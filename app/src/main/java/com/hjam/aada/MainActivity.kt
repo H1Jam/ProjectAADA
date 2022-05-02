@@ -236,7 +236,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 mTag,
                 "BluePackReceived size=${inp.size} Data=[${
                     inp.map { it.toUByte() }.joinToString()}]")
-            val tmp = inp.map { it.toInt().toChar() }
+            val tmp = inp.map { it.toString(16)}
             setStatusText(tmp.joinToString())
         }
     }
