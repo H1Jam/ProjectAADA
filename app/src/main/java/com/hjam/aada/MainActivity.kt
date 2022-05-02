@@ -22,6 +22,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.ezbluelib.EzBlue
 
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private lateinit var mBtnConnect: Button
     private lateinit var mBtnDisconnect: Button
     private lateinit var navView: NavigationView
+
     companion object {
         private const val mTag = "AADA_MainActivity"
         private const val BLUETOOTH_PERMISSION_CODE = 101
@@ -56,7 +58,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
 //        }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         navView = binding.navView
-        val navController : NavController = findNavController(R.id.nav_host_fragment_content_main)
+        val navController: NavController = findNavController(R.id.nav_host_fragment_content_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -212,10 +214,6 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         super.onDestroy()
     }
 
-    private val dataBuf: ArrayList<Byte> = arrayListOf()
-    private var dataBufOut: ArrayList<Byte> = arrayListOf()
-    private val dataHeader : Array<Int> = arrayOf(100,201,176)
-    private val dataIn : Array<Int> = arrayOf(0,0,0)
     /**
      * A byte receive callback. When a byte appears in the stream this method will be invoked.
      * The method runs on Bluetooth thread. Do not update UI here!
@@ -223,23 +221,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
      * @return ArrayList<Byte> if the packed was parsed otherwise returns null.
      */
     override fun parseIt(inp: Int): ArrayList<Byte>? {
-        dataBuf.add(inp.toByte())
-        // if receive new line char, the packed was concluded. You may try 13 too.
-        dataIn[0] = dataIn[1]
-        dataIn[1] = dataIn[2]
-        dataIn[2] = inp
-        if (dataIn.contentEquals(dataHeader)){
-            Log.d ("parseIt", "Got the header!")
-        }
-//        if (inp == 10) {
-//            // We need to make a copy of the list otherwise the `clear()` method will  clear it
-//            // before returning the list thus `bluePackReceived` will always get an empty array.
-//            dataBufOut = dataBuf.toMutableList() as ArrayList<Byte>
-//            dataBuf.clear()
-//            return dataBufOut
-//        }
-
-        return null
+        return DataProtocol.parseIt(inp)
     }
 
     /**
@@ -250,9 +232,12 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
      */
     override fun bluePackReceived(inp: ArrayList<Byte>?) {
         if (inp != null) {
-            Log.d(mTag, "bluePackReceived data $inp , size= ${inp.size}")
+            Log.d(
+                mTag,
+                "BluePackReceived size=${inp.size} Data=[${
+                    inp.map { it.toUByte() }.joinToString()}]")
             val tmp = inp.map { it.toInt().toChar() }
-            setStatusText(tmp.joinToString(separator = ""))
+            setStatusText(tmp.joinToString())
         }
     }
 
