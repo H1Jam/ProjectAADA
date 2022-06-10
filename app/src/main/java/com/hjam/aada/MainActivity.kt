@@ -24,7 +24,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.databinding.ActivityMainBinding
+import com.hjam.aada.utils.Crc16
 import com.hjam.ezbluelib.EzBlue
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 
 class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser,
@@ -86,13 +89,21 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mBtnDisconnect = binding.root.findViewById(R.id.btn_disconnect)
     }
 
-    private val mBytes: ByteArray = ByteArray(1)
+    private fun bufferProtoTest(long : Long):ByteArray{
+        val bb1 = ByteBuffer.allocate(Long.SIZE_BYTES + Float.SIZE_BYTES + Short.SIZE_BYTES)
+        bb1.order(ByteOrder.LITTLE_ENDIAN)
+        val array = with(bb1){
+            putLong(long)
+            putFloat(123.456F)
+            putShort(4321)
+        }.array()
+        return array
+    }
 
     private fun startTheApp() {
         mBtnSend.setOnClickListener {
             // a byte array showcase:
-            mBytes[0] = 100.toByte()
-            EzBlue.write(mBytes)
+            EzBlue.write(DataProtocol.prepareFrame(bufferProtoTest(System.currentTimeMillis())))
             // or just use the above line for single byte transfer:
             //EzBlue.write(counterd)
         }
@@ -146,12 +157,10 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     // Function to check and request permission.
     private fun checkPermission(permission: String, requestCode: Int): Boolean {
         if (ActivityCompat.checkSelfPermission(
-                this@MainActivity,
-                permission
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
+                this@MainActivity, permission) == PackageManager.PERMISSION_DENIED) {
             // Requesting the permission
-            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(permission), requestCode)
+            ActivityCompat.requestPermissions(
+                this@MainActivity, arrayOf(permission), requestCode)
             return false
         }
         return true
@@ -220,7 +229,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
      * @param inp: an Int from input stream.
      * @return ArrayList<Byte> if the packed was parsed otherwise returns null.
      */
-    override fun parseIt(inp: Int): ArrayList<Byte>? {
+    override fun parseIt(inp: Int): ByteArray? {
         return DataProtocol.parseIt(inp)
     }
 
@@ -230,14 +239,23 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
      * @param inp: an ArrayList containing the packed body parsed in the parseIt stage.
      * @return void
      */
-    override fun bluePackReceived(inp: ArrayList<Byte>?) {
+    override fun bluePackReceived(inp: ByteArray?) {
         if (inp != null) {
             Log.d(
                 mTag,
                 "BluePackReceived size=${inp.size} Data=[${
                     inp.map { it.toUByte() }.joinToString()}]")
-            val tmp = inp.map { it.toString(16)}
-            setStatusText(tmp.joinToString())
+            try {
+                val bb =  ByteBuffer.wrap(inp)
+                bb.order(ByteOrder.LITTLE_ENDIAN)
+                Log.d(
+                    mTag,
+                    "BluePackReceived Converted Data=[${bb.long}, ${bb.float}, ${bb.short}]")
+            }catch (ex :Exception){
+                Log.e(mTag,ex.message.toString())
+            }
+            val tmp = inp.map { it.toUByte() }.joinToString()
+            setStatusText(tmp)
         }
     }
 

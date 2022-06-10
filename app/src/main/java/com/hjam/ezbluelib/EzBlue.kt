@@ -31,7 +31,7 @@ object EzBlue {
          * @param inp: an Int from input stream.
          * @return ArrayList<Byte> if the packed was parsed otherwise returns null.
          */
-        fun parseIt(inp: Int): ArrayList<Byte>?
+        fun parseIt(inp: Int): ByteArray?
 
         /**
          * @bluePackReceived Packet receive callback. When your packed is ready this method will be invoked.
@@ -39,7 +39,7 @@ object EzBlue {
          * @param inp: an ArrayList containing the packed body parsed in the parseIt stage.
          * @return void
          */
-        fun bluePackReceived(inp: ArrayList<Byte>?)
+        fun bluePackReceived(inp: ByteArray?)
     }
 
     fun getBondedDevices(): Collection<BluetoothDevice> {
@@ -90,8 +90,8 @@ object EzBlue {
      * @param buffer : ByteArray
      */
     @Synchronized
-    fun write(buffer: ByteArray) {
-        if (this::mBtConnectThread.isInitialized) {
+    fun write(buffer: ByteArray?) {
+        if (this::mBtConnectThread.isInitialized && buffer != null) {
             mBtConnectThread.write(buffer)
         }
     }
