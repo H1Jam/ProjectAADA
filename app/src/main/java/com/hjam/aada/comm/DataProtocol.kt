@@ -12,7 +12,7 @@ object DataProtocol {
     private val mDataIn: ByteArray = byteArrayOf(0, 0, 0)
     private var mDataStep = 0
     private var mDataLength = 0
-
+    private var mLastDigitTimeStamp=0L
     /**
      * A byte receive callback. When a byte appears in the stream this method will be invoked.
      * The method runs on Bluetooth thread. Do not update UI here!
@@ -20,6 +20,10 @@ object DataProtocol {
      * @return ArrayList<Byte> if the packed was parsed otherwise returns null.
      */
     fun parseIt(inp: Int): ByteArray? {
+        if (isTimedOut()){
+            mDataIn.fill(0)
+            mDataStep=0
+        }
         when (mDataStep) {
             0 -> {
                 mDataIn[0] = mDataIn[1]
@@ -53,22 +57,36 @@ object DataProtocol {
         return null
     }
 
+    /**
+     * A method to re-sync the frames. It calculates the time between last synced frame.
+     * @return boolean
+     */
+    private fun isTimedOut():Boolean{
+        if ((System.currentTimeMillis() - mLastDigitTimeStamp)>100){
+            mLastDigitTimeStamp = System.currentTimeMillis()
+            return true
+        }
+        return false
+    }
+
     private fun checkCRC(frameBytes: ByteArray): ByteArray? {
         val recalculatedCrc = Crc16.crc16(frameBytes.dropLast(2).toByteArray())
         val receivedCRC = (frameBytes.takeLast(2)).toByteArray()
         return if (recalculatedCrc.contentEquals(receivedCRC)) {
+            mLastDigitTimeStamp = System.currentTimeMillis()
             Logger.debug(mTag,"Good CRC! Expected:[${recalculatedCrc.joinToString()}]" +
                     " Received:[${receivedCRC.joinToString()}]")
             frameBytes.dropLast(2).toByteArray()
         } else {
-            Logger.error(mTag,"Bad CRC! Expected:${recalculatedCrc.joinToString()}," +
-                    " Received:${receivedCRC.joinToString()}")
+            Logger.error(mTag,"Bad CRC! Expected:" +
+                    "${recalculatedCrc.map { it.toUByte() }.joinToString()}," +
+                    " Received:${receivedCRC.map { it.toUByte() }.joinToString()}")
             null
         }
     }
 
     fun prepareFrame(frameBytes: ByteArray): ByteArray? {
-        Logger.debug(mTag, "sendFrame: ${frameBytes.map { it.toUByte() }.joinToString()}")
+        Logger.debug(mTag, "sendFrame: ${(frameBytes+Crc16.crc16(frameBytes)).map { it.toUByte() }.joinToString()}")
         if (frameBytes.size > mMaxDataLength){
             return null
         }

@@ -63,7 +63,7 @@ class Crc16 {
 
         fun crc16(inputs: ByteArray): ByteArray {
             val result = crc16(inputs.toUByteArray())
-            return byteArrayOf((result shr 8).toByte(), (result).toByte())
+            return byteArrayOf((result).toByte(), (result shr 8).toByte())
         }
     }
 

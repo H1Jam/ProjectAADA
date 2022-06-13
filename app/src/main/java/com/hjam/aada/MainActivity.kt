@@ -103,7 +103,9 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private fun startTheApp() {
         mBtnSend.setOnClickListener {
             // a byte array showcase:
+            val goodData1 = byteArrayOf(0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39)
             EzBlue.write(DataProtocol.prepareFrame(bufferProtoTest(System.currentTimeMillis())))
+            //EzBlue.write(DataProtocol.prepareFrame(goodData1))
             // or just use the above line for single byte transfer:
             //EzBlue.write(counterd)
         }
@@ -247,12 +249,12 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                     inp.map { it.toUByte() }.joinToString()}]")
             try {
                 val bb =  ByteBuffer.wrap(inp)
-                bb.order(ByteOrder.LITTLE_ENDIAN)
+                //bb.order(ByteOrder.LITTLE_ENDIAN)
                 Log.d(
                     mTag,
-                    "BluePackReceived Converted Data=[${bb.long}, ${bb.float}, ${bb.short}]")
+                    "BluePackReceived Converted Data=[${bb.long}]")
             }catch (ex :Exception){
-                Log.e(mTag,ex.message.toString())
+                Log.e(mTag,"bluePackReceived Message "+ex.message.toString())
             }
             val tmp = inp.map { it.toUByte() }.joinToString()
             setStatusText(tmp)
