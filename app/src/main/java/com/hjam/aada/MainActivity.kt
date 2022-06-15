@@ -23,6 +23,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
+import com.hjam.aada.comm.DataProtocol.handleData
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.aada.utils.Crc16
 import com.hjam.ezbluelib.EzBlue
@@ -248,11 +249,9 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 "BluePackReceived size=${inp.size} Data=[${
                     inp.map { it.toUByte() }.joinToString()}]")
             try {
-                val bb =  ByteBuffer.wrap(inp)
+                //val bb =  ByteBuffer.wrap(inp)
                 //bb.order(ByteOrder.LITTLE_ENDIAN)
-                Log.d(
-                    mTag,
-                    "BluePackReceived Converted Data=[${bb.long}]")
+                handleData(inp)
             }catch (ex :Exception){
                 Log.e(mTag,"bluePackReceived Message "+ex.message.toString())
             }

@@ -4,9 +4,14 @@ class AnalogGauge(
     private val x: Int,
     private val y: Int,
     private val width: Int,
-    private val height: Int
+    private val height: Int,
+    private var value: Float
 ) {
-    public fun set() {
+    companion object{
+        const val mID : Byte = 16.toByte()
+        val typeArrayList = arrayOf(Long, Float, Int)
+    }
+    public fun setX() {
 
     }
 

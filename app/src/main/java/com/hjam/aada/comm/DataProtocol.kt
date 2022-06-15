@@ -1,11 +1,16 @@
 package com.hjam.aada.comm
 
+import android.util.Log
+import com.hjam.aada.MainActivity
+import com.hjam.aada.comm.types.DataStateMachine
 import com.hjam.aada.utils.Crc16
 import com.hjam.aada.utils.Logger
+import java.nio.ByteBuffer
 
 object DataProtocol {
     private const val mTag = "AADA_DataProtocol"
     private const val mMaxDataLength = 253 // 253 + 2(Bytes for CRC) = 255
+    private const val mMinFrameLength = 4
     private val mDataBuf: ArrayList<Byte> = arrayListOf()
     private var mDataBufOut = byteArrayOf()
     private val mDataHeader = byteArrayOf(199.toByte(), 201.toByte(), 176.toByte())
@@ -13,6 +18,11 @@ object DataProtocol {
     private var mDataStep = 0
     private var mDataLength = 0
     private var mLastDigitTimeStamp=0L
+    private enum class DataDirection{
+        ToAndroid,
+        FromAndroid
+    }
+
     /**
      * A byte receive callback. When a byte appears in the stream this method will be invoked.
      * The method runs on Bluetooth thread. Do not update UI here!
@@ -70,7 +80,8 @@ object DataProtocol {
     }
 
     private fun checkCRC(frameBytes: ByteArray): ByteArray? {
-        val recalculatedCrc = Crc16.crc16(frameBytes.dropLast(2).toByteArray())
+        //Drop the Direction Byte (first one) and the received CRC16 (last two).
+        val recalculatedCrc = Crc16.crc16(frameBytes.dropLast(2).drop(1).toByteArray())
         val receivedCRC = (frameBytes.takeLast(2)).toByteArray()
         return if (recalculatedCrc.contentEquals(receivedCRC)) {
             mLastDigitTimeStamp = System.currentTimeMillis()
@@ -90,7 +101,22 @@ object DataProtocol {
         if (frameBytes.size > mMaxDataLength){
             return null
         }
-        return mDataHeader + byteArrayOf((frameBytes.size + 2).toByte()) + frameBytes +
-                Crc16.crc16(frameBytes)
+        return mDataHeader +
+                byteArrayOf((frameBytes.size + 3).toByte(),
+                    DataDirection.FromAndroid.ordinal.toByte()) +
+                frameBytes + Crc16.crc16(frameBytes)
+    }
+
+    fun handleData(frameBytes: ByteArray){
+        Logger.debug(mTag,"handleData!")
+        if (frameBytes.size > mMinFrameLength && frameBytes[0] == DataDirection.ToAndroid.ordinal.toByte()){
+            dispatchData(frameBytes)
+        }
+    }
+    private fun dispatchData(frameBytes: ByteArray){
+        Logger.debug(mTag,"dispatchData!")
+        val bb =  ByteBuffer.wrap(frameBytes)
+        bb.get() // To remove the first byes, the direction byte.
+        DataStateMachine.process(bb)
     }
 }
