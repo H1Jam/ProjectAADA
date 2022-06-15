@@ -13,7 +13,7 @@ class DataProtocolTest : TestCase() {
         for (d in data.dropLast(1)){
             assertNull(DataProtocol.parseIt(d.toInt()))
         }
-        return DataProtocol.parseIt(data.last().toInt())
+        return DataProtocol.parseIt(data.last().toInt())?.drop(1)?.toByteArray()
     }
 
     private fun assertData(data : Array<Int>): ByteArray?{
@@ -55,7 +55,7 @@ class DataProtocolTest : TestCase() {
             goodDataLongArray.add(i.toByte())
         }
         val tooDataLong = goodDataLongArray.toByteArray()
-        val goodDataLong = goodDataLongArray.dropLast(3).toByteArray()
+        val goodDataLong = goodDataLongArray.dropLast(4).toByteArray()
         val longFrame = DataProtocol.prepareFrame(goodDataLong)
         assertNull(DataProtocol.prepareFrame(tooDataLong))
         assertNotNull(longFrame)
