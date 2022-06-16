@@ -1,7 +1,5 @@
 package com.hjam.aada.comm.types
 
-import com.hjam.aada.ScreenObjects
-
 class TextLabel(
     val tag: Int,
     private var x: Int?,
