@@ -2,8 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/canvas01"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:textAllCaps="false"
     tools:context=".ui.home.HomeFragment">
 
     <TextView
@@ -62,7 +64,6 @@
         android:text="@string/send"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
