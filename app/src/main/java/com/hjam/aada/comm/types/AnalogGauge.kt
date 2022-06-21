@@ -1,6 +1,7 @@
 package com.hjam.aada.comm.types
 
 class AnalogGauge(
+    private var tag: String,
     private val x: Int,
     private val y: Int,
     private val width: Int,

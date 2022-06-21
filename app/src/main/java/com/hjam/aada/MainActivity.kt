@@ -5,13 +5,16 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -25,7 +28,7 @@ import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.DataProtocol.handleData
 import com.hjam.aada.databinding.ActivityMainBinding
-import com.hjam.aada.utils.Crc16
+import com.hjam.aada.utils.Logger
 import com.hjam.ezbluelib.EzBlue
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -47,6 +50,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         private const val mTag = "AADA_MainActivity"
         private const val BLUETOOTH_PERMISSION_CODE = 101
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,17 +87,43 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         }
     }
 
+    private fun pxToMm(px: Int): Int {
+        return (px.toFloat() / TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_MM, 1f, resources.displayMetrics
+        )
+                ).toInt()
+    }
+
     private fun setViews() {
         mLblText = binding.root.findViewById(R.id.lbl_text)
         mBtnSend = binding.root.findViewById(R.id.btn_send)
         mBtnConnect = binding.root.findViewById(R.id.btn_connect)
         mBtnDisconnect = binding.root.findViewById(R.id.btn_disconnect)
+
+        val canvas1: ConstraintLayout = findViewById(R.id.canvas01);
+        ScreenObjects.initScreen(canvas1, R.id.canvas01, R.id.canvas01, resources.displayMetrics)
+        val f = resources.displayMetrics.density
+        Logger.debug(
+            mTag, "heightPixels ${resources.displayMetrics.heightPixels} " +
+                    "widthPixels ${resources.displayMetrics.widthPixels}"
+        )
+        Logger.debug(
+            mTag, "heightPixels ${pxToMm(resources.displayMetrics.heightPixels)} " +
+                    "widthPixels ${pxToMm(resources.displayMetrics.widthPixels)}"
+        )
+        ScreenObjects.addTextToScreen(44, 30, -10, "First Test Label", 12)
+        ScreenObjects.refreshText(86, "Refreshed It!")
+        ScreenObjects.refreshText(-10, "Refreshed It! After Set")
+        ScreenObjects.refreshText(12, "Refreshed It! After Set!")
+        ScreenObjects.addButtonToScreen(44, 300, 255, " First Button Label ", 28)
+        ScreenObjects.addButtonToScreen(200, 360, 250, "Button Label ", 15)
+        ScreenObjects.refreshButtonText(255,"Refreshed TexT!")
     }
 
-    private fun bufferProtoTest(long : Long):ByteArray{
+    private fun bufferProtoTest(long: Long): ByteArray {
         val bb1 = ByteBuffer.allocate(Long.SIZE_BYTES + Float.SIZE_BYTES + Short.SIZE_BYTES)
         bb1.order(ByteOrder.LITTLE_ENDIAN)
-        val array = with(bb1){
+        val array = with(bb1) {
             putLong(long)
             putFloat(123.456F)
             putShort(4321)
@@ -104,7 +134,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private fun startTheApp() {
         mBtnSend.setOnClickListener {
             // a byte array showcase:
-            val goodData1 = byteArrayOf(0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39)
+            val goodData1 = byteArrayOf(0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39)
             EzBlue.write(DataProtocol.prepareFrame(bufferProtoTest(System.currentTimeMillis())))
             //EzBlue.write(DataProtocol.prepareFrame(goodData1))
             // or just use the above line for single byte transfer:
@@ -117,6 +147,15 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mBtnDisconnect.setOnClickListener {
             EzBlue.stop()
         }
+
+
+        //canvas1.requestLayout()
+//        try {
+//            ScreenObjects.initScreen(canvas1,R.id.canvas01,R.id.canvas01)
+//            ScreenObjects.addTextToScreen(100,200,10,50,1,"First Test Label")
+//        }catch (ex: Exception){
+//            Logger.error(mTag, ex.message.toString())
+//        }
     }
 
     private fun showDevList() {
@@ -160,10 +199,13 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     // Function to check and request permission.
     private fun checkPermission(permission: String, requestCode: Int): Boolean {
         if (ActivityCompat.checkSelfPermission(
-                this@MainActivity, permission) == PackageManager.PERMISSION_DENIED) {
+                this@MainActivity, permission
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
             // Requesting the permission
             ActivityCompat.requestPermissions(
-                this@MainActivity, arrayOf(permission), requestCode)
+                this@MainActivity, arrayOf(permission), requestCode
+            )
             return false
         }
         return true
@@ -247,13 +289,15 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
             Log.d(
                 mTag,
                 "BluePackReceived size=${inp.size} Data=[${
-                    inp.map { it.toUByte() }.joinToString()}]")
+                    inp.map { it.toUByte() }.joinToString()
+                }]"
+            )
             try {
                 //val bb =  ByteBuffer.wrap(inp)
                 //bb.order(ByteOrder.LITTLE_ENDIAN)
                 handleData(inp)
-            }catch (ex :Exception){
-                Log.e(mTag,"bluePackReceived Message "+ex.message.toString())
+            } catch (ex: Exception) {
+                Log.e(mTag, "bluePackReceived Message " + ex.message.toString())
             }
             val tmp = inp.map { it.toUByte() }.joinToString()
             setStatusText(tmp)

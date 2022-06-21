@@ -14,6 +14,7 @@ class DataStateMachine {
             when (switch){
                 AnalogGauge.mID->{
                     Logger.debug(mTag, "Got AnalogGauge")
+                    //bb.get
                 }
                 200.toByte()->{
                     Logger.debug(mTag, "Got 200")

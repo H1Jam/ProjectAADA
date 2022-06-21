@@ -30,4 +30,5 @@ class TextLabel(
     override fun toString(): String {
         return "TextLabel:[Tag:$tag, x:$x, y:$y, size:$size, value:$value]"
     }
+
 }
