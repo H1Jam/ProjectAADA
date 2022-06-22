@@ -12,7 +12,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.types.TextLabel
 import com.hjam.aada.utils.Logger
-import kotlin.experimental.and
 
 
 object ScreenObjects {
@@ -59,6 +58,7 @@ object ScreenObjects {
             }
         }
         mTexLabelsList.add(textLabel)
+        addTextToScreen(textLabel)
         refreshScreen()
     }
 
@@ -66,7 +66,8 @@ object ScreenObjects {
         Logger.debug(mTag, "modifyTextLabel: ${textLabel.tag}")
         for (i in 0..mTexLabelsList.size) {
             if (mTexLabelsList[i].tag == textLabel.tag) {
-                mTexLabelsList[i].setFromInstance(textLabel)
+                mTexLabelsList[i].updateFromInstance(textLabel)
+                refreshText(textLabel)
                 refreshScreen()
                 return
             }
@@ -82,7 +83,13 @@ object ScreenObjects {
         }
     }
 
-    fun addTextToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int) {
+   fun addTextToScreen(textLabel: TextLabel){
+       with(textLabel){
+           addTextToScreen(x, y,tag,text,fontSize,textColor)
+       }
+    }
+
+    fun addTextToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int, textColor: Int?) {
         val px = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             x.toFloat(),
@@ -108,6 +115,9 @@ object ScreenObjects {
         lbl.tag = "lbl${cTag.toUInt()}"
         lbl.text = vText
         lbl.layoutParams = params
+        if (textColor != null) {
+            lbl.setTextColor(textColor)
+        }
         lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fSize.toFloat())
         // SetBtListener(btn[i]);
         mCanvasConstraintLayout.addView(lbl)
@@ -115,16 +125,43 @@ object ScreenObjects {
         // SetBtListener(btn)
     }
 
-    fun refreshText(cTag: Int, vText: String) {
-        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${cTag.toUInt()}")
+    fun refreshText(tag: Int, text : String ){
+        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${tag.toUInt()}")
         if (lbl != null) {
-            lbl.text = vText
+            lbl.text =text
         } else {
-            Logger.error(mTag, "refreshText: TextView(tag=$cTag) does not exist!")
+            Logger.error(mTag, "refreshText: TextView(tag=$tag) does not exist!")
+        }
+    }
+
+    fun refreshText(textLabel: TextLabel) {
+        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${textLabel.tag.toUInt()}")
+        if (lbl != null) {
+            lbl.text = textLabel.text
+            if (textLabel.textColor.toUInt() > 0u){
+                lbl.setTextColor(textLabel.textColor)
+            }
+            if (textLabel.fontSize > 0){
+                lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textLabel.fontSize.toFloat())
+            }
+        } else {
+            Logger.error(mTag, "refreshText: TextView(tag=${textLabel.tag}) does not exist!")
         }
     }
 
     fun addButtonToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int) {
+        addButtonToScreen(x, y, cTag, vText, fSize, Color.BLACK, Color.LTGRAY)
+    }
+
+    fun addButtonToScreen(
+        x: Int,
+        y: Int,
+        cTag: Int,
+        vText: String,
+        fSize: Int,
+        textColor: Int,
+        backColor: Int
+    ) {
         if (cTag < 0 || cTag > 255) {
             Logger.error(mTag, "addButtonToScreen: Invalid tag! (tag:$cTag)")
             return
@@ -157,8 +194,8 @@ object ScreenObjects {
         btn.layoutParams = params
         btn.isAllCaps = false
         btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fSize.toFloat())
-        btn.setTextColor(getDrawableForegroundColor(ViewColors.Red))
-        btn.background = getDrawable(ViewColors.Red)
+        btn.setTextColor(textColor)
+        btn.background = getDrawable(backColor)
         val pad = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             15.0F,
@@ -170,7 +207,7 @@ object ScreenObjects {
         setButtonListener(btn)
     }
 
-    fun setButtonListener(button: Button) {
+    private fun setButtonListener(button: Button) {
         val buttonListener: View.OnClickListener = object : View.OnClickListener {
             var numClicks = 0
             override fun onClick(v: View?) {
@@ -202,22 +239,13 @@ object ScreenObjects {
     }
 
 
-    private fun getDrawable(color: ViewColors): Drawable? {
-        return when (color) {
-            (ViewColors.Red) -> {
-                AppCompatResources.getDrawable(
-                    AADATheApp.instance.applicationContext,
-                    R.drawable.button_red
-                )
-            }
-            else -> {
-                AppCompatResources.getDrawable(
-                    AADATheApp.instance.applicationContext,
-                    R.drawable.button_red
-                )
-            }
-        }
+    private fun getDrawable(color: Int): Drawable? {
+        return AppCompatResources.getDrawable(
+            AADATheApp.instance.applicationContext,
+            R.drawable.button_red
+        )?.apply { setTint(color) }
     }
+
     private fun getDrawableForegroundColor(color: ViewColors): Int {
         return when (color) {
             (ViewColors.Red) -> {
@@ -236,7 +264,7 @@ object ScreenObjects {
                 Color.BLACK
             }
             else -> {
-              Color.BLACK
+                Color.BLACK
             }
         }
     }

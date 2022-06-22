@@ -4,8 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
 
         val canvas1: ConstraintLayout = findViewById(R.id.canvas01);
         ScreenObjects.initScreen(canvas1, R.id.canvas01, R.id.canvas01, resources.displayMetrics)
-        val f = resources.displayMetrics.density
         Logger.debug(
             mTag, "heightPixels ${resources.displayMetrics.heightPixels} " +
                     "widthPixels ${resources.displayMetrics.widthPixels}"
@@ -111,12 +110,14 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
             mTag, "heightPixels ${pxToMm(resources.displayMetrics.heightPixels)} " +
                     "widthPixels ${pxToMm(resources.displayMetrics.widthPixels)}"
         )
-        ScreenObjects.addTextToScreen(44, 30, -10, "First Test Label", 12)
+        ScreenObjects.addTextToScreen(44, 30, -10, "First Test Label", 12, Color.BLUE)
+        ScreenObjects.addTextToScreen(44, 45, 15, "2nd Test Label", 15, null)
         ScreenObjects.refreshText(86, "Refreshed It!")
         ScreenObjects.refreshText(-10, "Refreshed It! After Set")
         ScreenObjects.refreshText(12, "Refreshed It! After Set!")
         ScreenObjects.addButtonToScreen(44, 300, 255, " First Button Label ", 28)
         ScreenObjects.addButtonToScreen(200, 360, 250, "Button Label ", 15)
+        ScreenObjects.addButtonToScreen(44, 400, 11, "vText", 20, Color.WHITE, Color.GREEN)
         ScreenObjects.refreshButtonText(255,"Refreshed TexT!")
     }
 
@@ -134,7 +135,6 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private fun startTheApp() {
         mBtnSend.setOnClickListener {
             // a byte array showcase:
-            val goodData1 = byteArrayOf(0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39)
             EzBlue.write(DataProtocol.prepareFrame(bufferProtoTest(System.currentTimeMillis())))
             //EzBlue.write(DataProtocol.prepareFrame(goodData1))
             // or just use the above line for single byte transfer:

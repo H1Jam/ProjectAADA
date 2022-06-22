@@ -1,5 +1,6 @@
 package com.hjam.aada.comm.types
 
+import com.hjam.aada.ScreenObjects
 import com.hjam.aada.utils.Logger
 import java.nio.ByteBuffer
 
@@ -10,11 +11,16 @@ class DataStateMachine {
         fun process(bb: ByteBuffer){
             Logger.debug(mTag,"DataStateMachine.process!")
             switch = bb.get()
-            Logger.debug(mTag,"DataStateMachine.process! + $switch")
+            Logger.debug(mTag,"DataStateMachine.process! mID:$switch")
             when (switch){
                 AnalogGauge.mID->{
-                    Logger.debug(mTag, "Got AnalogGauge")
-                    //bb.get
+                    Logger.debug(mTag, "Got An alogGauge")
+                    //val s: String = StandardCharsets.UTF_8.decode(bb).toString()
+                }
+                TextLabel.mID->{
+                    val textLabel = TextLabel.fromByteBuffer(bb)
+                    Logger.debug(mTag, "Got a TextLabel $textLabel")
+                    ScreenObjects.addTextLabel(textLabel)
                 }
                 200.toByte()->{
                     Logger.debug(mTag, "Got 200")
