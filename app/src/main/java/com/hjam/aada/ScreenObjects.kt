@@ -21,6 +21,7 @@ object ScreenObjects {
     private var mLeftToLeft = 0
     private lateinit var mCanvasConstraintLayout: ConstraintLayout
     private lateinit var mDisplayMetrics: DisplayMetrics
+    private var mReady = false
 
     enum class ViewColors {
         Red,
@@ -44,10 +45,11 @@ object ScreenObjects {
         mLeftToLeft = leftToLeft
         mCanvasConstraintLayout = canvasConstraintLayout
         mDisplayMetrics = displayMetrics
+        mReady = true
     }
 
     fun addTextLabel(textLabel: TextLabel) {
-        if (textLabel.tag <= 0) {
+        if (!mReady || textLabel.tag <= 0) {
             return
         }
         Logger.debug(mTag, "addTextLabel: ${textLabel.tag}")
