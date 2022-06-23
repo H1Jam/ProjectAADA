@@ -1,11 +1,10 @@
 package com.hjam.aada.comm.types
 
-import android.graphics.Color
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
 
-class TextLabel(
+class AADATextLabel(
     var x: Int,
     var y: Int,
     val tag: Int,
@@ -16,8 +15,7 @@ class TextLabel(
 
     companion object {
         const val mID: Byte = 17.toByte()
-        val typeArrayList = arrayOf(Long, Float, Int)
-        fun fromByteBuffer(byteBuffer: ByteBuffer): TextLabel {
+        fun fromByteBuffer(byteBuffer: ByteBuffer): AADATextLabel {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
             val y = byteBuffer.short.toInt()
@@ -25,16 +23,16 @@ class TextLabel(
             val fSize = byteBuffer.short.toInt()
             val textColor: Int = byteBuffer.int
             val vText = StandardCharsets.UTF_8.decode(byteBuffer).toString()
-            return TextLabel(x, y, cTag, vText, fSize, textColor)
+            return AADATextLabel(x, y, cTag, vText, fSize, textColor)
         }
     }
 
-    fun updateFromInstance(textLabel: TextLabel) {
-        if (this.tag == textLabel.tag) {
-            this.x = textLabel.x
-            this.y = textLabel.y
-            this.fontSize = textLabel.fontSize
-            this.text = textLabel.text
+    fun updateFromInstance(AADATextLabel: AADATextLabel) {
+        if (this.tag == AADATextLabel.tag) {
+            this.x = AADATextLabel.x
+            this.y = AADATextLabel.y
+            this.fontSize = AADATextLabel.fontSize
+            this.text = AADATextLabel.text
         }
     }
 

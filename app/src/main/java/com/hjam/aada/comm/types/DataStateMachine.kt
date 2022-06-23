@@ -17,8 +17,8 @@ class DataStateMachine {
                     Logger.debug(mTag, "Got An alogGauge")
                     //val s: String = StandardCharsets.UTF_8.decode(bb).toString()
                 }
-                TextLabel.mID->{
-                    val textLabel = TextLabel.fromByteBuffer(bb)
+                AADATextLabel.mID->{
+                    val textLabel = AADATextLabel.fromByteBuffer(bb)
                     Logger.debug(mTag, "Got a TextLabel $textLabel")
                     ScreenObjects.addTextLabel(textLabel)
                 }

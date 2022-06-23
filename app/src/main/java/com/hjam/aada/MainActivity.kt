@@ -27,6 +27,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.DataProtocol.handleData
+import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.aada.utils.Logger
 import com.hjam.ezbluelib.EzBlue
@@ -35,7 +36,7 @@ import java.nio.ByteOrder
 
 
 class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser,
-    NavigationView.OnNavigationItemSelectedListener {
+    NavigationView.OnNavigationItemSelectedListener, AADAWriter {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -101,7 +102,13 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mBtnDisconnect = binding.root.findViewById(R.id.btn_disconnect)
 
         val canvas1: ConstraintLayout = findViewById(R.id.canvas01);
-        ScreenObjects.initScreen(canvas1, R.id.canvas01, R.id.canvas01, resources.displayMetrics)
+        ScreenObjects.initScreen(
+            canvas1,
+            R.id.canvas01,
+            R.id.canvas01,
+            resources.displayMetrics,
+            this
+        )
         Logger.debug(
             mTag, "heightPixels ${resources.displayMetrics.heightPixels} " +
                     "widthPixels ${resources.displayMetrics.widthPixels}"
@@ -118,7 +125,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.addButtonToScreen(44, 300, 255, " First Button Label ", 28)
         ScreenObjects.addButtonToScreen(200, 360, 250, "Button Label ", 15)
         ScreenObjects.addButtonToScreen(44, 400, 11, "vText", 20, Color.WHITE, Color.GREEN)
-        ScreenObjects.refreshButtonText(255,"Refreshed TexT!")
+        ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {
@@ -307,5 +314,9 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun write(buffer: ByteArray?) {
+        EzBlue.write(buffer)
     }
 }

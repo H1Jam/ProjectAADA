@@ -1,7 +1,5 @@
 package com.hjam.aada.comm
 
-import android.util.Log
-import com.hjam.aada.MainActivity
 import com.hjam.aada.comm.types.DataStateMachine
 import com.hjam.aada.utils.Crc16
 import com.hjam.aada.utils.Logger
@@ -107,12 +105,14 @@ object DataProtocol {
                 frameBytes + Crc16.crc16(frameBytes)
     }
 
+
     fun handleData(frameBytes: ByteArray){
         Logger.debug(mTag,"handleData!")
         if (frameBytes.size > mMinFrameLength && frameBytes[0] == DataDirection.ToAndroid.ordinal.toByte()){
             dispatchData(frameBytes)
         }
     }
+
     private fun dispatchData(frameBytes: ByteArray){
         Logger.debug(mTag,"dispatchData!")
         val bb =  ByteBuffer.wrap(frameBytes)

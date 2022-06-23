@@ -10,18 +10,20 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.hjam.aada.comm.types.TextLabel
+import com.hjam.aada.comm.types.AADAWriter
+import com.hjam.aada.comm.types.AADATextLabel
 import com.hjam.aada.utils.Logger
 
 
 object ScreenObjects {
     private val mTag = "ScreenObjects"
-    private val mTexLabelsList: MutableList<TextLabel> = mutableListOf()
+    private val M_TEX_LABELS_LIST: MutableList<AADATextLabel> = mutableListOf()
     private var mTopToTop = 0
     private var mLeftToLeft = 0
     private lateinit var mCanvasConstraintLayout: ConstraintLayout
     private lateinit var mDisplayMetrics: DisplayMetrics
     private var mReady = false
+    private var mWriteListener : AADAWriter? =null
 
     enum class ViewColors {
         Red,
@@ -32,61 +34,62 @@ object ScreenObjects {
     }
 
     private fun refreshScreen() {
-        for (tl in mTexLabelsList) {
+        for (tl in M_TEX_LABELS_LIST) {
             Logger.debug(mTag, "UI: $tl")
         }
     }
 
     fun initScreen(
         canvasConstraintLayout: ConstraintLayout, topToTop: Int, leftToLeft: Int,
-        displayMetrics: DisplayMetrics
+        displayMetrics: DisplayMetrics, writeListener:AADAWriter
     ) {
         mTopToTop = topToTop
         mLeftToLeft = leftToLeft
         mCanvasConstraintLayout = canvasConstraintLayout
         mDisplayMetrics = displayMetrics
         mReady = true
+        mWriteListener = writeListener
     }
 
-    fun addTextLabel(textLabel: TextLabel) {
-        if (!mReady || textLabel.tag <= 0) {
+    fun addTextLabel(AADATextLabel: AADATextLabel) {
+        if (!mReady || AADATextLabel.tag <= 0) {
             return
         }
-        Logger.debug(mTag, "addTextLabel: ${textLabel.tag}")
-        for (tl in mTexLabelsList) {
-            if (tl.tag == textLabel.tag) {
-                modifyTextLabel(textLabel)
+        Logger.debug(mTag, "addTextLabel: ${AADATextLabel.tag}")
+        for (tl in M_TEX_LABELS_LIST) {
+            if (tl.tag == AADATextLabel.tag) {
+                modifyTextLabel(AADATextLabel)
                 return
             }
         }
-        mTexLabelsList.add(textLabel)
-        addTextToScreen(textLabel)
+        M_TEX_LABELS_LIST.add(AADATextLabel)
+        addTextToScreen(AADATextLabel)
         refreshScreen()
     }
 
-    private fun modifyTextLabel(textLabel: TextLabel) {
-        Logger.debug(mTag, "modifyTextLabel: ${textLabel.tag}")
-        for (i in 0..mTexLabelsList.size) {
-            if (mTexLabelsList[i].tag == textLabel.tag) {
-                mTexLabelsList[i].updateFromInstance(textLabel)
-                refreshText(textLabel)
+    private fun modifyTextLabel(AADATextLabel: AADATextLabel) {
+        Logger.debug(mTag, "modifyTextLabel: ${AADATextLabel.tag}")
+        for (i in 0..M_TEX_LABELS_LIST.size) {
+            if (M_TEX_LABELS_LIST[i].tag == AADATextLabel.tag) {
+                M_TEX_LABELS_LIST[i].updateFromInstance(AADATextLabel)
+                refreshText(AADATextLabel)
                 refreshScreen()
                 return
             }
         }
     }
 
-    fun removeTextLabel(textLabel: TextLabel) {
-        for (tl in mTexLabelsList) {
-            if (tl.tag == textLabel.tag) {
-                mTexLabelsList.remove(tl)
+    fun removeTextLabel(AADATextLabel: AADATextLabel) {
+        for (tl in M_TEX_LABELS_LIST) {
+            if (tl.tag == AADATextLabel.tag) {
+                M_TEX_LABELS_LIST.remove(tl)
                 return
             }
         }
     }
 
-   fun addTextToScreen(textLabel: TextLabel){
-       with(textLabel){
+   fun addTextToScreen(AADATextLabel: AADATextLabel){
+       with(AADATextLabel){
            addTextToScreen(x, y,tag,text,fontSize,textColor)
        }
     }
@@ -136,18 +139,18 @@ object ScreenObjects {
         }
     }
 
-    fun refreshText(textLabel: TextLabel) {
-        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${textLabel.tag.toUInt()}")
+    fun refreshText(AADATextLabel: AADATextLabel) {
+        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${AADATextLabel.tag.toUInt()}")
         if (lbl != null) {
-            lbl.text = textLabel.text
-            if (textLabel.textColor.toUInt() > 0u){
-                lbl.setTextColor(textLabel.textColor)
+            lbl.text = AADATextLabel.text
+            if (AADATextLabel.textColor.toUInt() > 0u){
+                lbl.setTextColor(AADATextLabel.textColor)
             }
-            if (textLabel.fontSize > 0){
-                lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textLabel.fontSize.toFloat())
+            if (AADATextLabel.fontSize > 0){
+                lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, AADATextLabel.fontSize.toFloat())
             }
         } else {
-            Logger.error(mTag, "refreshText: TextView(tag=${textLabel.tag}) does not exist!")
+            Logger.error(mTag, "refreshText: TextView(tag=${AADATextLabel.tag}) does not exist!")
         }
     }
 
@@ -225,6 +228,7 @@ object ScreenObjects {
     fun sendButtonClickData(tag: String) {
         try {
             val pTag: UByte = (Integer.parseInt(tag.drop(3))).toUByte() and 0xFF.toUByte()
+
             Logger.debug(mTag, "sendBtnClickData: $pTag")
         } catch (ex: Exception) {
             Logger.debug(mTag, "sendBtnClickData: ${ex.message}")
@@ -233,10 +237,17 @@ object ScreenObjects {
 
     fun refreshButtonText(cTag: Int, vText: String) {
         val btn: Button? = mCanvasConstraintLayout.findViewWithTag("btn${cTag.toUInt()}")
+
         if (btn != null) {
             btn.text = vText
         } else {
             Logger.error(mTag, "refreshButtonText: Button(tag=$cTag) does not exist!")
+        }
+    }
+
+    private fun writeData(buffer: ByteArray?){
+        if (mWriteListener != null){
+            mWriteListener?.write(buffer)
         }
     }
 
@@ -248,27 +259,5 @@ object ScreenObjects {
         )?.apply { setTint(color) }
     }
 
-    private fun getDrawableForegroundColor(color: ViewColors): Int {
-        return when (color) {
-            (ViewColors.Red) -> {
-                Color.BLACK
-            }
-            (ViewColors.Blue) -> {
-                Color.WHITE
-            }
-            (ViewColors.Black) -> {
-                Color.WHITE
-            }
-            (ViewColors.White) -> {
-                Color.BLACK
-            }
-            (ViewColors.Yellow) -> {
-                Color.BLACK
-            }
-            else -> {
-                Color.BLACK
-            }
-        }
-    }
 
 }
