@@ -234,7 +234,6 @@ object EzBlue {
                     mEnable = false
                 }
             }
-
         }
 
         fun write(data: Int) {

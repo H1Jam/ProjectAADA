@@ -10,6 +10,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.hjam.aada.comm.DataProtocol
+import com.hjam.aada.comm.types.AADAButton
 import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.comm.types.AADATextLabel
 import com.hjam.aada.utils.Logger
@@ -194,7 +196,7 @@ object ScreenObjects {
         )
 
         val btn = Button(AADATheApp.instance.applicationContext)
-        btn.tag = "btn${cTag.toUInt()}"
+        btn.tag = "${AADAButton.mTagPrefix}${cTag.toUInt()}"
         btn.text = vText
         btn.layoutParams = params
         btn.isAllCaps = false
@@ -217,7 +219,7 @@ object ScreenObjects {
             var numClicks = 0
             override fun onClick(v: View?) {
                 numClicks++
-                val str = "TAG:${button.tag} $numClicks"
+                val str = "TAG:${v?.tag} $numClicks"
                 button.text = str
                 sendButtonClickData(v?.tag.toString())
             }
@@ -227,11 +229,10 @@ object ScreenObjects {
 
     fun sendButtonClickData(tag: String) {
         try {
-            val pTag: UByte = (Integer.parseInt(tag.drop(3))).toUByte() and 0xFF.toUByte()
-
-            Logger.debug(mTag, "sendBtnClickData: $pTag")
+            writeData(AADAButton.toBytesFromTag(tag)?.let { DataProtocol.prepareFrame(it) })
+            Logger.debug(mTag, "sendBtnClickData: $tag")
         } catch (ex: Exception) {
-            Logger.debug(mTag, "sendBtnClickData: ${ex.message}")
+            Logger.error(mTag, "sendBtnClickData:$tag, ex:${ex.message}")
         }
     }
 

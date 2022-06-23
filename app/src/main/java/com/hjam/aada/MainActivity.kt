@@ -317,6 +317,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     }
 
     override fun write(buffer: ByteArray?) {
+        Logger.debug(mTag, "writeData From Listener: ${buffer?.map{it.toUByte()}?.joinToString()}")
         EzBlue.write(buffer)
     }
 }
