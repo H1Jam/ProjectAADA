@@ -7,11 +7,9 @@ class AnalogGaugeTest : TestCase(){
 
     @Test
     fun test_TypeList(){
+        //Todo: Add the actual test!
         for (d in AnalogGauge.typeArrayList){
             println(d)
-            if (d == Long){
-                println("LOOOONG")
-            }
         }
     }
 }
