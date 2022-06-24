@@ -12,9 +12,13 @@ class AADATextLabel(
     var fontSize: Int,
     var textColor: Int
 ) {
-
+    val screenTag = screenTag(this)
     companion object {
         const val mID: Byte = 17.toByte()
+        const val mTagPrefix = "lbl"
+        fun screenTag(aADATextLabel: AADATextLabel):String{
+            return mTagPrefix+aADATextLabel.tag.toString()
+        }
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADATextLabel {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
@@ -27,12 +31,12 @@ class AADATextLabel(
         }
     }
 
-    fun updateFromInstance(AADATextLabel: AADATextLabel) {
-        if (this.tag == AADATextLabel.tag) {
-            this.x = AADATextLabel.x
-            this.y = AADATextLabel.y
-            this.fontSize = AADATextLabel.fontSize
-            this.text = AADATextLabel.text
+    fun updateFromInstance(aADATextLabel: AADATextLabel) {
+        if (this.tag == aADATextLabel.tag) {
+            this.x = aADATextLabel.x
+            this.y = aADATextLabel.y
+            this.fontSize = aADATextLabel.fontSize
+            this.text = aADATextLabel.text
         }
     }
 

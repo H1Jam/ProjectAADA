@@ -7,15 +7,19 @@ import java.nio.charset.StandardCharsets
 class AADAButton(
     var x: Int,
     var y: Int,
-    var cTag: Int,
-    var vText: String,
-    var fSize: Int,
+    var tag: Int,
+    var text: String,
+    var fontSize: Int,
     var textColor: Int,
     var backColor: Int
 ) {
+    val screenTag = screenTag(this)
     companion object {
         const val mID: Byte = 18.toByte()
         const val mTagPrefix = "btn"
+        fun screenTag(aadaButton: AADAButton):String{
+            return mTagPrefix +aadaButton.tag.toString()
+        }
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAButton {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
@@ -33,7 +37,7 @@ class AADAButton(
             bb1.order(ByteOrder.LITTLE_ENDIAN)
             val array = with(bb1) {
                 put(mID)
-                putShort(aadaButton.cTag.toShort())
+                putShort(aadaButton.tag.toShort())
             }.array()
             return array
         }

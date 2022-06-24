@@ -118,13 +118,14 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                     "widthPixels ${pxToMm(resources.displayMetrics.widthPixels)}"
         )
         ScreenObjects.addTextToScreen(44, 30, -10, "First Test Label", 12, Color.BLUE)
-        ScreenObjects.addTextToScreen(44, 45, 15, "2nd Test Label", 15, null)
+        ScreenObjects.addTextToScreen(44, 45, 15, "2nd Test Label", 15, 0)
         ScreenObjects.refreshText(86, "Refreshed It!")
         ScreenObjects.refreshText(-10, "Refreshed It! After Set")
         ScreenObjects.refreshText(12, "Refreshed It! After Set!")
         ScreenObjects.addButtonToScreen(44, 300, 255, " First Button Label ", 28)
         ScreenObjects.addButtonToScreen(200, 360, 250, "Button Label ", 15)
         ScreenObjects.addButtonToScreen(44, 400, 11, "vText", 20, Color.WHITE, Color.GREEN)
+        ScreenObjects.addButtonToScreen(44, 400, 11, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
     }
 
@@ -317,7 +318,10 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     }
 
     override fun write(buffer: ByteArray?) {
-        Logger.debug(mTag, "writeData From Listener: ${buffer?.map{it.toUByte()}?.joinToString()}")
+        Logger.debug(
+            mTag,
+            "writeData From Listener: ${buffer?.map { it.toUByte() }?.joinToString()}"
+        )
         EzBlue.write(buffer)
     }
 }

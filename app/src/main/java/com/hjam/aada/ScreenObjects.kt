@@ -19,13 +19,13 @@ import com.hjam.aada.utils.Logger
 
 object ScreenObjects {
     private val mTag = "ScreenObjects"
-    private val M_TEX_LABELS_LIST: MutableList<AADATextLabel> = mutableListOf()
+    private val mScreenObjects: MutableSet<String> = mutableSetOf()
     private var mTopToTop = 0
     private var mLeftToLeft = 0
     private lateinit var mCanvasConstraintLayout: ConstraintLayout
     private lateinit var mDisplayMetrics: DisplayMetrics
     private var mReady = false
-    private var mWriteListener : AADAWriter? =null
+    private var mWriteListener: AADAWriter? = null
 
     enum class ViewColors {
         Red,
@@ -36,14 +36,14 @@ object ScreenObjects {
     }
 
     private fun refreshScreen() {
-        for (tl in M_TEX_LABELS_LIST) {
-            Logger.debug(mTag, "UI: $tl")
-        }
+     //   for (tl in mScreenObjects) {
+            Logger.debug(mTag, "UI: ${mScreenObjects.joinToString()}")
+       // }
     }
 
     fun initScreen(
         canvasConstraintLayout: ConstraintLayout, topToTop: Int, leftToLeft: Int,
-        displayMetrics: DisplayMetrics, writeListener:AADAWriter
+        displayMetrics: DisplayMetrics, writeListener: AADAWriter
     ) {
         mTopToTop = topToTop
         mLeftToLeft = leftToLeft
@@ -53,111 +53,137 @@ object ScreenObjects {
         mWriteListener = writeListener
     }
 
-    fun addTextLabel(AADATextLabel: AADATextLabel) {
-        if (!mReady || AADATextLabel.tag <= 0) {
-            return
-        }
-        Logger.debug(mTag, "addTextLabel: ${AADATextLabel.tag}")
-        for (tl in M_TEX_LABELS_LIST) {
-            if (tl.tag == AADATextLabel.tag) {
-                modifyTextLabel(AADATextLabel)
-                return
+    fun addButton(aadaButton: AADAButton) {
+        if (mReady && aadaButton.tag > 0) {
+            Logger.debug(mTag, "addButton: ${aadaButton.tag}")
+            if (mScreenObjects.add(aadaButton.screenTag)) {
+                addButtonToScreen(aadaButton)
+            } else {
+                modifyButton(aadaButton)
             }
+            refreshScreen()
         }
-        M_TEX_LABELS_LIST.add(AADATextLabel)
-        addTextToScreen(AADATextLabel)
+    }
+
+    private fun modifyButton(aadaButton: AADAButton) {
+        Logger.debug(mTag, "modifyButton: ${aadaButton.tag}")
+        refreshButton(aadaButton)
         refreshScreen()
     }
 
-    private fun modifyTextLabel(AADATextLabel: AADATextLabel) {
-        Logger.debug(mTag, "modifyTextLabel: ${AADATextLabel.tag}")
-        for (i in 0..M_TEX_LABELS_LIST.size) {
-            if (M_TEX_LABELS_LIST[i].tag == AADATextLabel.tag) {
-                M_TEX_LABELS_LIST[i].updateFromInstance(AADATextLabel)
-                refreshText(AADATextLabel)
+    fun addTextLabel(aadaTextLabel: AADATextLabel) {
+        if (mReady && aadaTextLabel.tag > 0) {
+            Logger.debug(mTag, "addTextLabel: ${aadaTextLabel.tag}")
+            if (mScreenObjects.add(aadaTextLabel.screenTag)) {
+                addTextToScreen(aadaTextLabel)
                 refreshScreen()
-                return
+            } else {
+                modifyTextLabel(aadaTextLabel)
             }
+
         }
+    }
+
+    private fun modifyTextLabel(aadaTextLabel: AADATextLabel) {
+        Logger.debug(mTag, "modifyTextLabel: ${aadaTextLabel.tag}")
+        refreshText(aadaTextLabel)
+        refreshScreen()
     }
 
     fun removeTextLabel(AADATextLabel: AADATextLabel) {
-        for (tl in M_TEX_LABELS_LIST) {
-            if (tl.tag == AADATextLabel.tag) {
-                M_TEX_LABELS_LIST.remove(tl)
-                return
+
+    }
+
+    private fun addTextToScreen(aadaTextLabel: AADATextLabel) {
+        with(aadaTextLabel) {
+            // addTextToScreen(x, y, screenTag, text, fontSize, textColor)
+            val px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                x.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+            val py = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                y.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+            val params = ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.topToTop = mTopToTop
+            params.leftToLeft = mLeftToLeft
+            params.setMargins(px, py, 0, 0)
+            Logger.debug(
+                mTag, "addTextToScreen:[x:$x($px), y:$y($py), " +
+                        "cTag:$screenTag, Text:$text], size:$fontSize"
+            )
+            val lbl = TextView(AADATheApp.instance.applicationContext)
+            lbl.tag = screenTag
+            lbl.text = text
+            lbl.layoutParams = params
+            if (textColor.toUInt() > 0U) {
+                lbl.setTextColor(textColor)
             }
+            lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
+            mCanvasConstraintLayout.addView(lbl)
+
         }
     }
 
-   fun addTextToScreen(AADATextLabel: AADATextLabel){
-       with(AADATextLabel){
-           addTextToScreen(x, y,tag,text,fontSize,textColor)
-       }
+    fun addTextToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int, textColor: Int) {
+        addTextLabel(AADATextLabel(x, y, cTag, vText, fSize, textColor))
     }
 
-    fun addTextToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int, textColor: Int?) {
-        val px = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            x.toFloat(),
-            mDisplayMetrics
-        ).toInt()
-        val py = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            y.toFloat(),
-            mDisplayMetrics
-        ).toInt()
-        val params = ConstraintLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.topToTop = mTopToTop
-        params.leftToLeft = mLeftToLeft
-        params.setMargins(px, py, 0, 0)
-        Logger.debug(
-            mTag, "addTextToScreen:[x:$x($px), y:$y($py), " +
-                    "cTag:${cTag.toUInt()}, Text:$vText], size:$fSize"
-        )
-        val lbl = TextView(AADATheApp.instance.applicationContext)
-        lbl.tag = "lbl${cTag.toUInt()}"
-        lbl.text = vText
-        lbl.layoutParams = params
-        if (textColor != null) {
-            lbl.setTextColor(textColor)
-        }
-        lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fSize.toFloat())
-        // SetBtListener(btn[i]);
-        mCanvasConstraintLayout.addView(lbl)
-        //mCanvasConstraintLayout.requestLayout()
-        // SetBtListener(btn)
-    }
-
-    fun refreshText(tag: Int, text : String ){
-        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${tag.toUInt()}")
+    fun refreshText(tag: Int, text: String) {
+        val lbl: TextView? =
+            mCanvasConstraintLayout.findViewWithTag("${AADATextLabel.mTagPrefix}${tag.toUInt()}")
         if (lbl != null) {
-            lbl.text =text
+            lbl.text = text
         } else {
             Logger.error(mTag, "refreshText: TextView(tag=$tag) does not exist!")
         }
     }
 
-    fun refreshText(AADATextLabel: AADATextLabel) {
-        val lbl: TextView? = mCanvasConstraintLayout.findViewWithTag("lbl${AADATextLabel.tag.toUInt()}")
-        if (lbl != null) {
-            lbl.text = AADATextLabel.text
-            if (AADATextLabel.textColor.toUInt() > 0u){
-                lbl.setTextColor(AADATextLabel.textColor)
+    private fun refreshButton(aadaButton: AADAButton) {
+        val btn: Button? =
+            mCanvasConstraintLayout.findViewWithTag(aadaButton.screenTag)
+        if (btn != null) {
+            btn.text = aadaButton.text
+            if (aadaButton.textColor.toUInt() > 0u) {
+                btn.setTextColor(aadaButton.textColor)
             }
-            if (AADATextLabel.fontSize > 0){
-                lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, AADATextLabel.fontSize.toFloat())
+            if (aadaButton.backColor.toUInt() > 0u) {
+                btn.background = getDrawable(aadaButton.backColor)
+            }
+
+            if (aadaButton.fontSize > 0) {
+                btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, aadaButton.fontSize.toFloat())
             }
         } else {
-            Logger.error(mTag, "refreshText: TextView(tag=${AADATextLabel.tag}) does not exist!")
+            Logger.error(mTag, "refreshText: TextView(tag=${aadaButton.tag}) does not exist!")
         }
     }
 
+    private fun refreshText(aadaTextLabel: AADATextLabel) {
+        val lbl: TextView? =
+            mCanvasConstraintLayout.findViewWithTag(aadaTextLabel.screenTag)
+        if (lbl != null) {
+            lbl.text = aadaTextLabel.text
+            if (aadaTextLabel.textColor.toUInt() > 0u) {
+                lbl.setTextColor(aadaTextLabel.textColor)
+            }
+            if (aadaTextLabel.fontSize > 0) {
+                lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, aadaTextLabel.fontSize.toFloat())
+            }
+        } else {
+            Logger.error(mTag, "refreshText: TextView(tag=${aadaTextLabel.tag}) does not exist!")
+        }
+    }
+
+
     fun addButtonToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int) {
-        addButtonToScreen(x, y, cTag, vText, fSize, Color.BLACK, Color.LTGRAY)
+        addButton(AADAButton(x, y, cTag, vText, fSize, Color.BLACK, Color.LTGRAY))
     }
 
     fun addButtonToScreen(
@@ -169,49 +195,55 @@ object ScreenObjects {
         textColor: Int,
         backColor: Int
     ) {
-        if (cTag < 0 || cTag > 255) {
-            Logger.error(mTag, "addButtonToScreen: Invalid tag! (tag:$cTag)")
-            return
+        addButton(AADAButton(x, y, cTag, vText, fSize, textColor, backColor))
+    }
+
+    private fun addButtonToScreen(aadaButton: AADAButton) {
+        with(aadaButton) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addButtonToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            val px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                x.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+            val py = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                y.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+            val params = ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.topToTop = mTopToTop
+            params.leftToLeft = mLeftToLeft
+            params.setMargins(px, py, 0, 0)
+            Logger.debug(
+                mTag, "addButtonToScreen:[x:$x($px), y:$y($py), " +
+                        "cTag:$screenTag, Text:$text], size:$fontSize"
+            )
+
+            val btn = Button(AADATheApp.instance.applicationContext)
+            btn.tag = screenTag
+            btn.text = text
+            btn.layoutParams = params
+            btn.isAllCaps = false
+            btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
+            btn.setTextColor(textColor)
+            btn.background = getDrawable(backColor)
+            val pad = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15.0F,
+                mDisplayMetrics
+            ).toInt()
+
+            btn.setPaddingRelative(pad, 0, pad, 0)
+            mCanvasConstraintLayout.addView(btn)
+            setButtonListener(btn)
         }
-        val px = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            x.toFloat(),
-            mDisplayMetrics
-        ).toInt()
-        val py = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            y.toFloat(),
-            mDisplayMetrics
-        ).toInt()
-        val params = ConstraintLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.topToTop = mTopToTop
-        params.leftToLeft = mLeftToLeft
-        params.setMargins(px, py, 0, 0)
-        Logger.debug(
-            mTag, "addButtonToScreen:[x:$x($px), y:$y($py), " +
-                    "cTag:${cTag.toUInt()}, Text:$vText], size:$fSize"
-        )
-
-        val btn = Button(AADATheApp.instance.applicationContext)
-        btn.tag = "${AADAButton.mTagPrefix}${cTag.toUInt()}"
-        btn.text = vText
-        btn.layoutParams = params
-        btn.isAllCaps = false
-        btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fSize.toFloat())
-        btn.setTextColor(textColor)
-        btn.background = getDrawable(backColor)
-        val pad = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            15.0F,
-            mDisplayMetrics
-        ).toInt()
-
-        btn.setPaddingRelative(pad, 0, pad, 0)
-        mCanvasConstraintLayout.addView(btn)
-        setButtonListener(btn)
     }
 
     private fun setButtonListener(button: Button) {
@@ -246,8 +278,8 @@ object ScreenObjects {
         }
     }
 
-    private fun writeData(buffer: ByteArray?){
-        if (mWriteListener != null){
+    private fun writeData(buffer: ByteArray?) {
+        if (mWriteListener != null) {
             mWriteListener?.write(buffer)
         }
     }
