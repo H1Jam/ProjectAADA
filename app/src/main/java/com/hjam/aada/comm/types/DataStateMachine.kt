@@ -22,6 +22,12 @@ class DataStateMachine {
                     Logger.debug(mTag, "Got a TextLabel $textLabel")
                     ScreenObjects.addTextLabel(textLabel)
                 }
+                AADAButton.mID->{
+                    val aadaButton = AADAButton.fromByteBuffer(bb)
+                    Logger.debug(mTag, "Got a AADAButton $aadaButton")
+                    ScreenObjects.addButton(aadaButton)
+                }
+
                 200.toByte()->{
                     Logger.debug(mTag, "Got 200")
                 }

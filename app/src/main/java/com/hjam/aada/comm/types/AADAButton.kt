@@ -57,5 +57,10 @@ class AADAButton(
         }
     }
 
+    override fun toString(): String {
+        return "AADAButton:[Tag:$tag, x:$x, y:$y, FontSize:$fontSize," +
+                " Text:$text, textColor:${textColor.toString(16)}," +
+                "backColor:${backColor.toString(16)}]"
+    }
 
 }

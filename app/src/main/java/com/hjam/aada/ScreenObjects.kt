@@ -18,7 +18,7 @@ import com.hjam.aada.utils.Logger
 
 
 object ScreenObjects {
-    private val mTag = "ScreenObjects"
+    private const val mTag = "ScreenObjects"
     private val mScreenObjects: MutableSet<String> = mutableSetOf()
     private var mTopToTop = 0
     private var mLeftToLeft = 0

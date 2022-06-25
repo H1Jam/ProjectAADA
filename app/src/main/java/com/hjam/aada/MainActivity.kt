@@ -2,9 +2,12 @@ package com.hjam.aada
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -12,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -80,12 +84,26 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         navView.setNavigationItemSelectedListener(this)
         setViews()
 
-        if (checkPermission(Manifest.permission.BLUETOOTH_CONNECT, BLUETOOTH_PERMISSION_CODE)) {
-            startTheApp()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestMultiplePermissions.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            )
         } else {
-            mBtnConnect.isEnabled = false
-            mLblText.text = getString(R.string.no_permission)
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            requestBluetooth.launch(enableBtIntent)
         }
+
+//        if (checkPermission(arrayOf(
+//                Manifest.permission.BLUETOOTH_SCAN,
+//                Manifest.permission.BLUETOOTH_CONNECT), BLUETOOTH_PERMISSION_CODE)) {
+//            startTheApp()
+//        } else {
+//            //Todo Request Permission
+//            mBtnConnect.isEnabled = false
+//            mLblText.text = getString(R.string.no_permission)
+//        }
     }
 
     private fun pxToMm(px: Int): Int {
@@ -122,10 +140,10 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.refreshText(86, "Refreshed It!")
         ScreenObjects.refreshText(-10, "Refreshed It! After Set")
         ScreenObjects.refreshText(12, "Refreshed It! After Set!")
-        ScreenObjects.addButtonToScreen(44, 300, 255, " First Button Label ", 28)
-        ScreenObjects.addButtonToScreen(200, 360, 250, "Button Label ", 15)
-        ScreenObjects.addButtonToScreen(44, 400, 11, "vText", 20, Color.WHITE, Color.GREEN)
-        ScreenObjects.addButtonToScreen(44, 400, 11, "vText 2", 20, Color.BLACK, Color.RED)
+        ScreenObjects.addButtonToScreen(44, 300, 7, " First Button Label ", 28)
+        ScreenObjects.addButtonToScreen(200, 360, 2, "Button Label ", 15)
+        ScreenObjects.addButtonToScreen(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN)
+        ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
     }
 
@@ -204,15 +222,42 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         EzBlue.start()
     }
 
+
+    private var requestBluetooth =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                Log.d(mTag, "Permission in granted!")
+                startTheApp()
+            } else {
+                mBtnConnect.isEnabled = false
+                mLblText.text = getString(R.string.no_permission)
+                Log.e(mTag, "Permission in NOT granted!")
+            }
+        }
+
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+           if(permissions.entries.all {
+                Log.d(mTag, "${it.key} = ${it.value}")
+                it.value==true
+            }){
+               startTheApp()
+           }else{
+               mBtnConnect.isEnabled = false
+               mLblText.text = getString(R.string.no_permission)
+               Log.e(mTag, "Permission in NOT granted!")
+           }
+        }
+
     // Function to check and request permission.
-    private fun checkPermission(permission: String, requestCode: Int): Boolean {
+    private fun checkPermission(permission: Array<String>, requestCode: Int): Boolean {
         if (ActivityCompat.checkSelfPermission(
-                this@MainActivity, permission
+                this@MainActivity, permission[0]
             ) == PackageManager.PERMISSION_DENIED
         ) {
             // Requesting the permission
             ActivityCompat.requestPermissions(
-                this@MainActivity, arrayOf(permission), requestCode
+                this@MainActivity, permission, requestCode
             )
             return false
         }
