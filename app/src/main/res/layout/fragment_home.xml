@@ -65,5 +65,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.hjam.aada.comm.types.AADAKnob
+        android:id="@+id/MyKnob1"
+        android:layout_width="108dp"
+        android:layout_height="118dp"
+        android:layout_marginStart="196dp"
+        android:layout_marginTop="128dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

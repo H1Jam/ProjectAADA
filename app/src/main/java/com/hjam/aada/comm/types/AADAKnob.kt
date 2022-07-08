@@ -4,175 +4,123 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
-import com.hjam.aada.utils.Logger
+import androidx.core.graphics.scale
+import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.min
 
 
 class AADAKnob : AppCompatImageView {
-    private val mTag = "AADAKnob"
-    private val currentPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val paint2: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val options: BitmapFactory.Options = BitmapFactory.Options()
-    private var knobBack: Bitmap = BitmapFactory.decodeResource(resources, com.hjam.aada.R.drawable.knob02s,options)
-    // public Context myContext;
-    private var drawKnob = false
-    var drawText = false
-    var left = 0f
-    var top = 0f
-    var right = 0f
-    var bottom = 0f
-    var radius = 100f
-    var xt = 0f
-    var yt = 0f
-    var xc = 0f
-    var yc = 0f
-    var xLast = 0f
-    var yLast = 0f
-    var xDelta = 0f
-    var yDelta = 0f
-    var Knob = 0f
-    var str1 = "STR1"
+    private val mPaintKnob: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mPaintText: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mBitmapOptions: BitmapFactory.Options = BitmapFactory.Options()
+    private var mKnobBitmap: Bitmap =
+        BitmapFactory.decodeResource(resources, com.hjam.aada.R.drawable.knob02s, mBitmapOptions)
+    private var mDrawKnob = true
+    private var mDrawText = true
+    private var mTouchX = 0f
+    private var mTouchY = 0f
+    private var mCenterX = 0f
+    private var mCenterY = 0f
+    private var mSmallestDim = 1
+    private var mWidthBitmap = 0f
+    private var mHeightBitmap = 0f
+    private var mKnob = 0f
+    private var mKnobText = "123"
+    private var mKnobTextWidth = 0
+    private var mSaturated = false
+    private var tmpRect = Rect()
+    private var tmpKnob = 0f
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr) {
-        options.inScaled = false
+        mBitmapOptions.inScaled = false
         init()
     }
 
-    //    private Handler mHandler = new Handler();
-    //    private static final int FINGER_STOP_THRESHOLD = 100;
-    fun getDrawKnob(): Boolean {
-        return drawKnob
-    }
-
-    fun setDrawKnob(doDrawKnob: Boolean) {
-        drawKnob = doDrawKnob
-        invalidate()
-        requestLayout()
-    }
-
-
     private fun init() {
-        currentPaint.isDither = true
-        currentPaint.color = -0xffba34 // alpha.r.g.b
-        currentPaint.style = Paint.Style.FILL_AND_STROKE
-        currentPaint.strokeJoin = Paint.Join.ROUND
-        currentPaint.strokeCap = Paint.Cap.ROUND
-        currentPaint.strokeWidth = 5f
-        currentPaint.isAntiAlias = true
-        currentPaint.setShadowLayer(10f, 0f, 0f, Color.BLACK)
-        paint2.color = Color.BLACK
-        paint2.style = Paint.Style.FILL
-        paint2.setShadowLayer(10f, 0f, 0f, Color.BLACK)
-        paint2.textSize = 52f
-        knobBack =BitmapFactory.decodeResource(resources, com.hjam.aada.R.drawable.knob02s,options)
-        xc = width / 2f
-        yc = height / 2f
+        mPaintKnob.isDither = true
+        mPaintKnob.color = -0xffba34 // alpha.r.g.b
+        mPaintKnob.style = Paint.Style.FILL_AND_STROKE
+        mPaintKnob.strokeJoin = Paint.Join.ROUND
+        mPaintKnob.strokeCap = Paint.Cap.ROUND
+        mPaintKnob.strokeWidth = 5f
+        mPaintKnob.isAntiAlias = true
+        mPaintKnob.setShadowLayer(10f, 0f, 0f, Color.BLACK)
+        mPaintText.color = Color.BLACK
+        mPaintText.style = Paint.Style.FILL
+        mPaintText.setShadowLayer(10f, 0f, 0f, Color.BLACK)
+        mPaintText.textSize = 36f
+        mKnobBitmap =
+            BitmapFactory.decodeResource(resources, com.hjam.aada.R.drawable.knob02s, mBitmapOptions)
+        mWidthBitmap = mKnobBitmap.width.toFloat()
+        mHeightBitmap = mKnobBitmap.height.toFloat()
+        mCenterX = width / 2f
+        mCenterY = height / 2f
     }
-    private var counter =5
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        mSmallestDim = min(width, height)
+        mPaintText.textSize = mSmallestDim*0.1f
+        mKnobBitmap = mKnobBitmap.scale(mSmallestDim,mSmallestDim,true)
+        mWidthBitmap= mKnobBitmap.width.toFloat()/2
+        mHeightBitmap= mKnobBitmap.height.toFloat()/2
+        mCenterX = width / 2f
+        mCenterY = height / 2f
+        mPaintText.getTextBounds(mKnobText,0,mKnobText.length,tmpRect)
+        mKnobTextWidth = tmpRect.width()
+    }
+
     override fun onDraw(canvas: Canvas) {
-        if (counter<0){
-            Logger.debug(mTag, "Knob: $Knob")
-            counter=5
+        if (mDrawKnob) {
+            canvas.rotate(-1f * (mKnob - 90f), mWidthBitmap, mHeightBitmap)
+            canvas.drawBitmap(mKnobBitmap, 0f, 0f, mPaintKnob)
+            canvas.rotate((mKnob - 90f), mWidthBitmap, mHeightBitmap)
         }
-        canvas.drawBitmap(knobBack,0F,0F,currentPaint)
-        counter--
-        xc = width / 2f
-        yc = height / 2f
-
-        //  if (drawKnob) {
-        canvas.rotate(-1f * (Knob - 90f), xc, yc)
-        //  }
-
+        if (mDrawText) {
+            canvas.drawText(mKnobText, mSmallestDim/2f - (mKnobTextWidth/2f), mSmallestDim * 0.8f, mPaintText)
+        }
         super.onDraw(canvas)
-        radius = 0.8f * xc.coerceAtMost(yc)
-        //  this.myCanvas =canvas;
-        // if (drawKnob) {
-        //  canvas.drawLine(xc, yc, xe, ye, currentPaint);
-
-        //}
-        if (drawText) {
-            //  canvas.drawText(str1, xc * 0.19f, yc * 0.95f, paint2);
-        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         if (event.action == MotionEvent.ACTION_UP) {
             performClick()
-            //  str1 ="UP";
-            // invalidate();
             return true
         }
         if (event.action == MotionEvent.ACTION_DOWN) {
-            // str1 ="Down";
-            xLast = event.getX(0)
-            yLast = event.getY(0)
-             invalidate()
-
-            //  this.draw(this.myCanvas);
+            invalidate()
             return true
         }
         if (event.action == MotionEvent.ACTION_MOVE) {
-            xt = event.getX(0)
-            yt = event.getY(0)
-          //  xDelta = xLast - xt
-          //  yDelta = yLast - yt
-          //  xLast = xt
-          //  yLast = yt
-
-            // if (xDelta+yDelta <1 ){ return false;}
-//            if (yt > yc) { // Down
-//                Knob -= xDelta * 0.2f
-//            } else {
-//                Knob += xDelta * 0.2f
-//            }
-//            if (xt > xc) { // Right
-//                Knob += yDelta * 0.2f
-//            } else {
-//                Knob -= yDelta * 0.2f
-//            }
-//            if (Knob > 240) {
-//                Knob = 240f
-//            }
-//            if (Knob < -60) {
-//                Knob = -60f
-//            }
-            //Todo: find the first touch point and use it as a reference point
-            // and set the knob value relative to that point.
-             Knob = (atan2(yc-yt,xt-xc) *180/3.1415f)
-
-
-            // xe= (float) (xc + radius* Math.cos(Math.atan2(yc-yt,xt-xc)));
-            // ye= (float) (yc - radius* Math.sin(Math.atan2(yc-yt,xt-xc)));
-
-
-            // str1 =String.valueOf(event.getY(0));
-            //  Knob=event.getX(0)/10;
-             invalidate()
-            //    this.draw(this.myCanvas);
+            mTouchX = event.getX(0)
+            mTouchY = event.getY(0)
+            tmpKnob = (atan2(mCenterY - mTouchY, mTouchX - mCenterX) * 180 / 3.1415f)
+            if (tmpKnob < -45 && tmpKnob > -135){
+                mSaturated = true
+            }
+            if (!mSaturated){
+                mKnob = tmpKnob
+                mKnobText =mKnob.toInt().toString()
+                mPaintText.getTextBounds(mKnobText,0,mKnobText.length,tmpRect)
+                mKnobTextWidth = tmpRect.width()
+            }
+            if (mSaturated && (abs(abs(tmpKnob) - abs(mKnob)) <5)){
+                mSaturated= false
+            }
+            invalidate()
             return true
         }
-        //        mHandler.removeCallbacksAndMessages(null);
-//        if(event.getActionMasked() != MotionEvent.ACTION_UP){
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    xDelta = 0;
-//                    yDelta = 0;
-//                }
-//            }, FINGER_STOP_THRESHOLD);
-//        }
         return false
     }
 
     override fun performClick(): Boolean {
         super.performClick()
-        // doSomething();
         return true
     }
 }
