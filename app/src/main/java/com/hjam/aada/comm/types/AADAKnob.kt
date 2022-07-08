@@ -91,6 +91,7 @@ class AADAKnob : AppCompatImageView {
         super.onTouchEvent(event)
         if (event.action == MotionEvent.ACTION_UP) {
             performClick()
+            mSaturated= false
             return true
         }
         if (event.action == MotionEvent.ACTION_DOWN) {
