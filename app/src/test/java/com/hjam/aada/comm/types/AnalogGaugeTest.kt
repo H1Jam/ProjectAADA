@@ -1,5 +1,6 @@
 package com.hjam.aada.comm.types
 
+import com.hjam.aada.widgets.AnalogGauge
 import junit.framework.TestCase
 import org.junit.Test
 

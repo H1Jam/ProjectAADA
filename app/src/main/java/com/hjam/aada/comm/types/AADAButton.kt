@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets
 class AADAButton(
     var x: Int,
     var y: Int,
-    var tag: Int,
+    val tag: Int,
     var text: String,
     var fontSize: Int,
     var textColor: Int,
@@ -16,7 +16,7 @@ class AADAButton(
     val screenTag = screenTag(this)
     companion object {
         const val mID: Byte = 18.toByte()
-        const val mTagPrefix = "btn"
+        private const val mTagPrefix = "btn"
         fun screenTag(aadaButton: AADAButton):String{
             return mTagPrefix +aadaButton.tag.toString()
         }

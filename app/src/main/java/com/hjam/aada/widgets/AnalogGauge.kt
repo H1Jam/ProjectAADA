@@ -1,4 +1,4 @@
-package com.hjam.aada.comm.types
+package com.hjam.aada.widgets
 
 class AnalogGauge(
     private var tag: String,

@@ -12,9 +12,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.AADAButton
+import com.hjam.aada.comm.types.AADAKnob
 import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.comm.types.AADATextLabel
 import com.hjam.aada.utils.Logger
+import com.hjam.aada.widgets.DialKnob
 
 
 object ScreenObjects {
@@ -51,6 +53,24 @@ object ScreenObjects {
         mDisplayMetrics = displayMetrics
         mReady = true
         mWriteListener = writeListener
+    }
+
+    fun addKnob(aadaKnob: AADAKnob) {
+        if (mReady && aadaKnob.tag > 0) {
+            Logger.debug(mTag, "addKnob: $aadaKnob")
+            if (mScreenObjects.add(aadaKnob.screenTag)) {
+                addKnobToScreen(aadaKnob)
+            } else {
+                modifyKnob(aadaKnob)
+            }
+            refreshScreen()
+        }
+    }
+
+    private fun modifyKnob(aadaKnob: AADAKnob) {
+        Logger.debug(mTag, "modifyKnob: ${aadaKnob.tag}")
+      //  refreshKnob(aadaKnob)
+        refreshScreen()
     }
 
     fun addButton(aadaButton: AADAButton) {
@@ -275,6 +295,56 @@ object ScreenObjects {
             btn.text = vText
         } else {
             Logger.error(mTag, "refreshButtonText: Button(tag=$cTag) does not exist!")
+        }
+    }
+
+    private fun addKnobToScreen(aadaKnob: AADAKnob) {
+        with(aadaKnob) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addKnobToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            val px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                x.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+            val py = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                y.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+
+            val pw = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                size.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+
+            val ph = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                size.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+
+            val params = ConstraintLayout.LayoutParams(ph, pw)
+            params.topToTop = mTopToTop
+            params.leftToLeft = mLeftToLeft
+            params.setMargins(px, py, 0, 0)
+
+            val knb = DialKnob(AADATheApp.instance.applicationContext)
+            knb.tag = screenTag
+            knb.layoutParams = params
+            val pad = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15.0F,
+                mDisplayMetrics
+            ).toInt()
+            knb.setPaddingRelative(pad, 0, pad, 0)
+            knb.setStyle(minValue,maxValue,startValue,labelText)
+            mCanvasConstraintLayout.addView(knb)
+            //Todo: SetListener!
+           // setKnobListener(btn)
         }
     }
 

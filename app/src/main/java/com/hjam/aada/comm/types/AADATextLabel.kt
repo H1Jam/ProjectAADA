@@ -17,7 +17,7 @@ class AADATextLabel(
         const val mID: Byte = 17.toByte()
         const val mTagPrefix = "lbl"
         fun screenTag(aADATextLabel: AADATextLabel):String{
-            return mTagPrefix+aADATextLabel.tag.toString()
+            return mTagPrefix +aADATextLabel.tag.toString()
         }
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADATextLabel {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)

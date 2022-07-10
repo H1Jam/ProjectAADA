@@ -31,6 +31,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.DataProtocol.handleData
+import com.hjam.aada.comm.types.AADAKnob
 import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.aada.utils.Logger
@@ -145,6 +146,8 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN)
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
+        ScreenObjects.addKnob(AADAKnob(44,450,120,-100,100,50,"Voltage",33))
+        ScreenObjects.addKnob(AADAKnob(170,450,80,-120,100,50,"Voltage",34))
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {

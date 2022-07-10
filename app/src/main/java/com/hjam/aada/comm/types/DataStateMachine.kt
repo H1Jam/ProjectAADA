@@ -2,6 +2,7 @@ package com.hjam.aada.comm.types
 
 import com.hjam.aada.ScreenObjects
 import com.hjam.aada.utils.Logger
+import com.hjam.aada.widgets.AnalogGauge
 import java.nio.ByteBuffer
 
 class DataStateMachine {
