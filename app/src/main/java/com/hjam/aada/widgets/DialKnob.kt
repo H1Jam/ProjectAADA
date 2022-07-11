@@ -46,7 +46,7 @@ class DialKnob : AppCompatImageView {
     private var mRotationAnchorX = 0f
     private var mRotationAnchorY = 0f
     private val mBitmapScale = 0.8f
-
+    private var mOnChangedListener : ChangedListener?= null
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
@@ -63,6 +63,15 @@ class DialKnob : AppCompatImageView {
         typedArray.recycle()
         mBitmapOptions.inScaled = false
         init(min, max, start, text)
+    }
+
+    public fun interface ChangedListener{
+        fun onChange(it : Int)
+    }
+
+
+    fun setOnChangedListener(onChangedListener : ChangedListener){
+        mOnChangedListener =onChangedListener
     }
 
     private fun init(min: Int, max: Int, start: Int, text: String) {
@@ -107,7 +116,7 @@ class DialKnob : AppCompatImageView {
         mKnobText = mStart.toString()
     }
 
-    public fun setStyle(min: Int, max: Int, start: Int, text: String) {
+    fun setStyle(min: Int, max: Int, start: Int, text: String) {
         mMin = min
         mMax = max
         mStart = start
@@ -215,10 +224,14 @@ class DialKnob : AppCompatImageView {
         super.onDraw(canvas)
     }
 
+    //Todo: limitSpeed And call it during ACTION_MOVE and send the ACTION_UP anyway.
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         if (event.action == MotionEvent.ACTION_UP) {
             performClick()
+            if (mOnChangedListener != null) {
+                mOnChangedListener?.onChange(mKnobDial.toInt())
+            }
             mSaturated = false
             return true
         }
@@ -242,8 +255,8 @@ class DialKnob : AppCompatImageView {
             if (mSaturated && (abs(tmpKnob - mKnobDegree) < 10)) {
                 mSaturated = false
             }
-            mKnobDial = knob2dial(mKnobDegree)
-            mKnobText = degree2dial(mKnobDial).toString()
+            mKnobDial = degree2dial(knob2dial(mKnobDegree)).toFloat()
+            mKnobText = mKnobDial.toString()
             mPaintText.getTextBounds(mKnobText, 0, mKnobText.length, tmpRect)
             invalidate()
             return true

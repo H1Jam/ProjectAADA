@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
         ScreenObjects.addKnob(AADAKnob(44,450,120,-100,100,50,"Voltage",33))
-        ScreenObjects.addKnob(AADAKnob(170,450,80,-120,100,50,"Voltage",34))
+        ScreenObjects.addKnob(AADAKnob(170,450,80,-120,200,50,"Current",34))
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {

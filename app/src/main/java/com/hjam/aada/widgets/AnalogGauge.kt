@@ -1,5 +1,7 @@
 package com.hjam.aada.widgets
 
+import com.hjam.aada.comm.types.AADAObject
+
 class AnalogGauge(
     private var tag: String,
     private val x: Int,
@@ -9,7 +11,7 @@ class AnalogGauge(
     private var value: Float
 ) {
     companion object{
-        const val mID : Byte = 16.toByte()
+        val objID : Byte = AADAObject.ScreenIDs.gauge1.ordinal.toByte()
         val typeArrayList = arrayOf(Long, Float, Int)
     }
     public fun setX() {

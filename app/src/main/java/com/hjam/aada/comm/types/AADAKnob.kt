@@ -13,8 +13,11 @@ class AADAKnob(
     val startValue: Int,
     val labelText: String,
     val tag: Int
-) : AADAObject(tag, "knb", ScreenIDs.knob.ordinal.toByte()) {
+) : AADAObject(tag, "knb") {
+    var dial: Int = startValue
+
     companion object {
+        val objID = ScreenIDs.knob.ordinal.toByte()
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAKnob {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
@@ -26,6 +29,17 @@ class AADAKnob(
             val startValue = byteBuffer.short.toInt()
             val vText = StandardCharsets.UTF_8.decode(byteBuffer).toString()
             return AADAKnob(x, y, size, minValue, maxValue, startValue, vText, cTag)
+        }
+
+        fun toBytesFromTag(aadaKnob: AADAKnob): ByteArray? {
+            val bb1 = ByteBuffer.allocate(Byte.SIZE_BYTES + Short.SIZE_BYTES + Short.SIZE_BYTES)
+            bb1.order(ByteOrder.LITTLE_ENDIAN)
+            val array = with(bb1) {
+                put(objID)
+                putShort(aadaKnob.tag.toShort())
+                putShort(aadaKnob.dial.toShort())
+            }.array()
+            return array
         }
     }
 

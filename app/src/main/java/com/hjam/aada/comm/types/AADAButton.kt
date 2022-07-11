@@ -1,5 +1,7 @@
 package com.hjam.aada.comm.types
 
+import com.hjam.aada.ScreenObjects
+import com.hjam.aada.utils.Logger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
@@ -15,7 +17,7 @@ class AADAButton(
 ) {
     val screenTag = screenTag(this)
     companion object {
-        const val mID: Byte = 18.toByte()
+        val objID = AADAObject.ScreenIDs.button.ordinal.toByte()
         private const val mTagPrefix = "btn"
         fun screenTag(aadaButton: AADAButton):String{
             return mTagPrefix +aadaButton.tag.toString()
@@ -36,7 +38,7 @@ class AADAButton(
             val bb1 = ByteBuffer.allocate(Byte.SIZE_BYTES + Short.SIZE_BYTES)
             bb1.order(ByteOrder.LITTLE_ENDIAN)
             val array = with(bb1) {
-                put(mID)
+                put(objID)
                 putShort(aadaButton.tag.toShort())
             }.array()
             return array
@@ -44,13 +46,15 @@ class AADAButton(
 
         fun toBytesFromTag(tag: String): ByteArray? {
             if (!tag.startsWith(mTagPrefix)) {
+                Logger.debug("AADAButton", "toBytesFromTag: Null!")
                 return null
             }
+            Logger.debug("AADAButton", "toBytesFromTag: [$tag]")
             val pTag = (Integer.parseInt(tag.drop(3))).toShort()
             val bb1 = ByteBuffer.allocate(Byte.SIZE_BYTES + Short.SIZE_BYTES)
             bb1.order(ByteOrder.LITTLE_ENDIAN)
             val array = with(bb1) {
-                put(mID)
+                put(objID)
                 putShort(pTag)
             }.array()
             return array
