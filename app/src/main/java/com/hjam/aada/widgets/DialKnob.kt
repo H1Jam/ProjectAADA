@@ -267,8 +267,7 @@ class DialKnob : AppCompatImageView {
         }
         return false
     }
-
-
+    
     override fun performClick(): Boolean {
         super.performClick()
         return true
