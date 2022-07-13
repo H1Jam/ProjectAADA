@@ -225,7 +225,6 @@ class DialKnob : AppCompatImageView {
         super.onDraw(canvas)
     }
 
-    //Todo: limitSpeed And call it during ACTION_MOVE and send the ACTION_UP anyway.
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         if (event.action == MotionEvent.ACTION_UP) {
@@ -267,7 +266,7 @@ class DialKnob : AppCompatImageView {
         }
         return false
     }
-    
+
     override fun performClick(): Boolean {
         super.performClick()
         return true
