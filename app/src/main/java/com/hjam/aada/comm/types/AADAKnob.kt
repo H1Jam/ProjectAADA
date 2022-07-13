@@ -15,9 +15,11 @@ class AADAKnob(
     val tag: Int
 ) : AADAObject(tag, "knb") {
     var dial: Int = startValue
+    var lastCallbackTick: Long = 0L
 
     companion object {
         val objID = ScreenIDs.knob.ordinal.toByte()
+        const val minCallTime = 50
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAKnob {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()

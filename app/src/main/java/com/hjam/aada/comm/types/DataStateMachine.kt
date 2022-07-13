@@ -33,7 +33,6 @@ class DataStateMachine {
                     Logger.debug(mTag, "Got a AADAKnob $aadaKnob")
                     ScreenObjects.addKnob(aadaKnob)
                 }
-
                 200.toByte()->{
                     Logger.debug(mTag, "Got 200")
                 }

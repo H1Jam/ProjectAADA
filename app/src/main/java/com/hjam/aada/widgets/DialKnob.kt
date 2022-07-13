@@ -46,7 +46,8 @@ class DialKnob : AppCompatImageView {
     private var mRotationAnchorX = 0f
     private var mRotationAnchorY = 0f
     private val mBitmapScale = 0.8f
-    private var mOnChangedListener : ChangedListener?= null
+    private var mOnChangedListener: ChangedListener? = null
+
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
@@ -65,13 +66,13 @@ class DialKnob : AppCompatImageView {
         init(min, max, start, text)
     }
 
-    public fun interface ChangedListener{
-        fun onChange(it : Int)
+    public fun interface ChangedListener {
+        fun onChange(it: Int, forceSend: Boolean)
     }
 
 
-    fun setOnChangedListener(onChangedListener : ChangedListener){
-        mOnChangedListener =onChangedListener
+    fun setOnChangedListener(onChangedListener: ChangedListener) {
+        mOnChangedListener = onChangedListener
     }
 
     private fun init(min: Int, max: Int, start: Int, text: String) {
@@ -230,7 +231,7 @@ class DialKnob : AppCompatImageView {
         if (event.action == MotionEvent.ACTION_UP) {
             performClick()
             if (mOnChangedListener != null) {
-                mOnChangedListener?.onChange(mKnobDial.toInt())
+                mOnChangedListener?.onChange(mKnobDial.toInt(), true)
             }
             mSaturated = false
             return true
@@ -257,6 +258,9 @@ class DialKnob : AppCompatImageView {
             }
             mKnobDial = degree2dial(knob2dial(mKnobDegree)).toFloat()
             mKnobText = mKnobDial.toString()
+            if (mOnChangedListener != null) {
+                mOnChangedListener?.onChange(mKnobDial.toInt(), false)
+            }
             mPaintText.getTextBounds(mKnobText, 0, mKnobText.length, tmpRect)
             invalidate()
             return true

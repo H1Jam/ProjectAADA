@@ -117,7 +117,12 @@ object ScreenObjects {
 
     private fun addTextToScreen(aadaTextLabel: AADATextLabel) {
         with(aadaTextLabel) {
-            val params = setLayout(x,y,ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            val params = setLayout(
+                x,
+                y,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
             Logger.debug(
                 mTag, "addTextToScreen:[x:$x, y:$y, " +
                         "cTag:$screenTag, Text:$text], size:$fontSize"
@@ -220,7 +225,12 @@ object ScreenObjects {
                 Logger.error(mTag, "addButtonToScreen: Invalid tag! (tag:$tag)")
                 return
             }
-            val params = setLayout(x,y,ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            val params = setLayout(
+                x,
+                y,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
             Logger.debug(
                 mTag, "addButtonToScreen:[x:$x, y:$y, " +
                         "cTag:$screenTag, Text:$text], size:$fontSize"
@@ -283,7 +293,7 @@ object ScreenObjects {
                 Logger.error(mTag, "addKnobToScreen: Invalid tag! (tag:$tag)")
                 return
             }
-            val params = setLayout(x,y,size,size)
+            val params = setLayout(x, y, size, size)
             val knb = DialKnob(AADATheApp.instance.applicationContext)
             knb.tag = screenTag
             knb.layoutParams = params
@@ -295,19 +305,27 @@ object ScreenObjects {
             knb.setPaddingRelative(pad, 0, pad, 0)
             knb.setStyle(minValue, maxValue, startValue, labelText)
             mCanvasConstraintLayout.addView(knb)
-            //Todo: SetListener!
-            // setKnobListener(btn)
-            knb.setOnChangedListener {
-                Logger.debug("Knob", "Knob $aadaKnob it:$it")
-                aadaKnob.dial = it
-                writeData(AADAKnob.toBytesFromTag(aadaKnob)
-                    ?.let { it1 -> DataProtocol.prepareFrame(it1) })
+
+            knb.setOnChangedListener { it, forced ->
+                if (!forced && (System.currentTimeMillis() - aadaKnob.lastCallbackTick) > AADAKnob.minCallTime) {
+                    Logger.debug("Knob", "Knob send $aadaKnob it:$it,")
+                    lastCallbackTick = System.currentTimeMillis()
+                    writeData(AADAKnob.toBytesFromTag(aadaKnob)
+                        ?.let { it2 -> DataProtocol.prepareFrame(it2) })
+                    lastCallbackTick = System.currentTimeMillis()
+                }
+                if (forced) {
+                    Logger.debug("Knob", "Knob send(Forced) $aadaKnob it:$it,")
+                    writeData(AADAKnob.toBytesFromTag(aadaKnob)
+                        ?.let { it2 -> DataProtocol.prepareFrame(it2) })
+                    lastCallbackTick = System.currentTimeMillis()
+                }
             }
         }
     }
 
 
-    private fun setLayout(x: Int, y: Int, width: Int, height:Int ):ConstraintLayout.LayoutParams {
+    private fun setLayout(x: Int, y: Int, width: Int, height: Int): ConstraintLayout.LayoutParams {
         val px = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             x.toFloat(),
@@ -319,35 +337,35 @@ object ScreenObjects {
             mDisplayMetrics
         ).toInt()
 
-        val pw = if (width != ViewGroup.LayoutParams.WRAP_CONTENT){
+        val pw = if (width != ViewGroup.LayoutParams.WRAP_CONTENT) {
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 width.toFloat(),
                 mDisplayMetrics
             ).toInt()
-        }else{
+        } else {
             ViewGroup.LayoutParams.WRAP_CONTENT
         }
 
-        val ph =  if (height != ViewGroup.LayoutParams.WRAP_CONTENT){
-         TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            height.toFloat(),
-            mDisplayMetrics
-        ).toInt()
-        }else{
+        val ph = if (height != ViewGroup.LayoutParams.WRAP_CONTENT) {
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                height.toFloat(),
+                mDisplayMetrics
+            ).toInt()
+        } else {
             ViewGroup.LayoutParams.WRAP_CONTENT
         }
 
 
         val params = ConstraintLayout.LayoutParams(ph, pw)
 
-        with(params){
+        with(params) {
             topToTop = mTopToTop
             leftToLeft = mLeftToLeft
             setMargins(px, py, 0, 0)
         }
-        return  params
+        return params
     }
 
     private fun writeData(buffer: ByteArray?) {
