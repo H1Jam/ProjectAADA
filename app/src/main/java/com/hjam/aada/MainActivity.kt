@@ -4,11 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
+import android.preference.PreferenceManager
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -36,6 +41,12 @@ import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.aada.utils.Logger
 import com.hjam.ezbluelib.EzBlue
+import org.osmdroid.api.IMapController
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -51,9 +62,12 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private lateinit var mBtnConnect: Button
     private lateinit var mBtnDisconnect: Button
     private lateinit var navView: NavigationView
+    private var map: MapView? = null
+    private var mapController: IMapController? = null
 
     companion object {
         private const val mTag = "AADA_MainActivity"
+        private const val GPS_STORAGE_PERMISSION_CODE = 100
         private const val BLUETOOTH_PERMISSION_CODE = 101
     }
 
@@ -88,12 +102,21 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             requestMultiplePermissions.launch(
                 arrayOf(
-                    Manifest.permission.BLUETOOTH_CONNECT
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
             )
         } else {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             requestBluetooth.launch(enableBtIntent)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
+                GPS_STORAGE_PERMISSION_CODE
+            )
         }
 
 //        if (checkPermission(arrayOf(
@@ -119,7 +142,6 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mBtnSend = binding.root.findViewById(R.id.btn_send)
         mBtnConnect = binding.root.findViewById(R.id.btn_connect)
         mBtnDisconnect = binding.root.findViewById(R.id.btn_disconnect)
-
         val canvas1: ConstraintLayout = findViewById(R.id.canvas01);
         ScreenObjects.initScreen(
             canvas1,
@@ -142,12 +164,29 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.refreshText(-10, "Refreshed It! After Set")
         ScreenObjects.refreshText(12, "Refreshed It! After Set!")
         ScreenObjects.addButtonToScreen(44, 300, 7, " First Button Label ", 28)
-        ScreenObjects.addButtonToScreen(200, 360, 2, "Button Label ", 15)
+      //  ScreenObjects.addButtonToScreen(200, 360, 2, "Button Label ", 15)
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN)
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
         ScreenObjects.addKnob(AADAKnob(44,450,120,-100,100,50,"Voltage",33))
         ScreenObjects.addKnob(AADAKnob(170,450,80,-120,200,50,"Current",34))
+    }
+
+    private fun startMap(){
+        Logger.debug(mTag, "startMap()")
+        val ctx: Context = applicationContext
+        val shr = this.getSharedPreferences("map", MODE_PRIVATE)
+        Configuration.getInstance().load(ctx,PreferenceManager.getDefaultSharedPreferences(ctx))
+        Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID;
+        map = binding.root.findViewById(R.id.mapView01);
+        map?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+        //map?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+        map?.setMultiTouchControls(true)
+        mapController = map?.controller
+        mapController?.setZoom(19.0)
+
+        val startPoint = GeoPoint(33.989820, -81.029123)
+        mapController?.setCenter(startPoint)
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {
@@ -245,6 +284,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 it.value==true
             }){
                startTheApp()
+               startMap()
            }else{
                mBtnConnect.isEnabled = false
                mLblText.text = getString(R.string.no_permission)
@@ -252,20 +292,6 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
            }
         }
 
-    // Function to check and request permission.
-    private fun checkPermission(permission: Array<String>, requestCode: Int): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this@MainActivity, permission[0]
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
-            // Requesting the permission
-            ActivityCompat.requestPermissions(
-                this@MainActivity, permission, requestCode
-            )
-            return false
-        }
-        return true
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -281,6 +307,12 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 Log.e(mTag, "Permission Denied!")
             }
         }
+        if (requestCode==GPS_STORAGE_PERMISSION_CODE){
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startMap()
+            }
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -317,6 +349,19 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mBtnConnect.isEnabled = true
         mBtnDisconnect.isEnabled = false
         mBtnSend.isEnabled = false
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        if (map != null)
+            map?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (map != null)
+            map?.onPause();
     }
 
     override fun onDestroy() {
