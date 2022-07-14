@@ -67,23 +67,23 @@
 
     <com.hjam.aada.widgets.DialKnob
         android:id="@+id/MyKnob1"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="196dp"
-        android:layout_marginTop="128dp"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="168dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:text="@string/dial"
-        app:minValue="0"
         app:maxValue="500"
-        app:startValue="200"/>
+        app:minValue="0"
+        app:startValue="200"
+        app:text="@string/dial" />
 
     <org.osmdroid.views.MapView
         android:id="@+id/mapView01"
         android:layout_width="185dp"
         android:layout_height="198dp"
-        android:layout_marginStart="196dp"
-        android:layout_marginTop="228dp"
+        android:layout_marginStart="204dp"
+        android:layout_marginTop="128dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
