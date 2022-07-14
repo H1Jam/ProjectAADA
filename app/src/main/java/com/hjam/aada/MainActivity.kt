@@ -6,13 +6,10 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
 import android.preference.PreferenceManager
 import android.util.Log
 import android.util.TypedValue
@@ -45,8 +42,8 @@ import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -62,7 +59,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private lateinit var mBtnConnect: Button
     private lateinit var mBtnDisconnect: Button
     private lateinit var navView: NavigationView
-    private var map: MapView? = null
+    private var mapView: MapView? = null
     private var mapController: IMapController? = null
 
     companion object {
@@ -178,15 +175,24 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         val shr = this.getSharedPreferences("map", MODE_PRIVATE)
         Configuration.getInstance().load(ctx,PreferenceManager.getDefaultSharedPreferences(ctx))
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID;
-        map = binding.root.findViewById(R.id.mapView01);
-        map?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+        mapView = binding.root.findViewById(R.id.mapView01);
+        mapView?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
         //map?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        map?.setMultiTouchControls(true)
-        mapController = map?.controller
+        mapView?.setMultiTouchControls(true)
+        mapController = mapView?.controller
         mapController?.setZoom(19.0)
-
-        val startPoint = GeoPoint(33.989820, -81.029123)
+        val startPoint = GeoPoint(43.767567, -79.413305)
+        val startMarker = Marker(mapView)
+        startMarker.position = startPoint
+        startMarker.icon =  getDrawable(R.drawable.car2)
+        startMarker.rotation = 45f
+        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        startMarker.isFlat =true
+        mapView?.overlays?.add(startMarker)
         mapController?.setCenter(startPoint)
+        mapView?.mapOrientation = 120f
+        startMarker.rotation = 10f
+
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {
@@ -354,14 +360,14 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
 
     override fun onResume() {
         super.onResume()
-        if (map != null)
-            map?.onResume()
+        if (mapView != null)
+            mapView?.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (map != null)
-            map?.onPause();
+        if (mapView != null)
+            mapView?.onPause();
     }
 
     override fun onDestroy() {
