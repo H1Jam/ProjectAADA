@@ -7,12 +7,13 @@ import java.nio.charset.StandardCharsets
 class AADAGauge(
     var x: Int,
     var y: Int,
-    var size: Int,
+    val size: Int,
+    var value: Float,
     val maxValue: Float,
     val drawArc: Boolean,
-    var arcGreenMaxVal: Float,
-    var arcYellowMaxVal: Float,
-    var arcRedMaxVal: Float,
+    val arcGreenMaxVal: Float,
+    val arcYellowMaxVal: Float,
+    val arcRedMaxVal: Float,
     val unitTextLabel: String,
     val tag: Int
 ) : AADAObject(tag, "gau") {
@@ -24,6 +25,7 @@ class AADAGauge(
             val y = byteBuffer.short.toInt()
             val cTag = byteBuffer.short.toInt()
             val size = byteBuffer.short.toInt()
+            val value = byteBuffer.float
             val maxValue = byteBuffer.float
             val drawArc = byteBuffer.char != 0.toChar()
             val arcGreenMaxVal = byteBuffer.float
@@ -34,6 +36,7 @@ class AADAGauge(
                 x,
                 y,
                 size,
+                value,
                 maxValue,
                 drawArc,
                 arcGreenMaxVal,
