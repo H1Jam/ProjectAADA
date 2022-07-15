@@ -21,6 +21,7 @@ class GaugeView : View {
     private var dyT = 0.0F
     private var lc = 0.0F
     var maxValue =250F // Maximum number on the gauge
+    var drawArc =true
     var arcGreenMaxVal = 150F // Maximum safe number (The green range)
     var arcYellowMaxVal = 200F // Maximum warning number (The yellow range)
     var arcRedMaxVal = 225F // Maximum dangerous number (The red range)
@@ -88,18 +89,26 @@ class GaugeView : View {
         rTop = yc - (gaugeBack.height*0.435F)
         rW = xc + (gaugeBack.width*0.431F)
         rH = yc + (gaugeBack.height*0.43F)
-        arcGreenDeg =(arcGreenMaxVal/maxValue)*270.0F
-        arcYellowDeg=((arcYellowMaxVal/maxValue)*270.0F) - arcGreenDeg
-        arcRedDeg = ((arcRedMaxVal/maxValue)*270.0F) - arcYellowDeg-arcGreenDeg
         rectWheel.set(rLeft,rTop,rW,rH)
-        paintLine.style = Paint.Style.STROKE
-        paintLine.strokeWidth = gaugeBack.width/40F
-        paintLine.color = Color.argb(255, 50, 200, 0);
-        canvas?.drawArc(rectWheel, 135F, arcGreenDeg, false, paintLine)
-        paintLine.color = Color.YELLOW
-        canvas?.drawArc(rectWheel, 135F+arcGreenDeg, arcYellowDeg, false, paintLine)
-        paintLine.color = Color.RED;
-        canvas?.drawArc(rectWheel, 135F+arcGreenDeg+arcYellowDeg, arcRedDeg, false, paintLine)
+        if (drawArc){
+            arcGreenDeg =(arcGreenMaxVal/maxValue)*270.0F
+            arcYellowDeg=((arcYellowMaxVal/maxValue)*270.0F) - arcGreenDeg
+            arcRedDeg = ((arcRedMaxVal/maxValue)*270.0F) - arcYellowDeg-arcGreenDeg
+            paintLine.style = Paint.Style.STROKE
+            paintLine.strokeWidth = gaugeBack.width/40F
+            paintLine.color = Color.argb(255, 50, 200, 0);
+            canvas?.drawArc(rectWheel, 135F, arcGreenDeg, false, paintLine)
+            paintLine.color = Color.YELLOW
+            canvas?.drawArc(rectWheel, 135F+arcGreenDeg, arcYellowDeg, false, paintLine)
+            paintLine.color = Color.RED;
+            canvas?.drawArc(rectWheel, 135F+arcGreenDeg+arcYellowDeg, arcRedDeg, false, paintLine)
+        }else{
+            arcGreenDeg =360.0F
+            paintLine.style = Paint.Style.STROKE
+            paintLine.strokeWidth = gaugeBack.width/40F
+            paintLine.color = Color.argb(255, 150, 150, 150);
+            canvas?.drawArc(rectWheel, 135F, arcGreenDeg, false, paintLine)
+        }
         paintTexT.style = Paint.Style.FILL
         paintTexT.color = Color.WHITE
         paintTexT.strokeWidth = gaugeBack.width/120f
