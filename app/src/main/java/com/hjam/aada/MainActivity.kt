@@ -33,6 +33,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.DataProtocol.handleData
+import com.hjam.aada.comm.types.AADAGauge
 import com.hjam.aada.comm.types.AADAKnob
 import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.databinding.ActivityMainBinding
@@ -167,6 +168,9 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
         ScreenObjects.addKnob(AADAKnob(44,450,120,-100,100,50,"Voltage",33))
         ScreenObjects.addKnob(AADAKnob(170,450,80,-120,200,50,"Current",34))
+        ScreenObjects.addGauge(AADAGauge(30,220,90,20f,250f,false,100f,120f,180f,"RPM",1))
+        ScreenObjects.addGauge(AADAGauge(30,220,60,50f,250f,false,100f,120f,180f,"RPM",1))
+        ScreenObjects.addGauge(AADAGauge(0,0,0,100f,0f,true,0f,0f,0f,"222",1))
     }
 
     private fun startMap(){
