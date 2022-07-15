@@ -1,7 +1,5 @@
 package com.hjam.aada.comm.types
 
-import com.hjam.aada.comm.types.AADAObject
-
 class AADAGauge(
     private var tag: String,
     private val x: Int,
