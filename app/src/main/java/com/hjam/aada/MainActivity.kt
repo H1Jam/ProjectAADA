@@ -162,22 +162,22 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.refreshText(-10, "Refreshed It! After Set")
         ScreenObjects.refreshText(12, "Refreshed It! After Set!")
         ScreenObjects.addButtonToScreen(44, 300, 7, " First Button Label ", 28)
-      //  ScreenObjects.addButtonToScreen(200, 360, 2, "Button Label ", 15)
+        //  ScreenObjects.addButtonToScreen(200, 360, 2, "Button Label ", 15)
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN)
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
-        ScreenObjects.addKnob(AADAKnob(44,450,120,-100,100,50,"Voltage",33))
-        ScreenObjects.addKnob(AADAKnob(170,450,80,-120,200,50,"Current",34))
-        ScreenObjects.addGauge(AADAGauge(30,220,90,20f,250f,false,100f,120f,180f,"RPM",1))
-        ScreenObjects.addGauge(AADAGauge(30,220,60,50f,250f,false,100f,120f,180f,"RPM",1))
-        ScreenObjects.addGauge(AADAGauge(0,0,0,100f,0f,true,0f,0f,0f,"222",1))
+        ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100, 50, "Voltage", 33))
+        ScreenObjects.addKnob(AADAKnob(170, 450, 80, -120, 200, 50, "Current", 34))
+        ScreenObjects.addGauge(AADAGauge(30, 220, 90, 20f, 250f, false, 100f, 120f, 180f, "RPM", 1))
+        ScreenObjects.addGauge(AADAGauge(30, 220, 60, 50f, 250f, false, 100f, 120f, 180f, "RPM", 1))
+        ScreenObjects.addGauge(AADAGauge(0, 0, 0, 100f, 0f, true, 0f, 0f, 0f, "222", 1))
     }
 
-    private fun startMap(){
+    private fun startMap() {
         Logger.debug(mTag, "startMap()")
         val ctx: Context = applicationContext
         val shr = this.getSharedPreferences("map", MODE_PRIVATE)
-        Configuration.getInstance().load(ctx,PreferenceManager.getDefaultSharedPreferences(ctx))
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID;
         mapView = binding.root.findViewById(R.id.mapView01);
         mapView?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
@@ -188,10 +188,10 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         val startPoint = GeoPoint(43.767567, -79.413305)
         val startMarker = Marker(mapView)
         startMarker.position = startPoint
-        startMarker.icon =  getDrawable(R.drawable.car2)
+        startMarker.icon = getDrawable(R.drawable.car2)
         startMarker.rotation = 45f
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        startMarker.isFlat =true
+        startMarker.isFlat = true
         mapView?.overlays?.add(startMarker)
         mapController?.setCenter(startPoint)
         mapView?.mapOrientation = 120f
@@ -289,17 +289,17 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
 
     private val requestMultiplePermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-           if(permissions.entries.all {
-                Log.d(mTag, "${it.key} = ${it.value}")
-                it.value==true
-            }){
-               startTheApp()
-               startMap()
-           }else{
-               mBtnConnect.isEnabled = false
-               mLblText.text = getString(R.string.no_permission)
-               Log.e(mTag, "Permission in NOT granted!")
-           }
+            if (permissions.entries.all {
+                    Log.d(mTag, "${it.key} = ${it.value}")
+                    it.value == true
+                }) {
+                startTheApp()
+                startMap()
+            } else {
+                mBtnConnect.isEnabled = false
+                mLblText.text = getString(R.string.no_permission)
+                Log.e(mTag, "Permission in NOT granted!")
+            }
         }
 
 
@@ -317,7 +317,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 Log.e(mTag, "Permission Denied!")
             }
         }
-        if (requestCode==GPS_STORAGE_PERMISSION_CODE){
+        if (requestCode == GPS_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startMap()
             }
