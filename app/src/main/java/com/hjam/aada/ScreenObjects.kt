@@ -12,12 +12,10 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
-import com.hjam.aada.comm.types.AADAButton
-import com.hjam.aada.comm.types.AADAKnob
-import com.hjam.aada.comm.types.AADAWriter
-import com.hjam.aada.comm.types.AADATextLabel
+import com.hjam.aada.comm.types.*
 import com.hjam.aada.utils.Logger
 import com.hjam.aada.widgets.DialKnob
+import com.hjam.aada.widgets.GaugeView
 
 
 object ScreenObjects {
@@ -68,6 +66,18 @@ object ScreenObjects {
         }
     }
 
+    fun addGauge(aadaGauge: AADAGauge) {
+        if (mReady && aadaGauge.tag > 0) {
+            Logger.debug(mTag, "aadaGauge: $aadaGauge")
+            if (mScreenObjects.add(aadaGauge.screenTag)) {
+                addGaugeToScreen(aadaGauge)
+            } else {
+                modifyGauge(aadaGauge)
+            }
+            refreshScreen()
+        }
+    }
+
     fun addButton(aadaButton: AADAButton) {
         if (mReady && aadaButton.tag > 0) {
             Logger.debug(mTag, "addButton: ${aadaButton.tag}")
@@ -89,6 +99,12 @@ object ScreenObjects {
     private fun modifyKnob(aadaKnob: AADAKnob) {
         Logger.debug(mTag, "modifyKnob: ${aadaKnob.tag}")
         refreshKnob(aadaKnob)
+        refreshScreen()
+    }
+
+    private fun modifyGauge(aadaGauge: AADAGauge) {
+        Logger.debug(mTag, "modifyKnob: ${aadaGauge.tag}")
+        refreshGauge(aadaGauge)
         refreshScreen()
     }
 
@@ -183,6 +199,16 @@ object ScreenObjects {
             }
         } else {
             Logger.error(mTag, "refresh Knob: AADAKnob(tag=${aadaKnob.tag}) does not exist!")
+        }
+    }
+
+    private fun refreshGauge(aadaGauge: AADAGauge) {
+        val gge: GaugeView? =
+            mCanvasConstraintLayout.findViewWithTag(aadaGauge.screenTag)
+        if (gge != null) {
+            gge.setGaugeVal(aadaGauge.value)
+        } else {
+            Logger.error(mTag, "refresh Gauge: AADAGauge(tag=${aadaGauge.tag}) does not exist!")
         }
     }
 
@@ -324,6 +350,33 @@ object ScreenObjects {
         }
     }
 
+    private fun addGaugeToScreen(aadaGauge: AADAGauge) {
+        with(aadaGauge) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addGaugeToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            val params = setLayout(x, y, size, size)
+            val gge = GaugeView(AADATheApp.instance.applicationContext)
+            gge.tag = screenTag
+            gge.layoutParams = params
+            val pad = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15.0F,
+                mDisplayMetrics
+            ).toInt()
+            gge.setPaddingRelative(pad, 0, pad, 0)
+            gge.setStyle(
+                maxValue,
+                drawArc,
+                arcGreenMaxVal,
+                arcYellowMaxVal,
+                arcRedMaxVal,
+                unitTextLabel
+            )
+            mCanvasConstraintLayout.addView(gge)
+        }
+    }
 
     private fun setLayout(x: Int, y: Int, width: Int, height: Int): ConstraintLayout.LayoutParams {
         val px = TypedValue.applyDimension(
