@@ -2,7 +2,6 @@ package com.hjam.aada.comm.types
 
 import com.hjam.aada.ScreenObjects
 import com.hjam.aada.utils.Logger
-import com.hjam.aada.widgets.AnalogGauge
 import java.nio.ByteBuffer
 
 class DataStateMachine {
@@ -14,7 +13,7 @@ class DataStateMachine {
             switch = bb.get()
             Logger.debug(mTag,"DataStateMachine.process! mID:$switch")
             when (switch){
-                AnalogGauge.objID->{
+                AADAGauge.objID->{
                     Logger.debug(mTag, "Got An alogGauge")
                     //val s: String = StandardCharsets.UTF_8.decode(bb).toString()
                 }

@@ -1,8 +1,8 @@
-package com.hjam.aada.widgets
+package com.hjam.aada.comm.types
 
 import com.hjam.aada.comm.types.AADAObject
 
-class AnalogGauge(
+class AADAGauge(
     private var tag: String,
     private val x: Int,
     private val y: Int,
