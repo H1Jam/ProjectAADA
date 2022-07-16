@@ -1,6 +1,5 @@
 package com.hjam.aada.comm.types
 
-import com.hjam.aada.ScreenObjects
 import com.hjam.aada.utils.Logger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -17,7 +16,7 @@ class AADAButton(
 ) {
     val screenTag = screenTag(this)
     companion object {
-        val objID = AADAObject.ScreenIDs.button.ordinal.toByte()
+        val objID = AADAObject.ScreenIDs.Button.ordinal.toByte()
         private const val mTagPrefix = "btn"
         fun screenTag(aadaButton: AADAButton):String{
             return mTagPrefix +aadaButton.tag.toString()

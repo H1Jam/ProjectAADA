@@ -3,17 +3,17 @@ package com.hjam.aada.comm.types
 open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
     val screenTag = screenTag(tagPrefix, aadaTag)
     public enum class ScreenIDs {
-        reserve0,
-        reserve1,
-        reserve2,
-        reserve3,
-        reserve4,
-        reserve5,
-        button,
-        label,
-        gauge1,
-        gauge2,
-        knob
+        Reserve0,
+        Reserve1,
+        Reserve2,
+        Reserve3,
+        Reserve4,
+        Reserve5,
+        Button,
+        Label,
+        Gauge1,
+        Gauge2,
+        Knob
     }
     companion object {
         private fun screenTag(tagPrefix: String, tag: Int): String {

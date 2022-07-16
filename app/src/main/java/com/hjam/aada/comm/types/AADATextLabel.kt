@@ -14,7 +14,7 @@ class AADATextLabel(
 ) {
     val screenTag = screenTag(this)
     companion object {
-        val objID = AADAObject.ScreenIDs.label.ordinal.toByte()
+        val objID = AADAObject.ScreenIDs.Label.ordinal.toByte()
         const val mTagPrefix = "lbl"
         fun screenTag(aADATextLabel: AADATextLabel):String{
             return mTagPrefix +aADATextLabel.tag.toString()

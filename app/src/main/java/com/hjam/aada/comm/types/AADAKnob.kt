@@ -18,7 +18,7 @@ class AADAKnob(
     var lastCallbackTick: Long = 0L
 
     companion object {
-        val objID = ScreenIDs.knob.ordinal.toByte()
+        val objID = ScreenIDs.Knob.ordinal.toByte()
         const val minCallTime = 50
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAKnob {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)

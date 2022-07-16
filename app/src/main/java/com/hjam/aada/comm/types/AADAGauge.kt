@@ -18,7 +18,7 @@ class AADAGauge(
     val tag: Int
 ) : AADAObject(tag, "gau") {
     companion object {
-        val objID = ScreenIDs.gauge1.ordinal.toByte()
+        val objID = ScreenIDs.Gauge1.ordinal.toByte()
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAGauge {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
