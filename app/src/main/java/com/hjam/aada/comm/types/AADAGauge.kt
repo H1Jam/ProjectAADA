@@ -27,7 +27,7 @@ class AADAGauge(
             val size = byteBuffer.short.toInt()
             val value = byteBuffer.float
             val maxValue = byteBuffer.float
-            val drawArc = byteBuffer.char != 0.toChar()
+            val drawArc = byteBuffer.get() != 0.toByte()
             val arcGreenMaxVal = byteBuffer.float
             val arcYellowMaxVal = byteBuffer.float
             val arcRedMaxVal = byteBuffer.float
