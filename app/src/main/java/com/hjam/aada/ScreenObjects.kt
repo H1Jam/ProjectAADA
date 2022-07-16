@@ -374,6 +374,7 @@ object ScreenObjects {
                 arcRedMaxVal,
                 unitTextLabel
             )
+            gge.setGaugeVal(value)
             mCanvasConstraintLayout.addView(gge)
         }
     }
