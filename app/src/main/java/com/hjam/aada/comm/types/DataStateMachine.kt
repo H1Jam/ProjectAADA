@@ -13,10 +13,6 @@ class DataStateMachine {
             switch = bb.get()
             Logger.debug(mTag,"DataStateMachine.process! mID:$switch")
             when (switch){
-                AADAGauge.objID->{
-                    Logger.debug(mTag, "Got An alogGauge")
-                    //val s: String = StandardCharsets.UTF_8.decode(bb).toString()
-                }
                 AADATextLabel.objID->{
                     val textLabel = AADATextLabel.fromByteBuffer(bb)
                     Logger.debug(mTag, "Got a TextLabel $textLabel")
