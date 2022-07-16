@@ -7,9 +7,6 @@ class AADAGaugeTest : TestCase(){
 
     @Test
     fun test_TypeList(){
-        //Todo: Add the actual test!
-        for (d in AADAGauge.typeArrayList){
-            println(d)
-        }
+        //Todo: Add the actual test! Convert a byte buffer to an AADAGauge!
     }
 }
