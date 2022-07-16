@@ -166,11 +166,11 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN)
         ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
-        ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100, 50, "Voltage", 33))
-        ScreenObjects.addKnob(AADAKnob(170, 450, 80, -120, 200, 50, "Current", 34))
-        ScreenObjects.addGauge(AADAGauge(30, 220, 90, 20f, 250f, false, 100f, 120f, 180f, "RPM", 1))
-        ScreenObjects.addGauge(AADAGauge(30, 220, 60, 50f, 250f, false, 100f, 120f, 180f, "RPM", 1))
-        ScreenObjects.addGauge(AADAGauge(0, 0, 0, 100f, 0f, true, 0f, 0f, 0f, "222", 1))
+        //ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100, 50, "Voltage", 33))
+        //ScreenObjects.addKnob(AADAKnob(170, 450, 80, -120, 200, 50, "Current", 34))
+        //ScreenObjects.addGauge(AADAGauge(30, 220, 90, 20f, 250f, false, 100f, 120f, 180f, "RPM", 1))
+        //ScreenObjects.addGauge(AADAGauge(30, 220, 60, 50f, 250f, false, 100f, 120f, 180f, "RPM", 1))
+        //ScreenObjects.addGauge(AADAGauge(0, 0, 0, 100f, 0f, true, 0f, 0f, 0f, "222", 1))
     }
 
     private fun startMap() {
@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                     it.value == true
                 }) {
                 startTheApp()
-                startMap()
+                //startMap()
             } else {
                 mBtnConnect.isEnabled = false
                 mLblText.text = getString(R.string.no_permission)
@@ -319,7 +319,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         }
         if (requestCode == GPS_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startMap()
+               // startMap()
             }
         }
 
