@@ -32,6 +32,11 @@ class DataStateMachine {
                     Logger.debug(mTag, "Got a AADAKnob $aadaKnob")
                     ScreenObjects.addKnob(aadaKnob)
                 }
+                AADAGauge.objID->{
+                    val aadaGauge = AADAGauge.fromByteBuffer(bb)
+                    Logger.debug(mTag, "Got a AADAGauge $aadaGauge")
+                    ScreenObjects.addGauge(aadaGauge)
+                }
                 200.toByte()->{
                     Logger.debug(mTag, "Got 200")
                 }
