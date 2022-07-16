@@ -49,8 +49,8 @@ class AADAGauge(
     }
 
     override fun toString(): String {
-        return "AADAGauge:[Tag:$tag (${screenTag}), x:$x, y:$y, Size:$size maxValue:$maxValue," +
-                " drawArc:$drawArc, arcGreenMaxVal:$arcGreenMaxVal, " +
+        return "AADAGauge:[Tag:$tag (${screenTag}), x:$x, y:$y, Size:$size, value:$value, " +
+                "maxValue:$maxValue, drawArc:$drawArc, arcGreenMaxVal:$arcGreenMaxVal, " +
                 "arcYellowMaxVal:$arcYellowMaxVal, arcRedMaxVal:$arcRedMaxVal, " +
                 "unitTextLabel:$unitTextLabel]"
     }
