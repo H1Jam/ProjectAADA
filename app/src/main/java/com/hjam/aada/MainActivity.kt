@@ -196,7 +196,6 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mapController?.setCenter(startPoint)
         mapView?.mapOrientation = 120f
         startMarker.rotation = 10f
-
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {

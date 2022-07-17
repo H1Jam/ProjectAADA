@@ -9,17 +9,17 @@ class AADAMap(
     val y: Int,
     val height: Int,
     val width: Int,
-    var lat : Float,
-    var lon : Float,
+    var lat: Float,
+    var lon: Float,
     var zoom: Float,
-    val tag: Int = 1
-) : AADAObject(tag, "map")  {
+    val tag: Int = 1 // Always 1, since we only have 1 map on screen (may extend it in the future).
+) : AADAObject(tag, "map") {
     val objID = ScreenIDs.Map.ordinal.toByte()
     fun fromByteBuffer(byteBuffer: ByteBuffer): AADAMap {
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
         val x = byteBuffer.short.toInt()
         val y = byteBuffer.short.toInt()
-        val cTag = byteBuffer.short.toInt()
+        val cTag = byteBuffer.short.toInt()// Reserved
         val height = byteBuffer.short.toInt()
         val width = byteBuffer.short.toInt()
         val lat = byteBuffer.float

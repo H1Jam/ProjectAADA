@@ -1,4 +1,24 @@
 package com.hjam.aada.comm.types
 
-class AADAMapMarker {
+import android.graphics.drawable.Drawable
+
+class AADAMapMarker(
+    var lat: Float,
+    var lon: Float,
+    var rotation: Float,
+    var isFlat : Boolean,
+    var anchorX: Float,
+    var anchorY: Float,
+    val icon : Drawable,
+    val iconId : Int,
+    val tag: Int
+) : AADAObject(tag, "mrk") {
+
+    
+
+
+    override fun toString(): String {
+        return "AADAMapMarker:[Tag:$tag (${screenTag}), lat:$lat, lon:$lon, rotation:$rotation, " +
+                "isFlat:$isFlat, anchorX:$anchorX, anchorY:$anchorY, iconId:$iconId]"
+    }
 }
