@@ -2,8 +2,8 @@ package com.hjam.aada.comm.types
 
 open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
     val screenTag = screenTag(tagPrefix, aadaTag)
-
-    public enum class ScreenIDs {
+    //There will be more objects soon.
+    enum class ScreenIDs {
         Reserve0,
         Reserve1,
         Reserve2,
@@ -14,7 +14,8 @@ open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
         Label,
         Gauge1,
         Gauge2,
-        Knob
+        Knob,
+        Map
     }
 
     companion object {
