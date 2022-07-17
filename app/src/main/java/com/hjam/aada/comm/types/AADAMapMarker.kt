@@ -13,9 +13,7 @@ class AADAMapMarker(
     val iconId : Int,
     val tag: Int
 ) : AADAObject(tag, "mrk") {
-
-    
-
+    val objID = ScreenIDs.MapMarkers.ordinal.toByte()
 
     override fun toString(): String {
         return "AADAMapMarker:[Tag:$tag (${screenTag}), lat:$lat, lon:$lon, rotation:$rotation, " +
