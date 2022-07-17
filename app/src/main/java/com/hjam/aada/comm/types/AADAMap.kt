@@ -1,5 +1,6 @@
 package com.hjam.aada.comm.types
 
+import org.osmdroid.views.overlay.Marker
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -10,8 +11,8 @@ class AADAMap(
     val width: Int,
     var lat : Float,
     var lon : Float,
-    var zoom: Int,
-    val tag: Int
+    var zoom: Float,
+    val tag: Int = 1
 ) : AADAObject(tag, "map")  {
     val objID = ScreenIDs.Map.ordinal.toByte()
     fun fromByteBuffer(byteBuffer: ByteBuffer): AADAMap {
@@ -23,7 +24,7 @@ class AADAMap(
         val width = byteBuffer.short.toInt()
         val lat = byteBuffer.float
         val lon = byteBuffer.float
-        val zoom = byteBuffer.get().toInt()
+        val zoom = byteBuffer.float
         return AADAMap(
             x,
             y,
@@ -31,12 +32,12 @@ class AADAMap(
             width,
             lat,
             lon,
-            zoom,
-            cTag
+            zoom
         )
     }
 
     override fun toString(): String {
-        return "AADAMap:[Tag:$tag (${screenTag}), x:$x, y:$y, height:$height, width:$width]"
+        return "AADAMap:[Tag:$tag (${screenTag}), x:$x, y:$y, height:$height, width:$width, " +
+                "lat:$lat, lon:$lon, zoom:$zoom]"
     }
 }
