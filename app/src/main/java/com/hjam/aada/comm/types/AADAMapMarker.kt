@@ -16,7 +16,7 @@ class AADAMapMarker(
         val objID = ScreenIDs.MapMarkers.ordinal.toByte()
 
         // Will extend it.
-        enum class Icons(anchorX: Float, anchorY: Float, isFlat: Boolean, drawableId: Int) {
+        enum class Icons(val anchorX: Float,val anchorY: Float,val isFlat: Boolean,val drawableId: Int) {
             Default(0.5f, 0f, false, 0),
             Car_Red(0.5f, 0.5f, true, R.drawable.car_red),
             Car_Blue(0.5f, 0.5f, true, R.drawable.car_blue),
