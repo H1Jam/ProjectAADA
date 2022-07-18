@@ -17,20 +17,22 @@ class AADAMapMarker(
 
         // Will extend it.
         enum class Icons(anchorX: Float, anchorY: Float, isFlat: Boolean, drawableId: Int) {
-            Default(0.5f,0f,false,0),
-            Car_Red(0.5f,0.5f,true, R.drawable.car_red),
-            Car_Blue(0.5f,0.5f,true, R.drawable.car_blue),
-            Car_Green(0.5f,0.5f,true, R.drawable.car_green),
-            Car_Yellow(0.5f,0.5f,true, R.drawable.car_yellow),
-            Plane_Red(0.5f,0.5f,true, R.drawable.plane_red),
-            Plane_Blue(0.5f,0.5f,true, R.drawable.plane_blue),
-            Plane_Green(0.5f,0.5f,true, R.drawable.plane_green)
+            Default(0.5f, 0f, false, 0),
+            Car_Red(0.5f, 0.5f, true, R.drawable.car_red),
+            Car_Blue(0.5f, 0.5f, true, R.drawable.car_blue),
+            Car_Green(0.5f, 0.5f, true, R.drawable.car_green),
+            Car_Yellow(0.5f, 0.5f, true, R.drawable.car_yellow),
+            Plane_Red(0.5f, 0.5f, true, R.drawable.plane_red),
+            Plane_Blue(0.5f, 0.5f, true, R.drawable.plane_blue),
+            Plane_Green(0.5f, 0.5f, true, R.drawable.plane_green)
         }
-        enum class MarkerCmdId{
+
+        enum class MarkerCmdId {
             Add,
             Modify,
             Remove
         }
+
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAMapMarker {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val cTag = byteBuffer.short.toInt()

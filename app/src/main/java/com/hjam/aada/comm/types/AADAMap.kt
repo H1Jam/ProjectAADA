@@ -37,6 +37,7 @@ class AADAMap(
             )
         }
     }
+
     override fun toString(): String {
         return "AADAMap:[Tag:$tag (${screenTag}), x:$x, y:$y, height:$height, width:$width, " +
                 "lat:$lat, lon:$lon, zoom:$zoom]"

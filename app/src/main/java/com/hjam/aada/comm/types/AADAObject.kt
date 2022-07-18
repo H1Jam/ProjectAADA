@@ -2,6 +2,7 @@ package com.hjam.aada.comm.types
 
 open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
     val screenTag = screenTag(tagPrefix, aadaTag)
+
     //There will be more objects soon.
     enum class ScreenIDs {
         Reserve0,
