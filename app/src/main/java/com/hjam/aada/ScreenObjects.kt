@@ -3,6 +3,7 @@ package com.hjam.aada
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.Icon
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
+import com.hjam.aada.comm.types.AADAMapMarker.Companion.Icons
 import com.hjam.aada.utils.Logger
 import com.hjam.aada.widgets.DialKnob
 import com.hjam.aada.widgets.GaugeView
@@ -37,6 +39,8 @@ object ScreenObjects {
     private var mapController: IMapController? = null
     private var mapView: MapView? = null
     private val mMarkerListMap: MutableMap<Int, Marker> = mutableMapOf()
+    private val mIconsDrawable : MutableMap<Icons, Drawable?> = mutableMapOf()
+
     private var markerIconRedCar: Drawable? = null
     private var markerIconBlueCar: Drawable? = null
     private var markerIconYellowCar: Drawable? = null
@@ -70,13 +74,11 @@ object ScreenObjects {
         mDisplayMetrics = displayMetrics
         mReady = true
         mWriteListener = writeListener
-        markerIconRedCar = getDrawable(context, R.drawable.car_red)
-        markerIconBlueCar = getDrawable(context, R.drawable.car_blue)
-        markerIconYellowCar = getDrawable(context, R.drawable.car_yellow)
-        markerIconGreenCar = getDrawable(context, R.drawable.car_green)
-        markerIconRedPlane = getDrawable(context, R.drawable.plane_red)
-        markerIconBluePlane = getDrawable(context, R.drawable.plane_blue)
-        markerIconGreenPlane = getDrawable(context, R.drawable.plane_green)
+        for(icon in Icons.values()){
+            if (icon.drawableId!=0){ // Skip the default icon.
+                mIconsDrawable[icon] = getDrawable(context, icon.drawableId)
+            }
+        }
     }
 
     fun addKnob(aadaKnob: AADAKnob) {
@@ -226,6 +228,7 @@ object ScreenObjects {
                 mapController?.setZoom(zoom.toDouble())
                 val viewPort = GeoPoint(lat.toDouble(), lon.toDouble())
                 mapController?.setCenter(viewPort)
+                mapView?.mapOrientation = mapOrientation
             }
             refreshScreen()
         } else {
@@ -457,11 +460,14 @@ object ScreenObjects {
                 val startPoint = GeoPoint(lat.toDouble(), lon.toDouble())
                 val startMarker = Marker(mapView)
                 startMarker.position = startPoint
-                startMarker.icon = markerIconYellowCar //Todo
+                if (iconId > 0 && iconId < Icons.values().size){
+                   val iconParams = Icons.values()[iconId]
+                    startMarker.icon = mIconsDrawable[iconParams]
+                    startMarker.setAnchor(iconParams.anchorX,iconParams.anchorY)
+                    startMarker.isFlat = iconParams.isFlat
+                }
                 startMarker.infoWindow = null
                 startMarker.rotation = rotation
-                startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER) //Todo
-                startMarker.isFlat = true //Todo
                 mapView?.overlays?.add(startMarker)
                 mMarkerListMap[aadaMapMarker.tag] = startMarker
             }
@@ -492,6 +498,7 @@ object ScreenObjects {
             mapController?.setZoom(zoom.toDouble())
             val viewPort = GeoPoint(lat.toDouble(), lon.toDouble())
             mapController?.setCenter(viewPort)
+            mapView?.mapOrientation = mapOrientation
             mCanvasConstraintLayout.addView(mapView)
         }
     }
