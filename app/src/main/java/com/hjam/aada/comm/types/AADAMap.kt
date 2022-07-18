@@ -12,6 +12,7 @@ class AADAMap(
     var lat: Float,
     var lon: Float,
     var zoom: Float,
+    var mapOrientation: Float,
     val tag: Int = 1 // Always 1, since we only have 1 map on screen (may extend it in the future).
 ) : AADAObject(tag, "map") {
     companion object {
@@ -26,6 +27,7 @@ class AADAMap(
             val lat = byteBuffer.float
             val lon = byteBuffer.float
             val zoom = byteBuffer.float
+            val mapOrientation =  byteBuffer.float
             return AADAMap(
                 x,
                 y,
@@ -33,6 +35,7 @@ class AADAMap(
                 height,
                 lat,
                 lon,
+                mapOrientation,
                 zoom
             )
         }
