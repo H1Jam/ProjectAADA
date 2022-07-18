@@ -16,6 +16,11 @@ import com.hjam.aada.comm.types.*
 import com.hjam.aada.utils.Logger
 import com.hjam.aada.widgets.DialKnob
 import com.hjam.aada.widgets.GaugeView
+import org.osmdroid.api.IMapController
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
 
 
 object ScreenObjects {
@@ -27,7 +32,8 @@ object ScreenObjects {
     private lateinit var mDisplayMetrics: DisplayMetrics
     private var mReady = false
     private var mWriteListener: AADAWriter? = null
-
+    private var mapController: IMapController? = null
+    private var mapView: MapView? = null
     enum class ViewColors {
         Red,
         Blue,
@@ -73,6 +79,18 @@ object ScreenObjects {
                 addGaugeToScreen(aadaGauge)
             } else {
                 modifyGauge(aadaGauge)
+            }
+            refreshScreen()
+        }
+    }
+
+    fun addMap(aadaMap: AADAMap) {
+        if (mReady && aadaMap.tag == 1) { // Only one map for now.
+            Logger.debug(mTag, "add an aadaMap:$aadaMap")
+            if (mScreenObjects.add(aadaMap.screenTag)) {
+                addMapToScreen(aadaMap)
+            } else {
+                refreshMap(aadaMap)
             }
             refreshScreen()
         }
@@ -167,6 +185,20 @@ object ScreenObjects {
             lbl.text = text
         } else {
             Logger.error(mTag, "refreshText: TextView(tag=$tag) does not exist!")
+        }
+    }
+
+    private fun refreshMap(aadaMap: AADAMap) {
+        Logger.debug(mTag, "refreshMap: aadaMap:$aadaMap")
+        if (mapView != null){
+            with(aadaMap){
+                mapController?.setZoom(zoom.toDouble())
+                val viewPort = GeoPoint(lat.toDouble(),lon.toDouble())
+                mapController?.setCenter(viewPort)
+            }
+            refreshScreen()
+        }else{
+            Logger.error(mTag, "refreshMap: mapView is null!")
         }
     }
 
@@ -349,6 +381,33 @@ object ScreenObjects {
             }
         }
     }
+    private fun  addMapToScreen(aadaMap: AADAMap) {
+        with(aadaMap) {
+            if (tag < 0 || tag > 255) {
+              Logger.error(mTag, "addGaugeToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            val params = setLayout(x, y, width, height)
+            mapView =  MapView(AADATheApp.instance.applicationContext)
+            mapView?.tag = screenTag
+            mapView?.layoutParams = params
+            val pad =TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15.0F,
+                mDisplayMetrics
+            ).toInt()
+            mapView?.setPaddingRelative(pad, 0, pad, 0)
+            mapView?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+            //map?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+            mapView?.setMultiTouchControls(true)
+            mapView?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+            mapController = mapView?.controller
+            mapController?.setZoom(zoom.toDouble())
+            val viewPort = GeoPoint(lat.toDouble(),lon.toDouble())
+            mapController?.setCenter(viewPort)
+            mCanvasConstraintLayout.addView(mapView)
+        }
+    }
 
     private fun addGaugeToScreen(aadaGauge: AADAGauge) {
         with(aadaGauge) {
@@ -412,7 +471,7 @@ object ScreenObjects {
         }
 
 
-        val params = ConstraintLayout.LayoutParams(ph, pw)
+        val params = ConstraintLayout.LayoutParams(pw, ph)
 
         with(params) {
             topToTop = mTopToTop
