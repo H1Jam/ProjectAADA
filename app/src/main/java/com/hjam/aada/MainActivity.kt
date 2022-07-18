@@ -35,6 +35,7 @@ import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.DataProtocol.handleData
 import com.hjam.aada.comm.types.AADAGauge
 import com.hjam.aada.comm.types.AADAKnob
+import com.hjam.aada.comm.types.AADAMap
 import com.hjam.aada.comm.types.AADAWriter
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.aada.utils.Logger
@@ -43,6 +44,7 @@ import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import java.nio.ByteBuffer
@@ -171,6 +173,8 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         //ScreenObjects.addGauge(AADAGauge(30, 220, 90, 20f, 250f, false, 100f, 120f, 180f, "RPM", 1))
         //ScreenObjects.addGauge(AADAGauge(30, 220, 60, 50f, 250f, false, 100f, 120f, 180f, "RPM", 1))
         //ScreenObjects.addGauge(AADAGauge(0, 0, 0, 100f, 0f, true, 0f, 0f, 0f, "222", 1))
+        ScreenObjects.addMap(AADAMap(10,350,400,300,43.729715839905104f, -79.44888177666463f,11f))
+        ScreenObjects.addMap(AADAMap(10,350,400,300,43.729715839905104f, -79.44888177666463f,15f))
     }
 
     private fun startMap() {
@@ -181,14 +185,16 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID;
         mapView = binding.root.findViewById(R.id.mapView01);
         mapView?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-        //map?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+        mapView?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         mapView?.setMultiTouchControls(true)
         mapController = mapView?.controller
         mapController?.setZoom(19.0)
         val startPoint = GeoPoint(43.767567, -79.413305)
         val startMarker = Marker(mapView)
         startMarker.position = startPoint
-        startMarker.icon = getDrawable(R.drawable.car2)
+        startMarker.icon = getDrawable(R.drawable.car_red)
+        startMarker.title ="Plane"
+        startMarker.infoWindow =null
         startMarker.rotation = 45f
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         startMarker.isFlat = true
@@ -293,7 +299,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                     it.value == true
                 }) {
                 startTheApp()
-                //startMap()
+                startMap()
             } else {
                 mBtnConnect.isEnabled = false
                 mLblText.text = getString(R.string.no_permission)
@@ -318,7 +324,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         }
         if (requestCode == GPS_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-               // startMap()
+                startMap()
             }
         }
 
