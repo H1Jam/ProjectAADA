@@ -1,15 +1,16 @@
 package com.hjam.aada
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
@@ -21,6 +22,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 
 object ScreenObjects {
@@ -34,6 +36,15 @@ object ScreenObjects {
     private var mWriteListener: AADAWriter? = null
     private var mapController: IMapController? = null
     private var mapView: MapView? = null
+    private val mMarkerListMap: MutableMap<Int, Marker> = mutableMapOf()
+    private var markerIconRedCar: Drawable? = null
+    private var markerIconBlueCar: Drawable? = null
+    private var markerIconYellowCar: Drawable? = null
+    private var markerIconGreenCar: Drawable? = null
+    private var markerIconRedPlane: Drawable? = null
+    private var markerIconBluePlane: Drawable? = null
+    private var markerIconGreenPlane: Drawable? = null
+
     enum class ViewColors {
         Red,
         Blue,
@@ -49,6 +60,7 @@ object ScreenObjects {
     }
 
     fun initScreen(
+        context: Context,
         canvasConstraintLayout: ConstraintLayout, topToTop: Int, leftToLeft: Int,
         displayMetrics: DisplayMetrics, writeListener: AADAWriter
     ) {
@@ -58,6 +70,13 @@ object ScreenObjects {
         mDisplayMetrics = displayMetrics
         mReady = true
         mWriteListener = writeListener
+        markerIconRedCar = getDrawable(context, R.drawable.car_red)
+        markerIconBlueCar = getDrawable(context, R.drawable.car_blue)
+        markerIconYellowCar = getDrawable(context, R.drawable.car_yellow)
+        markerIconGreenCar = getDrawable(context, R.drawable.car_green)
+        markerIconRedPlane = getDrawable(context, R.drawable.plane_red)
+        markerIconBluePlane = getDrawable(context, R.drawable.plane_blue)
+        markerIconGreenPlane = getDrawable(context, R.drawable.plane_green)
     }
 
     fun addKnob(aadaKnob: AADAKnob) {
@@ -91,6 +110,18 @@ object ScreenObjects {
                 addMapToScreen(aadaMap)
             } else {
                 refreshMap(aadaMap)
+            }
+            refreshScreen()
+        }
+    }
+
+    fun addMapMarker(aadaMapMarker: AADAMapMarker) {
+        if (mReady && aadaMapMarker.tag > 0) { // Only one map for now.
+            Logger.debug(mTag, "add an AADAMapMarker:$aadaMapMarker")
+            if (mScreenObjects.add(aadaMapMarker.screenTag)) {
+                addMapMarkerToScreen(aadaMapMarker)
+            } else {
+                refreshMapMarker(aadaMapMarker)
             }
             refreshScreen()
         }
@@ -190,14 +221,14 @@ object ScreenObjects {
 
     private fun refreshMap(aadaMap: AADAMap) {
         Logger.debug(mTag, "refreshMap: aadaMap:$aadaMap")
-        if (mapView != null){
-            with(aadaMap){
+        if (mapView != null) {
+            with(aadaMap) {
                 mapController?.setZoom(zoom.toDouble())
-                val viewPort = GeoPoint(lat.toDouble(),lon.toDouble())
+                val viewPort = GeoPoint(lat.toDouble(), lon.toDouble())
                 mapController?.setCenter(viewPort)
             }
             refreshScreen()
-        }else{
+        } else {
             Logger.error(mTag, "refreshMap: mapView is null!")
         }
     }
@@ -211,7 +242,7 @@ object ScreenObjects {
                 btn.setTextColor(aadaButton.textColor)
             }
             if (aadaButton.backColor.toUInt() > 0u) {
-                btn.background = getDrawable(aadaButton.backColor)
+                btn.background = getDrawableFromColor(aadaButton.backColor)
             }
 
             if (aadaButton.fontSize > 0) {
@@ -300,7 +331,7 @@ object ScreenObjects {
             btn.isAllCaps = false
             btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
             btn.setTextColor(textColor)
-            btn.background = getDrawable(backColor)
+            btn.background = getDrawableFromColor(backColor)
             val pad = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 15.0F,
@@ -381,17 +412,73 @@ object ScreenObjects {
             }
         }
     }
-    private fun  addMapToScreen(aadaMap: AADAMap) {
+
+    private fun refreshMapMarker(aadaMapMarker: AADAMapMarker) {
+        with(aadaMapMarker) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addMapMarkerToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            if (mapView != null) {
+                val marker = mMarkerListMap[aadaMapMarker.tag]
+                if (marker != null) {
+                    marker.position.latitude = lat.toDouble()
+                    marker.position.longitude = lon.toDouble()
+                    marker.rotation = rotation
+                }
+            }
+
+        }
+    }
+
+    fun removeMapMarker(aadaMapMarker: AADAMapMarker){
+        with(aadaMapMarker) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addMapMarkerToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            if (mapView != null) {
+                val marker = mMarkerListMap[aadaMapMarker.tag]
+                if (marker != null) {
+                    mapView?.overlays?.remove(marker)
+                }
+            }
+        }
+    }
+
+    private fun addMapMarkerToScreen(aadaMapMarker: AADAMapMarker) {
+        with(aadaMapMarker) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addMapMarkerToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            if (mapView != null) {
+                Logger.debug(mTag, "addMapMarkerToScreen")
+                val startPoint = GeoPoint(lat.toDouble(), lon.toDouble())
+                val startMarker = Marker(mapView)
+                startMarker.position = startPoint
+                startMarker.icon = markerIconYellowCar //Todo
+                startMarker.infoWindow = null
+                startMarker.rotation = rotation
+                startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER) //Todo
+                startMarker.isFlat = true //Todo
+                mapView?.overlays?.add(startMarker)
+                mMarkerListMap[aadaMapMarker.tag] = startMarker
+            }
+        }
+    }
+
+    private fun addMapToScreen(aadaMap: AADAMap) {
         with(aadaMap) {
             if (tag < 0 || tag > 255) {
-              Logger.error(mTag, "addGaugeToScreen: Invalid tag! (tag:$tag)")
+                Logger.error(mTag, "addMapToScreen: Invalid tag! (tag:$tag)")
                 return
             }
             val params = setLayout(x, y, width, height)
-            mapView =  MapView(AADATheApp.instance.applicationContext)
+            mapView = MapView(AADATheApp.instance.applicationContext)
             mapView?.tag = screenTag
             mapView?.layoutParams = params
-            val pad =TypedValue.applyDimension(
+            val pad = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 15.0F,
                 mDisplayMetrics
@@ -403,7 +490,7 @@ object ScreenObjects {
             mapView?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
             mapController = mapView?.controller
             mapController?.setZoom(zoom.toDouble())
-            val viewPort = GeoPoint(lat.toDouble(),lon.toDouble())
+            val viewPort = GeoPoint(lat.toDouble(), lon.toDouble())
             mapController?.setCenter(viewPort)
             mCanvasConstraintLayout.addView(mapView)
         }
@@ -488,7 +575,7 @@ object ScreenObjects {
     }
 
 
-    private fun getDrawable(color: Int): Drawable? {
+    private fun getDrawableFromColor(color: Int): Drawable? {
         return AppCompatResources.getDrawable(
             AADATheApp.instance.applicationContext,
             R.drawable.button_red

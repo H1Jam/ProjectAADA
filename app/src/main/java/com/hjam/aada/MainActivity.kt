@@ -33,10 +33,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.DataProtocol.handleData
-import com.hjam.aada.comm.types.AADAGauge
-import com.hjam.aada.comm.types.AADAKnob
-import com.hjam.aada.comm.types.AADAMap
-import com.hjam.aada.comm.types.AADAWriter
+import com.hjam.aada.comm.types.*
 import com.hjam.aada.databinding.ActivityMainBinding
 import com.hjam.aada.utils.Logger
 import com.hjam.ezbluelib.EzBlue
@@ -144,6 +141,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         mBtnDisconnect = binding.root.findViewById(R.id.btn_disconnect)
         val canvas1: ConstraintLayout = findViewById(R.id.canvas01);
         ScreenObjects.initScreen(
+            this,
             canvas1,
             R.id.canvas01,
             R.id.canvas01,
@@ -173,8 +171,59 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         //ScreenObjects.addGauge(AADAGauge(30, 220, 90, 20f, 250f, false, 100f, 120f, 180f, "RPM", 1))
         //ScreenObjects.addGauge(AADAGauge(30, 220, 60, 50f, 250f, false, 100f, 120f, 180f, "RPM", 1))
         //ScreenObjects.addGauge(AADAGauge(0, 0, 0, 100f, 0f, true, 0f, 0f, 0f, "222", 1))
-        ScreenObjects.addMap(AADAMap(10,350,400,300,43.729715839905104f, -79.44888177666463f,11f))
-        ScreenObjects.addMap(AADAMap(10,350,400,300,43.729715839905104f, -79.44888177666463f,15f))
+        ScreenObjects.addMap(
+            AADAMap(
+                10,
+                350,
+                400,
+                300,
+                43.729715839905104f,
+                -79.44888177666463f,
+                11f
+            )
+        )
+        ScreenObjects.addMap(
+            AADAMap(
+                10,
+                350,
+                400,
+                300,
+                43.729715839905104f,
+                -79.44888177666463f,
+                15f
+            )
+        )
+        ScreenObjects.addMapMarker(
+            AADAMapMarker(
+                43.729725839905104f,
+                -79.44888177666463f,
+                45f,
+                1,
+                0,
+                1
+            )
+        )
+        ScreenObjects.addMapMarker(
+            AADAMapMarker(
+                43.739825839905104f,
+                -79.44888177666463f,
+                -45f,
+                1,
+                0,
+                11
+            )
+        )
+        ScreenObjects.removeMapMarker(
+            AADAMapMarker(
+                0f,
+                0f,
+                0f,
+                0,
+                0,
+                11
+            )
+        )
+
     }
 
     private fun startMap() {
@@ -193,8 +242,8 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         val startMarker = Marker(mapView)
         startMarker.position = startPoint
         startMarker.icon = getDrawable(R.drawable.car_red)
-        startMarker.title ="Plane"
-        startMarker.infoWindow =null
+        startMarker.title = "Plane"
+        startMarker.infoWindow = null
         startMarker.rotation = 45f
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         startMarker.isFlat = true
