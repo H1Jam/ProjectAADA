@@ -63,6 +63,9 @@ object ScreenObjects {
         //   for (tl in mScreenObjects) {
         Logger.debug(mTag, "UI: ${mScreenObjects.joinToString()}")
         // }
+        if (mapView != null) {
+            mapView?.invalidate()
+        }
     }
 
     fun initScreen(
@@ -419,11 +422,12 @@ object ScreenObjects {
     private fun refreshMapMarker(aadaMapMarker: AADAMapMarker) {
         with(aadaMapMarker) {
             if (tag < 0 || tag > 255) {
-                Logger.error(mTag, "addMapMarkerToScreen: Invalid tag! (tag:$tag)")
+                Logger.error(mTag, "refreshMapMarker: Invalid tag! (tag:$tag)")
                 return
             }
             if (mapView != null) {
-                if (aadaMapMarker.cmdId == MarkerCmdId.Add.ordinal){
+                if (aadaMapMarker.cmdId == 0){ //Todo use MarkerCmdId.Add.ordinal!
+                    Logger.debug(mTag, "refreshMapMarker: (tag:$screenTag)")
                     val aadaMapMarkerFromMap = mMarkerListMap[aadaMapMarker.tag]
                     if (aadaMapMarkerFromMap != null) {
                         aadaMapMarkerFromMap.mMarker?.position?.latitude = lat.toDouble()
@@ -446,13 +450,16 @@ object ScreenObjects {
     private fun removeMapMarker(aadaMapMarker: AADAMapMarker) {
         with(aadaMapMarker) {
             if (tag < 0 || tag > 255) {
-                Logger.error(mTag, "addMapMarkerToScreen: Invalid tag! (tag:$tag)")
+                Logger.error(mTag, "removeMapMarker: Invalid tag! (tag:$tag)")
                 return
             }
             if (mapView != null) {
+                Logger.error(mTag, "removeMapMarker: $aadaMapMarker")
                 val aadaMapMarkerFromMap = mMarkerListMap[aadaMapMarker.tag]?.mMarker
                 if (aadaMapMarkerFromMap != null) {
                     mapView?.overlays?.remove(aadaMapMarkerFromMap)
+                    mMarkerListMap.remove(tag)
+                    mScreenObjects.remove(screenTag)
                 }
             }
         }
@@ -465,7 +472,7 @@ object ScreenObjects {
                 return
             }
             if (mapView != null) {
-                Logger.debug(mTag, "addMapMarkerToScreen")
+                Logger.debug(mTag, "addMapMarkerToScreen $screenTag")
                 val startPoint = GeoPoint(lat.toDouble(), lon.toDouble())
                 val startMarker = Marker(mapView)
                 startMarker.position = startPoint
