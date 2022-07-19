@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
 import com.hjam.aada.comm.types.AADAMapMarker.Companion.Icons
+import com.hjam.aada.comm.types.AADAMapMarker.Companion.MarkerCmdId
 import com.hjam.aada.utils.Logger
 import com.hjam.aada.widgets.DialKnob
 import com.hjam.aada.widgets.GaugeView
@@ -422,20 +423,23 @@ object ScreenObjects {
                 return
             }
             if (mapView != null) {
-                val aadaMapMarkerFromMap = mMarkerListMap[aadaMapMarker.tag]
-                if (aadaMapMarkerFromMap != null) {
-                    aadaMapMarkerFromMap.mMarker?.position?.latitude = lat.toDouble()
-                    aadaMapMarkerFromMap.mMarker?.position?.longitude = lon.toDouble()
-                    aadaMapMarkerFromMap.mMarker?.rotation = rotation
-                    if (aadaMapMarker.iconId != mMarkerListMap[aadaMapMarker.tag]?.iconId && iconId < Icons.values().size){
-                        val iconParams = Icons.values()[iconId]
-                        aadaMapMarkerFromMap.mMarker?.icon = mIconsDrawable[iconParams]
-                        aadaMapMarkerFromMap.mMarker?.setAnchor(iconParams.anchorX,iconParams.anchorY)
-                        aadaMapMarkerFromMap.mMarker?.isFlat = iconParams.isFlat
+                if (aadaMapMarker.cmdId == MarkerCmdId.Add.ordinal){
+                    val aadaMapMarkerFromMap = mMarkerListMap[aadaMapMarker.tag]
+                    if (aadaMapMarkerFromMap != null) {
+                        aadaMapMarkerFromMap.mMarker?.position?.latitude = lat.toDouble()
+                        aadaMapMarkerFromMap.mMarker?.position?.longitude = lon.toDouble()
+                        aadaMapMarkerFromMap.mMarker?.rotation = rotation
+                        if (aadaMapMarker.iconId != mMarkerListMap[aadaMapMarker.tag]?.iconId && iconId < Icons.values().size){
+                            val iconParams = Icons.values()[iconId]
+                            aadaMapMarkerFromMap.mMarker?.icon = mIconsDrawable[iconParams]
+                            aadaMapMarkerFromMap.mMarker?.setAnchor(iconParams.anchorX,iconParams.anchorY)
+                            aadaMapMarkerFromMap.mMarker?.isFlat = iconParams.isFlat
+                        }
                     }
+                }else{
+                    removeMapMarker(aadaMapMarker)
                 }
             }
-
         }
     }
 
