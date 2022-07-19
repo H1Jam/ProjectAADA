@@ -23,13 +23,13 @@ class AADAMapMarker(
             PinGreen(0.5f, 1f, false, R.drawable.map_pin_green),
             PinBlue(0.5f, 1f, false, R.drawable.map_pin_blue),
             PinYellow(0.5f, 1f, false, R.drawable.map_pin_yellow),
-            Car_Red(0.5f, 0.5f, true, R.drawable.car_red),
-            Car_Blue(0.5f, 0.5f, true, R.drawable.car_blue),
-            Car_Green(0.5f, 0.5f, true, R.drawable.car_green),
-            Car_Yellow(0.5f, 0.5f, true, R.drawable.car_yellow),
-            Plane_Red(0.5f, 0.5f, true, R.drawable.plane_red),
-            Plane_Blue(0.5f, 0.5f, true, R.drawable.plane_blue),
-            Plane_Green(0.5f, 0.5f, true, R.drawable.plane_green)
+            CarRed(0.5f, 0.5f, true, R.drawable.car_red),
+            CarBlue(0.5f, 0.5f, true, R.drawable.car_blue),
+            CarGreen(0.5f, 0.5f, true, R.drawable.car_green),
+            CarYellow(0.5f, 0.5f, true, R.drawable.car_yellow),
+            PlaneRed(0.5f, 0.5f, true, R.drawable.plane_red),
+            PlaneBlue(0.5f, 0.5f, true, R.drawable.plane_blue),
+            PlaneGreen(0.5f, 0.5f, true, R.drawable.plane_green)
         }
 
         enum class MarkerCmdId {
