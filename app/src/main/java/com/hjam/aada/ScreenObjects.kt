@@ -39,7 +39,7 @@ object ScreenObjects {
     private var mWriteListener: AADAWriter? = null
     private var mapController: IMapController? = null
     private var mapView: MapView? = null
-
+    var mapPermissions = false
     //private val mMarkerListMap: MutableMap<Int, Marker> = mutableMapOf()
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
     private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
@@ -110,7 +110,7 @@ object ScreenObjects {
     }
 
     fun addMap(aadaMap: AADAMap) {
-        if (mReady && aadaMap.tag == 1) { // Only one map for now.
+        if (mReady && aadaMap.tag == 1 && mapPermissions) { // Only one map for now.
             Logger.debug(mTag, "add an aadaMap:$aadaMap")
             if (mScreenObjects.add(aadaMap.screenTag)) {
                 addMapToScreen(aadaMap)
@@ -122,7 +122,7 @@ object ScreenObjects {
     }
 
     fun addMapMarker(aadaMapMarker: AADAMapMarker) {
-        if (mReady && aadaMapMarker.tag > 0) { // Only one map for now.
+        if (mReady && aadaMapMarker.tag > 0 && mapView !=null) { // Only one map for now.
             Logger.debug(
                 mTag,
                 "add an AADAMapMarker:$aadaMapMarker, mScreenObjects:${mScreenObjects.size}"
