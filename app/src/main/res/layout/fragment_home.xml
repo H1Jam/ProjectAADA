@@ -64,17 +64,5 @@
         android:text="@string/send"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-<!--    <org.osmdroid.views.MapView-->
-<!--        android:id="@+id/mapView01"-->
-<!--        android:layout_width="185dp"-->
-<!--        android:layout_height="198dp"-->
-<!--        android:layout_marginStart="204dp"-->
-<!--        android:layout_marginTop="128dp"-->
-<!--        android:clickable="true"-->
-<!--        android:focusable="true"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
+    
 </androidx.constraintlayout.widget.ConstraintLayout>
