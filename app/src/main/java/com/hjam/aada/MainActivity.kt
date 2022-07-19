@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private lateinit var mBtnConnect: Button
     private lateinit var mBtnDisconnect: Button
     private lateinit var navView: NavigationView
-    private var mapView: MapView? = null
-    private var mapController: IMapController? = null
+    //private var mapView: MapView? = null
+   // private var mapController: IMapController? = null
 
     companion object {
         private const val mTag = "AADA_MainActivity"
@@ -202,25 +202,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         val shr = this.getSharedPreferences("map", MODE_PRIVATE)
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID;
-        mapView = binding.root.findViewById(R.id.mapView01);
-        mapView?.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-        mapView?.zoomController?.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        mapView?.setMultiTouchControls(true)
-        mapController = mapView?.controller
-        mapController?.setZoom(19.0)
-        val startPoint = GeoPoint(43.767567, -79.413305)
-        val startMarker = Marker(mapView)
-        startMarker.position = startPoint
-        startMarker.icon = getDrawable(R.drawable.car_red)
-        startMarker.title = "Plane"
-        startMarker.infoWindow = null
-        startMarker.rotation = 45f
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        startMarker.isFlat = true
-        mapView?.overlays?.add(startMarker)
-        mapController?.setCenter(startPoint)
-        mapView?.mapOrientation = 120f
-        startMarker.rotation = 10f
+        ScreenObjects.mapPermissions = true
     }
 
     private fun bufferProtoTest(long: Long): ByteArray {
@@ -388,14 +370,14 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
 
     override fun onResume() {
         super.onResume()
-        if (mapView != null)
-            mapView?.onResume()
+//        if (mapView != null)
+//            mapView?.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (mapView != null)
-            mapView?.onPause();
+//        if (mapView != null)
+//            mapView?.onPause();
     }
 
     override fun onDestroy() {
