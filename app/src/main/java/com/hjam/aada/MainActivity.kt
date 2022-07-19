@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
     private lateinit var mBtnDisconnect: Button
     private lateinit var navView: NavigationView
     //private var mapView: MapView? = null
-   // private var mapController: IMapController? = null
+    // private var mapController: IMapController? = null
 
     companion object {
         private const val mTag = "AADA_MainActivity"
@@ -370,14 +370,12 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
 
     override fun onResume() {
         super.onResume()
-//        if (mapView != null)
-//            mapView?.onResume()
+        ScreenObjects.mapViewResume()
     }
 
     override fun onPause() {
         super.onPause()
-//        if (mapView != null)
-//            mapView?.onPause();
+        ScreenObjects.mapViewPause()
     }
 
     override fun onDestroy() {
