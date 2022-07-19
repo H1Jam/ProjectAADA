@@ -16,7 +16,7 @@ open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
         Gauge1,
         Gauge2,
         Knob,
-        Map,
+        MapView,
         MapMarkers
     }
 
