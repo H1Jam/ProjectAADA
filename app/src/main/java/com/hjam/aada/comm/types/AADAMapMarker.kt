@@ -28,8 +28,9 @@ class AADAMapMarker(
             CarGreen(0.5f, 0.5f, true, R.drawable.car_green),
             CarYellow(0.5f, 0.5f, true, R.drawable.car_yellow),
             PlaneRed(0.5f, 0.5f, true, R.drawable.plane_red),
+            PlaneGreen(0.5f, 0.5f, true, R.drawable.plane_green),
             PlaneBlue(0.5f, 0.5f, true, R.drawable.plane_blue),
-            PlaneGreen(0.5f, 0.5f, true, R.drawable.plane_green)
+            PlaneYellow(0.5f, 0.5f, true, R.drawable.plane_yellow)
         }
 
         enum class MarkerCmdId {
