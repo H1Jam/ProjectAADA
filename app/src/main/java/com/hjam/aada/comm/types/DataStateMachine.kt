@@ -43,8 +43,8 @@ class DataStateMachine {
                     Logger.debug(mTag, "Got a AADAMapMarker $aadaMapMarker")
                     ScreenObjects.addMapMarker(aadaMapMarker)
                 }
-                200.toByte()->{
-                    Logger.debug(mTag, "Got 200")
+                else ->{
+                    Logger.debug(mTag, "Got a unknown command ID!")
                 }
             }
         }
