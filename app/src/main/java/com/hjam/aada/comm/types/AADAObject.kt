@@ -17,7 +17,8 @@ open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
         Gauge2,
         Knob,
         MapView,
-        MapMarkers
+        MapMarkers,
+        ToggleSwitch
     }
 
     companion object {
