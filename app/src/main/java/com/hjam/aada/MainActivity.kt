@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 43.739825f,
                 -79.448881f,
                 15f,
-                0f
+                180f
             )
         )
         ScreenObjects.addMapMarker(
@@ -241,11 +241,32 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
                 43.730825f,
                 -79.440881f,
                 90f,
-                2,
+                0,
                 0,
                 15
             )
         )
+//        ScreenObjects.addMapMarker(
+//            AADAMapMarker(
+//                43.730825f,
+//                -79.440881f,
+//                0f,
+//                0,
+//                0,
+//                15
+//            )
+//        )
+
+//        ScreenObjects.removeMapMarker(
+//            AADAMapMarker(
+//                0f,
+//                0f,
+//                0f,
+//                0,
+//                0,
+//                15
+//            )
+//        )
 
     }
 

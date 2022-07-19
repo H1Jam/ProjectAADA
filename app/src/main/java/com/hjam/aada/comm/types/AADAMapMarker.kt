@@ -19,7 +19,10 @@ class AADAMapMarker(
 
         // Will extend it.
         enum class Icons(val anchorX: Float,val anchorY: Float,val isFlat: Boolean,val drawableId: Int) {
-            Default(0.5f, 1f, false, R.drawable.map_pin_red),
+            PinRed(0.5f, 1f, false, R.drawable.map_pin_red),
+            PinGreen(0.5f, 1f, false, R.drawable.map_pin_green),
+            PinBlue(0.5f, 1f, false, R.drawable.map_pin_blue),
+            PinYellow(0.5f, 1f, false, R.drawable.map_pin_yellow),
             Car_Red(0.5f, 0.5f, true, R.drawable.car_red),
             Car_Blue(0.5f, 0.5f, true, R.drawable.car_blue),
             Car_Green(0.5f, 0.5f, true, R.drawable.car_green),
