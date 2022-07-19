@@ -39,9 +39,10 @@ object ScreenObjects {
     private var mWriteListener: AADAWriter? = null
     private var mapController: IMapController? = null
     private var mapView: MapView? = null
+
     //private val mMarkerListMap: MutableMap<Int, Marker> = mutableMapOf()
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
-    private val mIconsDrawable : MutableMap<Icons, Drawable?> = mutableMapOf()
+    private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
 
     private var markerIconRedCar: Drawable? = null
     private var markerIconBlueCar: Drawable? = null
@@ -79,8 +80,8 @@ object ScreenObjects {
         mDisplayMetrics = displayMetrics
         mReady = true
         mWriteListener = writeListener
-        for(icon in Icons.values()){
-                mIconsDrawable[icon] = getDrawable(context, icon.drawableId)
+        for (icon in Icons.values()) {
+            mIconsDrawable[icon] = getDrawable(context, icon.drawableId)
         }
     }
 
@@ -122,7 +123,10 @@ object ScreenObjects {
 
     fun addMapMarker(aadaMapMarker: AADAMapMarker) {
         if (mReady && aadaMapMarker.tag > 0) { // Only one map for now.
-            Logger.debug(mTag, "add an AADAMapMarker:$aadaMapMarker")
+            Logger.debug(
+                mTag,
+                "add an AADAMapMarker:$aadaMapMarker, mScreenObjects:${mScreenObjects.size}"
+            )
             if (mScreenObjects.add(aadaMapMarker.screenTag)) {
                 addMapMarkerToScreen(aadaMapMarker)
             } else {
@@ -426,21 +430,24 @@ object ScreenObjects {
                 return
             }
             if (mapView != null) {
-                if (aadaMapMarker.cmdId == 0){ //Todo use MarkerCmdId.Add.ordinal!
+                if (aadaMapMarker.cmdId == 0) { //Todo use MarkerCmdId.Add.ordinal!
                     Logger.debug(mTag, "refreshMapMarker: (tag:$screenTag)")
                     val aadaMapMarkerFromMap = mMarkerListMap[aadaMapMarker.tag]
                     if (aadaMapMarkerFromMap != null) {
                         aadaMapMarkerFromMap.mMarker?.position?.latitude = lat.toDouble()
                         aadaMapMarkerFromMap.mMarker?.position?.longitude = lon.toDouble()
                         aadaMapMarkerFromMap.mMarker?.rotation = rotation
-                        if (aadaMapMarker.iconId != mMarkerListMap[aadaMapMarker.tag]?.iconId && iconId < Icons.values().size){
+                        if (aadaMapMarker.iconId != mMarkerListMap[aadaMapMarker.tag]?.iconId && iconId < Icons.values().size) {
                             val iconParams = Icons.values()[iconId]
                             aadaMapMarkerFromMap.mMarker?.icon = mIconsDrawable[iconParams]
-                            aadaMapMarkerFromMap.mMarker?.setAnchor(iconParams.anchorX,iconParams.anchorY)
+                            aadaMapMarkerFromMap.mMarker?.setAnchor(
+                                iconParams.anchorX,
+                                iconParams.anchorY
+                            )
                             aadaMapMarkerFromMap.mMarker?.isFlat = iconParams.isFlat
                         }
                     }
-                }else{
+                } else {
                     removeMapMarker(aadaMapMarker)
                 }
             }
@@ -454,7 +461,7 @@ object ScreenObjects {
                 return
             }
             if (mapView != null) {
-                Logger.error(mTag, "removeMapMarker: $aadaMapMarker")
+                Logger.debug(mTag, "removeMapMarker: $aadaMapMarker")
                 val aadaMapMarkerFromMap = mMarkerListMap[aadaMapMarker.tag]?.mMarker
                 if (aadaMapMarkerFromMap != null) {
                     mapView?.overlays?.remove(aadaMapMarkerFromMap)
@@ -472,14 +479,17 @@ object ScreenObjects {
                 return
             }
             if (mapView != null) {
-                Logger.debug(mTag, "addMapMarkerToScreen $screenTag")
+                Logger.debug(
+                    mTag,
+                    "addMapMarkerToScreen $screenTag mMarkerListMap:${mMarkerListMap.size} , overlaysSize:${mapView?.overlays?.size}"
+                )
                 val startPoint = GeoPoint(lat.toDouble(), lon.toDouble())
                 val startMarker = Marker(mapView)
                 startMarker.position = startPoint
-                if (iconId < Icons.values().size){
-                   val iconParams = Icons.values()[iconId]
+                if (iconId < Icons.values().size) {
+                    val iconParams = Icons.values()[iconId]
                     startMarker.icon = mIconsDrawable[iconParams]
-                    startMarker.setAnchor(iconParams.anchorX,iconParams.anchorY)
+                    startMarker.setAnchor(iconParams.anchorX, iconParams.anchorY)
                     startMarker.isFlat = iconParams.isFlat
                 }
                 startMarker.infoWindow = null
