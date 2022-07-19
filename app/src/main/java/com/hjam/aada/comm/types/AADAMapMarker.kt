@@ -1,6 +1,7 @@
 package com.hjam.aada.comm.types
 
 import com.hjam.aada.R
+import org.osmdroid.views.overlay.Marker
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -12,12 +13,13 @@ class AADAMapMarker(
     val cmdId: Int,
     val tag: Int
 ) : AADAObject(tag, "mrk") {
+    var mMarker :Marker? = null
     companion object {
         val objID = ScreenIDs.MapMarkers.ordinal.toByte()
 
         // Will extend it.
         enum class Icons(val anchorX: Float,val anchorY: Float,val isFlat: Boolean,val drawableId: Int) {
-            Default(0.5f, 0f, false, 0),
+            Default(0.5f, 1f, false, R.drawable.map_pin_red),
             Car_Red(0.5f, 0.5f, true, R.drawable.car_red),
             Car_Blue(0.5f, 0.5f, true, R.drawable.car_blue),
             Car_Green(0.5f, 0.5f, true, R.drawable.car_green),
