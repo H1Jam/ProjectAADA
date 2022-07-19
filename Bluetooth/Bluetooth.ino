@@ -326,7 +326,7 @@ void addMapMarker()
   if (iconId>11){
     iconId =0;
   }
-  screenMapMarker2.tag = 1;
+  screenMapMarker2.tag = 2;
   screenMapMarker2.lat = 43.733825f;
   screenMapMarker2.lon = -79.443881f;
   screenMapMarker2.rotation = gVal;
