@@ -45,7 +45,7 @@ class AADAMapMarker(
             val lat = byteBuffer.float
             val lon = byteBuffer.float
             val rotation = byteBuffer.float
-            val iconId = byteBuffer.short.toInt()
+            val iconId = byteBuffer.get().toInt()
             val cmdId = byteBuffer.get().toInt() // MarkerCmdId's ordinal
             return AADAMapMarker(
                 lat,
