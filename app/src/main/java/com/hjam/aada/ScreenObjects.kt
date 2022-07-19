@@ -443,7 +443,7 @@ object ScreenObjects {
         }
     }
 
-    fun removeMapMarker(aadaMapMarker: AADAMapMarker) {
+    private fun removeMapMarker(aadaMapMarker: AADAMapMarker) {
         with(aadaMapMarker) {
             if (tag < 0 || tag > 255) {
                 Logger.error(mTag, "addMapMarkerToScreen: Invalid tag! (tag:$tag)")
