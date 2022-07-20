@@ -106,7 +106,7 @@ object ScreenObjects {
             if (mScreenObjects.add(aadaSwitch.screenTag)) {
                 addSwitchToScreen(aadaSwitch)
             } else {
-                modifyKnob(aadaSwitch)
+                refreshSwitch(aadaSwitch)
             }
             refreshScreen()
         }
@@ -302,6 +302,46 @@ object ScreenObjects {
         }
     }
 
+
+    private fun refreshSwitch(aadaSwitch: AADASwitch) {
+        Logger.debug(mTag, "refreshSwitch: aadaSwitch:$aadaSwitch")
+        val switch: SwitchCompat? =
+            mCanvasConstraintLayout.findViewWithTag(aadaSwitch.screenTag)
+        if (switch != null) {
+            if (aadaSwitch.cmdId == 0) {
+                with(aadaSwitch) {
+                    switch.isChecked = switchValue
+                    switch.text = text
+                }
+            } else {
+                Logger.debug(mTag, "removeSwitch: $aadaSwitch")
+                removeViewByTag(aadaSwitch.screenTag)
+            }
+
+        } else {
+            Logger.error(mTag, "refreshMap: mapView is null!")
+        }
+    }
+
+    private fun removeSwitch(adaSwitch: AADASwitch) {
+        with(adaSwitch) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "removeSwitch: Invalid tag! (tag:$tag)")
+                return
+            }
+
+        }
+    }
+
+    private fun removeViewByTag(screenTag: String) {
+        val view: View? =
+            mCanvasConstraintLayout.findViewWithTag(screenTag)
+        if (view != null) {
+            mCanvasConstraintLayout.removeView(view)
+            mScreenObjects.remove(screenTag)
+        }
+    }
+
     private fun refreshGauge(aadaGauge: AADAGauge) {
         val gge: GaugeView? =
             mCanvasConstraintLayout.findViewWithTag(aadaGauge.screenTag)
@@ -437,7 +477,7 @@ object ScreenObjects {
             switch.text = text
             mCanvasConstraintLayout.addView(switch)
             switch.setOnCheckedChangeListener { _, isChecked ->
-                aadaSwitch.value = isChecked
+                aadaSwitch.switchValue = isChecked
                 Logger.debug("AADASwitch", "switch send $aadaSwitch")
                 writeData(
                     AADASwitch.toBytesFromTag(aadaSwitch)
