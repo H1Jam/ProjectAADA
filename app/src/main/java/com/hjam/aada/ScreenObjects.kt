@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
@@ -96,6 +97,18 @@ object ScreenObjects {
         mWriteListener = writeListener
         for (icon in Icons.values()) {
             mIconsDrawable[icon] = getDrawable(context, icon.drawableId)
+        }
+    }
+
+    fun addSwitch(aadaSwitch: AADASwitch) {
+        if (mReady && aadaSwitch.tag > 0) {
+            Logger.debug(mTag, "addSwitch: $aadaSwitch")
+            if (mScreenObjects.add(aadaSwitch.screenTag)) {
+                addSwitchToScreen(aadaSwitch)
+            } else {
+                modifyKnob(aadaSwitch)
+            }
+            refreshScreen()
         }
     }
 
@@ -397,6 +410,39 @@ object ScreenObjects {
             btn.text = vText
         } else {
             Logger.error(mTag, "refreshButtonText: Button(tag=$cTag) does not exist!")
+        }
+    }
+
+    private fun addSwitchToScreen(aadaSwitch: AADASwitch) {
+        with(aadaSwitch) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addSwitchToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            val params = setLayout(
+                x,
+                y,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            val switch = SwitchCompat(AADATheApp.instance.applicationContext)
+            switch.tag = screenTag
+            switch.layoutParams = params
+            val pad = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15.0F,
+                mDisplayMetrics
+            ).toInt()
+            switch.setPaddingRelative(pad, 0, pad, 0)
+            switch.text = text
+            mCanvasConstraintLayout.addView(switch)
+            switch.setOnCheckedChangeListener { _, isChecked ->
+                aadaSwitch.value = isChecked
+                Logger.debug("AADASwitch", "switch send $aadaSwitch")
+                writeData(
+                    AADASwitch.toBytesFromTag(aadaSwitch)
+                        ?.let { it2 -> DataProtocol.prepareFrame(it2) })
+            }
         }
     }
 
