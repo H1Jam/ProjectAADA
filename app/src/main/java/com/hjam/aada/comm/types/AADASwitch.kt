@@ -28,10 +28,10 @@ class AADASwitch(
         }
 
         fun toBytesFromTag(aadaSwitch: AADASwitch): ByteArray? {
-            val bb1 = ByteBuffer.allocate(Byte.SIZE_BYTES + Short.SIZE_BYTES + Short.SIZE_BYTES)
+            val bb1 = ByteBuffer.allocate(Byte.SIZE_BYTES + Short.SIZE_BYTES + Byte.SIZE_BYTES)
             bb1.order(ByteOrder.LITTLE_ENDIAN)
             val array = with(bb1) {
-                put(AADAKnob.objID)
+                put(objID)
                 putShort(aadaSwitch.tag.toShort())
                 put(if(aadaSwitch.value) 1 else 0)
             }.array()
