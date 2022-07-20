@@ -156,17 +156,18 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
             mTag, "heightPixels ${pxToMm(resources.displayMetrics.heightPixels)} " +
                     "widthPixels ${pxToMm(resources.displayMetrics.widthPixels)}"
         )
-        ScreenObjects.addTextToScreen(44, 30, -10, "First Test Label", 12, Color.BLUE)
-        ScreenObjects.addTextToScreen(44, 45, 15, "2nd Test Label", 15, 0)
         ScreenObjects.refreshText(86, "Refreshed It!")
         ScreenObjects.refreshText(-10, "Refreshed It! After Set")
         ScreenObjects.refreshText(12, "Refreshed It! After Set!")
-        ScreenObjects.addButtonToScreen(44, 300, 7, " First Button Label ", 28)
         //  ScreenObjects.addButtonToScreen(200, 360, 2, "Button Label ", 15)
-        ScreenObjects.addButtonToScreen(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN)
-        ScreenObjects.addButtonToScreen(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED)
+        ScreenObjects.addButton(AADAButton(44, 400, 1, "vText", 20, Color.WHITE, Color.GREEN),this)
+        ScreenObjects.addButton(AADAButton(44, 400, 1, "vText 2", 20, Color.BLACK, Color.RED),this)
         ScreenObjects.refreshButtonText(255, "Refreshed TexT!")
-        //ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100, 50, "Voltage", 33))
+        ScreenObjects.addSwitch(AADASwitch(60,200,1,0,false,16,Color.WHITE,"MyFirstSwitch"), this)
+        ScreenObjects.addSwitch(AADASwitch(60,240,4,0,true,16,Color.RED,"MyFirstSwitch2"), this)
+        ScreenObjects.addSwitch(AADASwitch(60,240,4,0,true,20,Color.YELLOW,"MyFirstSwitch2"), this)
+        //ScreenObjects.addSwitch(AADASwitch(0,0,4,1,true,0,0,""), this)
+        //ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100 50, "Voltage", 33))
         //ScreenObjects.addKnob(AADAKnob(170, 450, 80, -120, 200, 50, "Current", 34))
         //ScreenObjects.addGauge(AADAGauge(30, 220, 90, 20f, 250f, false, 100f, 120f, 180f, "RPM", 1))
         //ScreenObjects.addGauge(AADAGauge(30, 220, 60, 50f, 250f, false, 100f, 120f, 180f, "RPM", 1))
@@ -410,7 +411,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
             try {
                 //val bb =  ByteBuffer.wrap(inp)
                 //bb.order(ByteOrder.LITTLE_ENDIAN)
-                handleData(inp)
+                handleData(inp, this)
             } catch (ex: Exception) {
                 Log.e(mTag, "bluePackReceived Message " + ex.message.toString())
             }
