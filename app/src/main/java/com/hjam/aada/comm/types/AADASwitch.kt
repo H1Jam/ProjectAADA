@@ -1,6 +1,5 @@
 package com.hjam.aada.comm.types
 
-import com.hjam.aada.utils.Logger
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
