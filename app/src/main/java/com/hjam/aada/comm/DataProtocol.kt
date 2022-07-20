@@ -1,5 +1,6 @@
 package com.hjam.aada.comm
 
+import android.content.Context
 import com.hjam.aada.comm.types.DataStateMachine
 import com.hjam.aada.utils.Crc16
 import com.hjam.aada.utils.Logger
@@ -106,17 +107,17 @@ object DataProtocol {
     }
 
 
-    fun handleData(frameBytes: ByteArray){
+    fun handleData(frameBytes: ByteArray, context: Context){
         Logger.debug(mTag,"handleData!")
         if (frameBytes.size > mMinFrameLength && frameBytes[0] == DataDirection.ToAndroid.ordinal.toByte()){
-            dispatchData(frameBytes)
+            dispatchData(frameBytes, context)
         }
     }
 
-    private fun dispatchData(frameBytes: ByteArray){
+    private fun dispatchData(frameBytes: ByteArray, context: Context){
         Logger.debug(mTag,"dispatchData!")
         val bb =  ByteBuffer.wrap(frameBytes)
         bb.get() // To remove the first byes, the direction byte.
-        DataStateMachine.process(bb)
+        DataStateMachine.process(bb, context)
     }
 }
