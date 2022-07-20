@@ -14,6 +14,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
 import com.hjam.aada.comm.types.AADAMapMarker.Companion.Icons
@@ -74,7 +75,6 @@ object ScreenObjects {
         }
     }
 
-
     private fun refreshScreen() {
         //   for (tl in mScreenObjects) {
         Logger.debug(mTag, "UI: ${mScreenObjects.joinToString()}")
@@ -89,6 +89,7 @@ object ScreenObjects {
         canvasConstraintLayout: ConstraintLayout, topToTop: Int, leftToLeft: Int,
         displayMetrics: DisplayMetrics, writeListener: AADAWriter
     ) {
+
         mTopToTop = topToTop
         mLeftToLeft = leftToLeft
         mCanvasConstraintLayout = canvasConstraintLayout
@@ -100,11 +101,11 @@ object ScreenObjects {
         }
     }
 
-    fun addSwitch(aadaSwitch: AADASwitch) {
+    fun addSwitch(aadaSwitch: AADASwitch, context: Context) {
         if (mReady && aadaSwitch.tag > 0) {
             Logger.debug(mTag, "addSwitch: $aadaSwitch")
             if (mScreenObjects.add(aadaSwitch.screenTag)) {
-                addSwitchToScreen(aadaSwitch)
+                addSwitchToScreen(aadaSwitch, context)
             } else {
                 refreshSwitch(aadaSwitch)
             }
@@ -112,11 +113,11 @@ object ScreenObjects {
         }
     }
 
-    fun addKnob(aadaKnob: AADAKnob) {
+    fun addKnob(aadaKnob: AADAKnob, context: Context) {
         if (mReady && aadaKnob.tag > 0) {
             Logger.debug(mTag, "addKnob: $aadaKnob")
             if (mScreenObjects.add(aadaKnob.screenTag)) {
-                addKnobToScreen(aadaKnob)
+                addKnobToScreen(aadaKnob, context)
             } else {
                 modifyKnob(aadaKnob)
             }
@@ -124,11 +125,11 @@ object ScreenObjects {
         }
     }
 
-    fun addGauge(aadaGauge: AADAGauge) {
+    fun addGauge(aadaGauge: AADAGauge, context: Context) {
         if (mReady && aadaGauge.tag > 0) {
             Logger.debug(mTag, "aadaGauge: $aadaGauge")
             if (mScreenObjects.add(aadaGauge.screenTag)) {
-                addGaugeToScreen(aadaGauge)
+                addGaugeToScreen(aadaGauge, context)
             } else {
                 modifyGauge(aadaGauge)
             }
@@ -136,11 +137,11 @@ object ScreenObjects {
         }
     }
 
-    fun addMap(aadaMap: AADAMap) {
+    fun addMap(aadaMap: AADAMap, context: Context) {
         if (mReady && aadaMap.tag == 1 && mapPermissions) { // Only one map for now.
             Logger.debug(mTag, "add an aadaMap:$aadaMap")
             if (mScreenObjects.add(aadaMap.screenTag)) {
-                addMapToScreen(aadaMap)
+                addMapToScreen(aadaMap, context)
             } else {
                 refreshMap(aadaMap)
             }
@@ -163,21 +164,21 @@ object ScreenObjects {
         }
     }
 
-    fun addButton(aadaButton: AADAButton) {
+    fun addButton(aadaButton: AADAButton, context: Context) {
         if (mReady && aadaButton.tag > 0) {
             Logger.debug(mTag, "addButton: ${aadaButton.tag}")
             if (mScreenObjects.add(aadaButton.screenTag)) {
-                addButtonToScreen(aadaButton)
+                addButtonToScreen(aadaButton, context)
             } else {
-                modifyButton(aadaButton)
+                modifyButton(aadaButton, context)
             }
             refreshScreen()
         }
     }
 
-    private fun modifyButton(aadaButton: AADAButton) {
+    private fun modifyButton(aadaButton: AADAButton, context: Context) {
         Logger.debug(mTag, "modifyButton: ${aadaButton.tag}")
-        refreshButton(aadaButton)
+        refreshButton(aadaButton, context)
         refreshScreen()
     }
 
@@ -193,11 +194,11 @@ object ScreenObjects {
         refreshScreen()
     }
 
-    fun addTextLabel(aadaTextLabel: AADATextLabel) {
+    fun addTextLabel(aadaTextLabel: AADATextLabel, context: Context) {
         if (mReady && aadaTextLabel.tag > 0) {
             Logger.debug(mTag, "addTextLabel: ${aadaTextLabel.tag}")
             if (mScreenObjects.add(aadaTextLabel.screenTag)) {
-                addTextToScreen(aadaTextLabel)
+                addTextToScreen(aadaTextLabel, context)
                 refreshScreen()
             } else {
                 modifyTextLabel(aadaTextLabel)
@@ -216,7 +217,7 @@ object ScreenObjects {
 
     }
 
-    private fun addTextToScreen(aadaTextLabel: AADATextLabel) {
+    private fun addTextToScreen(aadaTextLabel: AADATextLabel, context: Context) {
         with(aadaTextLabel) {
             val params = setLayout(
                 x,
@@ -228,7 +229,7 @@ object ScreenObjects {
                 mTag, "addTextToScreen:[x:$x, y:$y, " +
                         "cTag:$screenTag, Text:$text], size:$fontSize"
             )
-            val lbl = TextView(AADATheApp.instance.applicationContext)
+            val lbl = TextView(context)
             lbl.tag = screenTag
             lbl.text = text
             lbl.layoutParams = params
@@ -239,10 +240,6 @@ object ScreenObjects {
             mCanvasConstraintLayout.addView(lbl)
 
         }
-    }
-
-    fun addTextToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int, textColor: Int) {
-        addTextLabel(AADATextLabel(x, y, cTag, vText, fSize, textColor))
     }
 
     fun refreshText(tag: Int, text: String) {
@@ -270,7 +267,7 @@ object ScreenObjects {
         }
     }
 
-    private fun refreshButton(aadaButton: AADAButton) {
+    private fun refreshButton(aadaButton: AADAButton, context: Context) {
         val btn: Button? =
             mCanvasConstraintLayout.findViewWithTag(aadaButton.screenTag)
         if (btn != null) {
@@ -279,7 +276,7 @@ object ScreenObjects {
                 btn.setTextColor(aadaButton.textColor)
             }
             if (aadaButton.backColor.toUInt() > 0u) {
-                btn.background = getDrawableFromColor(aadaButton.backColor)
+                btn.background = getDrawableFromColor(aadaButton.backColor, context)
             }
 
             if (aadaButton.fontSize > 0) {
@@ -312,6 +309,8 @@ object ScreenObjects {
                 with(aadaSwitch) {
                     switch.isChecked = switchValue
                     switch.text = text
+                    switch.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
+                    switch.setTextColor(textColor)
                 }
             } else {
                 Logger.debug(mTag, "removeSwitch: $aadaSwitch")
@@ -320,16 +319,6 @@ object ScreenObjects {
 
         } else {
             Logger.error(mTag, "refreshMap: mapView is null!")
-        }
-    }
-
-    private fun removeSwitch(adaSwitch: AADASwitch) {
-        with(adaSwitch) {
-            if (tag < 0 || tag > 255) {
-                Logger.error(mTag, "removeSwitch: Invalid tag! (tag:$tag)")
-                return
-            }
-
         }
     }
 
@@ -369,23 +358,7 @@ object ScreenObjects {
     }
 
 
-    fun addButtonToScreen(x: Int, y: Int, cTag: Int, vText: String, fSize: Int) {
-        addButton(AADAButton(x, y, cTag, vText, fSize, Color.BLACK, Color.LTGRAY))
-    }
-
-    fun addButtonToScreen(
-        x: Int,
-        y: Int,
-        cTag: Int,
-        vText: String,
-        fSize: Int,
-        textColor: Int,
-        backColor: Int
-    ) {
-        addButton(AADAButton(x, y, cTag, vText, fSize, textColor, backColor))
-    }
-
-    private fun addButtonToScreen(aadaButton: AADAButton) {
+    private fun addButtonToScreen(aadaButton: AADAButton, context: Context) {
         with(aadaButton) {
             if (tag < 0 || tag > 255) {
                 Logger.error(mTag, "addButtonToScreen: Invalid tag! (tag:$tag)")
@@ -401,14 +374,14 @@ object ScreenObjects {
                 mTag, "addButtonToScreen:[x:$x, y:$y, " +
                         "cTag:$screenTag, Text:$text], size:$fontSize"
             )
-            val btn = Button(AADATheApp.instance.applicationContext)
+            val btn = Button(context)
             btn.tag = screenTag
             btn.text = text
             btn.layoutParams = params
             btn.isAllCaps = false
             btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
             btn.setTextColor(textColor)
-            btn.background = getDrawableFromColor(backColor)
+            btn.background = getDrawableFromColor(backColor, context)
             val pad = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 15.0F,
@@ -453,7 +426,7 @@ object ScreenObjects {
         }
     }
 
-    private fun addSwitchToScreen(aadaSwitch: AADASwitch) {
+    private fun addSwitchToScreen(aadaSwitch: AADASwitch, context: Context) {
         with(aadaSwitch) {
             if (tag < 0 || tag > 255) {
                 Logger.error(mTag, "addSwitchToScreen: Invalid tag! (tag:$tag)")
@@ -465,7 +438,7 @@ object ScreenObjects {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            val switch = SwitchCompat(AADATheApp.instance.applicationContext)
+            val switch = SwitchCompat(context)//AADATheApp.instance.applicationContext)
             switch.tag = screenTag
             switch.layoutParams = params
             val pad = TypedValue.applyDimension(
@@ -475,6 +448,9 @@ object ScreenObjects {
             ).toInt()
             switch.setPaddingRelative(pad, 0, pad, 0)
             switch.text = text
+            switch.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
+            switch.setTextColor(textColor)
+            switch.isChecked = switchValue
             mCanvasConstraintLayout.addView(switch)
             switch.setOnCheckedChangeListener { _, isChecked ->
                 aadaSwitch.switchValue = isChecked
@@ -486,14 +462,14 @@ object ScreenObjects {
         }
     }
 
-    private fun addKnobToScreen(aadaKnob: AADAKnob) {
+    private fun addKnobToScreen(aadaKnob: AADAKnob, context: Context) {
         with(aadaKnob) {
             if (tag < 0 || tag > 255) {
                 Logger.error(mTag, "addKnobToScreen: Invalid tag! (tag:$tag)")
                 return
             }
             val params = setLayout(x, y, size, size)
-            val knb = DialKnob(AADATheApp.instance.applicationContext)
+            val knb = DialKnob(context)
             knb.tag = screenTag
             knb.layoutParams = params
             val pad = TypedValue.applyDimension(
@@ -601,14 +577,14 @@ object ScreenObjects {
         }
     }
 
-    private fun addMapToScreen(aadaMap: AADAMap) {
+    private fun addMapToScreen(aadaMap: AADAMap, context: Context) {
         with(aadaMap) {
             if (tag < 0 || tag > 255) {
                 Logger.error(mTag, "addMapToScreen: Invalid tag! (tag:$tag)")
                 return
             }
             val params = setLayout(x, y, width, height)
-            mapView = MapView(AADATheApp.instance.applicationContext)
+            mapView = MapView(context)
             mapView?.tag = screenTag
             mapView?.layoutParams = params
             val pad = TypedValue.applyDimension(
@@ -630,14 +606,14 @@ object ScreenObjects {
         }
     }
 
-    private fun addGaugeToScreen(aadaGauge: AADAGauge) {
+    private fun addGaugeToScreen(aadaGauge: AADAGauge, context: Context) {
         with(aadaGauge) {
             if (tag < 0 || tag > 255) {
                 Logger.error(mTag, "addGaugeToScreen: Invalid tag! (tag:$tag)")
                 return
             }
             val params = setLayout(x, y, size, size)
-            val gge = GaugeView(AADATheApp.instance.applicationContext)
+            val gge = GaugeView(context)
             gge.tag = screenTag
             gge.layoutParams = params
             val pad = TypedValue.applyDimension(
@@ -709,9 +685,9 @@ object ScreenObjects {
     }
 
 
-    private fun getDrawableFromColor(color: Int): Drawable? {
+    private fun getDrawableFromColor(color: Int, context: Context): Drawable? {
         return AppCompatResources.getDrawable(
-            AADATheApp.instance.applicationContext,
+            context,
             R.drawable.button_red
         )?.apply { setTint(color) }
     }
