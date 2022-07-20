@@ -41,8 +41,9 @@ class AADASwitch(
         }
     }
     override fun toString(): String {
-        return "AADAButton:[Tag:$tag($screenTag), x:$x, y:$y Text:$text, FontSize:$fontSize, " +
-                "textColor:${textColor.toString(16)}]"
+        return "AADASwitch:[Tag:$tag($screenTag), cmdId:$cmdId, switchValue:$switchValue, " +
+                "x:$x, y:$y Text:$text, FontSize:$fontSize, " +
+                "textColor:${textColor.toUInt().toString(16)}]"
     }
 
 }
