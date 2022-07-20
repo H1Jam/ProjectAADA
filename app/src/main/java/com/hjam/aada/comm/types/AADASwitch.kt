@@ -8,11 +8,12 @@ class AADASwitch(
     var x: Int,
     var y: Int,
     val tag: Int,
+    val cmdId: Int,
+    var switchValue : Boolean = false,
     var fontSize: Int,
     var textColor: Int,
     var text: String
 ) : AADAObject(tag, "swc") {
-    var value = false
     companion object {
         val objID = ScreenIDs.ToggleSwitch.ordinal.toByte()
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADASwitch {
@@ -20,10 +21,12 @@ class AADASwitch(
             val x = byteBuffer.short.toInt()
             val y = byteBuffer.short.toInt()
             val cTag = byteBuffer.short.toInt()
+            val cmdId = byteBuffer.get().toInt()
+            val switchValue = byteBuffer.get() != 0.toByte()
             val fSize = byteBuffer.short.toInt()
             val textColor: Int = byteBuffer.int
             val vText = StandardCharsets.UTF_8.decode(byteBuffer).toString()
-            return AADASwitch(x, y, cTag, fSize, textColor, vText)
+            return AADASwitch(x, y, cTag, cmdId, switchValue, fSize, textColor, vText)
         }
 
         fun toBytesFromTag(aadaSwitch: AADASwitch): ByteArray? {
@@ -32,7 +35,7 @@ class AADASwitch(
             val array = with(bb1) {
                 put(objID)
                 putShort(aadaSwitch.tag.toShort())
-                put(if(aadaSwitch.value) 1 else 0)
+                put(if(aadaSwitch.switchValue) 1 else 0)
             }.array()
             return array
         }
