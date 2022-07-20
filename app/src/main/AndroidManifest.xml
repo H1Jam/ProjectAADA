@@ -13,12 +13,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AADA">
+        android:theme="@style/ThemeAADANoActionBar">
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.AADA.NoActionBar">
+            android:theme="@style/ThemeAADANoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
