@@ -27,6 +27,7 @@ enum ScreenIDs : uint8_t {
   knob,
   mapView,
   mapMarker
+  toggleSwitch
 };
 
 int sendFrame(uint8_t *destBuffer, uint8_t const *buffer, size_t len);
