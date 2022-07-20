@@ -43,7 +43,6 @@ object ScreenObjects {
     private var mapView: MapView? = null
     var mapPermissions = false
 
-    //private val mMarkerListMap: MutableMap<Int, Marker> = mutableMapOf()
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
     private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
 
@@ -684,13 +683,8 @@ object ScreenObjects {
         }
     }
 
-
     private fun getDrawableFromColor(color: Int, context: Context): Drawable? {
-        return AppCompatResources.getDrawable(
-            context,
-            R.drawable.button_red
-        )?.apply { setTint(color) }
+        return getDrawable(context, R.drawable.button_red)?.apply { setTint(color) }
     }
-
 
 }
