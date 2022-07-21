@@ -37,12 +37,30 @@ class DialKnob {
     }
 };
 
+class Switch {
+  private:
+    bool * value = NULL;
+  public:
+    Switch() {
+      Switch(NULL);
+    }
+    Switch(bool *val) {
+      value = val;
+    }
+    void update(bool val) {
+      if (value != NULL) {
+        *value = val;
+      }
+    }
+};
+
+
 #define maxButtons  8
 class ScreenObjects {
   private:
     Button* buttons;
     DialKnob* dialKnobs;
-    bool *switchs[maxButtons];
+    Switch *switchs;
     uint8_t buttonIndex = 0;
     uint8_t dialKnobIndex = 0;
     uint8_t switchIndex = 0;
@@ -50,7 +68,7 @@ class ScreenObjects {
     ScreenObjects() {
       buttons = new Button[maxButtons];
       dialKnobs = new DialKnob[maxButtons];
-      
+      switchs = new Switch[maxButtons];
       dialKnobIndex = 0;
       buttonIndex = 0;
     }
@@ -84,13 +102,13 @@ class ScreenObjects {
 
     void registerSwitch(uint8_t tag, bool *val) {
       if (tag < maxButtons) {
-        switchs[tag] = val;
+        switchs[tag] = Switch(val);
       }
     }
 
     void updateSwitch(uint8_t tag, bool val) {
       if (tag < maxButtons) {
-        *switchs[tag] = val;
+        switchs[tag].update(val);
       }
     }
 };
