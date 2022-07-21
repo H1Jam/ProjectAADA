@@ -348,7 +348,7 @@ class ScreenSwitch {
     uint8_t cmdId = 0;
     bool switchValue;
     int16_t fontSize;
-    int16_t textColor;
+    int32_t textColor;
     std::string labelText;
     int getBytes(uint8_t *out) {
       //Todo: add a better lenght limit!
