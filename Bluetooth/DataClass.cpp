@@ -99,7 +99,8 @@ class ScreenObjects {
         buttons[tag].clicked();
       }
     }
-
+    
+    //Todo just get ScreenSwitch
     void registerSwitch(uint8_t tag, bool *val) {
       if (tag < maxButtons) {
         switchs[tag] = Switch(val);

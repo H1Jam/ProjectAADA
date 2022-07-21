@@ -28,6 +28,8 @@ ScreenGauge screenGauge;
 ScreenMap screenMap;
 ScreenMapMarker screenMapMarker1;
 ScreenMapMarker screenMapMarker2;
+ScreenSwitch screenSwitch;
+ScreenSwitch screenSwitch1;
 bool label_counter = false;
 bool button_counter = false;
 int inpTemp;
@@ -120,11 +122,14 @@ void setup() {
   screenObjects.addDialKnob(&knb2);
   screenObjects.addDialKnob(&knb3);
   screenObjects.addDialKnob(&knb4);
-  Serial.println( screenObjects.addButton(&buttonClicked0));
-  Serial.println( screenObjects.addButton(&buttonClicked1));
-  Serial.println(  screenObjects.addButton(&buttonClicked2));
-  Serial.println(  screenObjects.addButton(&buttonClicked3));
-
+  Serial.println(screenObjects.addButton(&buttonClicked0));
+  Serial.println(screenObjects.addButton(&buttonClicked1));
+  Serial.println(screenObjects.addButton(&buttonClicked2));
+  Serial.println(screenObjects.addButton(&buttonClicked3));
+  screenSwitch.tag = 3;
+  screenSwitch1.tag = 2;
+  screenObjects.registerSwitch(screenSwitch.tag, &screenSwitch.switchValue);//Todo just get screenSwitch
+  screenObjects.registerSwitch(screenSwitch1.tag, &screenSwitch1.switchValue);
   // screenObjects.clickButton(2);
   //screenObjects.clickButton(0);
   //screenObjects.clickButton(1);
@@ -168,15 +173,15 @@ void setup() {
   data1.mInt = -1643;
   char* my_s_bytes = reinterpret_cast<char*>(&data1);
   bool aTst = true;
-  screenObjects.registerSwitch(1, &aTst);
-  screenObjects.updateSwitch(1, false);
-  Serial.println(aTst);
-  screenObjects.updateSwitch(1, true);
-  Serial.println(aTst);
-  screenObjects.updateSwitch(1, true);
-  Serial.println(aTst);
-  screenObjects.updateSwitch(1, false);
-  Serial.println(aTst);
+//  screenObjects.registerSwitch(1, &aTst);
+//  screenObjects.updateSwitch(1, false);
+//  Serial.println(aTst);
+//  screenObjects.updateSwitch(1, true);
+//  Serial.println(aTst);
+//  screenObjects.updateSwitch(1, true);
+//  Serial.println(aTst);
+//  screenObjects.updateSwitch(1, false);
+//  Serial.println(aTst);
 }
 
 
@@ -231,6 +236,12 @@ void loop() {
         Serial.println(knb2);
         Serial.println(knb3);
         Serial.println(knb4);
+      }
+      if (buf[1] == ScreenIDs::toggleSwitch) {
+         screenObjects.updateSwitch(buf[2], buf[4]==1);
+        Serial.print("\nSwitchs:");
+        Serial.println(screenSwitch.switchValue);
+        Serial.println(screenSwitch1.switchValue);
       }
 
       for (int i = 0; i < a ; i++ ) {
@@ -315,13 +326,12 @@ void buttonClicked3()
   addSwitch();
   Serial.print("\n3rd button has been clicked!\n");
 }
-ScreenSwitch screenSwitch;
+
 
 void addSwitch() {
 
   screenSwitch.x = 50;
   screenSwitch.y = 270;
-  screenSwitch.tag = 99;
   screenSwitch.cmdId = 0;
   screenSwitch.switchValue = hasMapMarker;
   screenSwitch.fontSize = 30;
@@ -332,7 +342,19 @@ void addSwitch() {
   if (frameSendBufferSize > 0) {
     SerialBT.write(frameSendBuffer, frameSendBufferSize);
   }
-
+  
+  screenSwitch1.x = 50;
+  screenSwitch1.y = 320;
+  screenSwitch1.cmdId = 0;
+  screenSwitch1.switchValue = !hasMapMarker;
+  screenSwitch1.fontSize = 20;
+  screenSwitch1.textColor = YELLOW;
+  screenSwitch1.labelText = "Switch2";
+  dLenght = screenSwitch1.getBytes(bufFrame);
+  frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
+  if (frameSendBufferSize > 0) {
+    SerialBT.write(frameSendBuffer, frameSendBufferSize);
+  }
 }
 
 
