@@ -1,24 +1,19 @@
 package com.hjam.aada
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.Icon
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
 import com.hjam.aada.comm.types.AADAMapMarker.Companion.Icons
-import com.hjam.aada.comm.types.AADAMapMarker.Companion.MarkerCmdId
 import com.hjam.aada.utils.Logger
 import com.hjam.aada.widgets.DialKnob
 import com.hjam.aada.widgets.GaugeView
@@ -28,7 +23,6 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-
 
 object ScreenObjects {
     private const val mTag = "ScreenObjects"
