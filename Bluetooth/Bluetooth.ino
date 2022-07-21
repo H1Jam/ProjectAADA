@@ -309,7 +309,7 @@ ScreenSwitch screenSwitch;
 void addSwitch(){
   
  screenSwitch.x =50;
- screenSwitch.y = 200;
+ screenSwitch.y = 270;
  screenSwitch.tag = 99;
  screenSwitch.cmdId = 0;
  screenSwitch.switchValue = hasMapMarker;
