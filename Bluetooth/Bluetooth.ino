@@ -8,8 +8,6 @@
 #endif
 // make an echo protocole.
 
-
-
 BluetoothSerial SerialBT;
 bool doWait = false;
 byte inp = 0;
@@ -303,8 +301,29 @@ void buttonClicked3()
     addMap();
     hasMap = true;
   }
+  addSwitch();
   Serial.print("\n3rd button has been clicked!\n");
 }
+ScreenSwitch screenSwitch;
+
+void addSwitch(){
+  
+ screenSwitch.x =50;
+ screenSwitch.y = 200;
+ screenSwitch.tag = 99;
+ screenSwitch.cmdId = 0;
+ screenSwitch.switchValue = hasMapMarker;
+ screenSwitch.fontSize =30;
+ screenSwitch.textColor = MAGENTA;
+ screenSwitch.labelText = "SwitchFromC++";
+  int dLenght = screenSwitch.getBytes(bufFrame);
+  frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
+  if (frameSendBufferSize > 0) {
+    SerialBT.write(frameSendBuffer, frameSendBufferSize);
+  }
+  
+}
+
 
 float gVal = 0;
 uint8_t iconId =0;

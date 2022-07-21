@@ -26,7 +26,7 @@ enum ScreenIDs : uint8_t {
   gauge2,
   knob,
   mapView,
-  mapMarker
+  mapMarker,
   toggleSwitch
 };
 
