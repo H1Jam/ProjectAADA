@@ -46,22 +46,6 @@ object ScreenObjects {
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
     private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
 
-    private var markerIconRedCar: Drawable? = null
-    private var markerIconBlueCar: Drawable? = null
-    private var markerIconYellowCar: Drawable? = null
-    private var markerIconGreenCar: Drawable? = null
-    private var markerIconRedPlane: Drawable? = null
-    private var markerIconBluePlane: Drawable? = null
-    private var markerIconGreenPlane: Drawable? = null
-
-    enum class ViewColors {
-        Red,
-        Blue,
-        White,
-        Black,
-        Yellow
-    }
-
     fun mapViewResume() {
         if (mapView != null) {
             mapView?.onResume()
