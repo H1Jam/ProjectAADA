@@ -169,7 +169,14 @@ void setup() {
   char* my_s_bytes = reinterpret_cast<char*>(&data1);
   bool aTst = true;
   screenObjects.registerSwitch(1, &aTst);
-  
+  screenObjects.updateSwitch(1, false);
+  Serial.println(aTst);
+  screenObjects.updateSwitch(1, true);
+  Serial.println(aTst);
+  screenObjects.updateSwitch(1, true);
+  Serial.println(aTst);
+  screenObjects.updateSwitch(1, false);
+  Serial.println(aTst);
 }
 
 
@@ -225,7 +232,7 @@ void loop() {
         Serial.println(knb3);
         Serial.println(knb4);
       }
-      
+
       for (int i = 0; i < a ; i++ ) {
         Serial.print(buf[i]);
         Serial.print(",");
@@ -297,7 +304,7 @@ void buttonClicked3()
     if (!hasMapMarker) {
       addMapMarker();
       hasMapMarker = true;
-    }else{
+    } else {
       removeMapMarker();
       hasMapMarker = false;
     }
@@ -310,27 +317,27 @@ void buttonClicked3()
 }
 ScreenSwitch screenSwitch;
 
-void addSwitch(){
-  
- screenSwitch.x =50;
- screenSwitch.y = 270;
- screenSwitch.tag = 99;
- screenSwitch.cmdId = 0;
- screenSwitch.switchValue = hasMapMarker;
- screenSwitch.fontSize =30;
- screenSwitch.textColor = MAGENTA;
- screenSwitch.labelText = "SwitchFromC++";
+void addSwitch() {
+
+  screenSwitch.x = 50;
+  screenSwitch.y = 270;
+  screenSwitch.tag = 99;
+  screenSwitch.cmdId = 0;
+  screenSwitch.switchValue = hasMapMarker;
+  screenSwitch.fontSize = 30;
+  screenSwitch.textColor = MAGENTA;
+  screenSwitch.labelText = "SwitchFromC++";
   int dLenght = screenSwitch.getBytes(bufFrame);
   frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
   if (frameSendBufferSize > 0) {
     SerialBT.write(frameSendBuffer, frameSendBufferSize);
   }
-  
+
 }
 
 
 float gVal = 0;
-uint8_t iconId =0;
+uint8_t iconId = 0;
 void addMapMarker()
 {
   gVal += 10;
@@ -346,8 +353,8 @@ void addMapMarker()
     SerialBT.write(frameSendBuffer, frameSendBufferSize);
   }
   iconId++;
-  if (iconId>11){
-    iconId =0;
+  if (iconId > 11) {
+    iconId = 0;
   }
   screenMapMarker2.tag = 2;
   screenMapMarker2.lat = 43.733825f;
