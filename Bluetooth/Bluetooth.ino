@@ -167,6 +167,9 @@ void setup() {
   data1.mFlt = 16.2132564f;
   data1.mInt = -1643;
   char* my_s_bytes = reinterpret_cast<char*>(&data1);
+  bool aTst = true;
+  screenObjects.registerSwitch(1, &aTst);
+  
 }
 
 
@@ -222,6 +225,7 @@ void loop() {
         Serial.println(knb3);
         Serial.println(knb4);
       }
+      
       for (int i = 0; i < a ; i++ ) {
         Serial.print(buf[i]);
         Serial.print(",");

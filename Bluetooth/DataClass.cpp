@@ -37,18 +37,20 @@ class DialKnob {
     }
 };
 
-
+#define maxButtons  8
 class ScreenObjects {
   private:
-    const int8_t maxButtons = 8;
     Button* buttons;
     DialKnob* dialKnobs;
+    bool *switchs[maxButtons];
     uint8_t buttonIndex = 0;
     uint8_t dialKnobIndex = 0;
+    uint8_t switchIndex = 0;
   public:
     ScreenObjects() {
       buttons = new Button[maxButtons];
       dialKnobs = new DialKnob[maxButtons];
+      
       dialKnobIndex = 0;
       buttonIndex = 0;
     }
@@ -77,6 +79,18 @@ class ScreenObjects {
     void clickButton(uint8_t tag) {
       if (tag < buttonIndex) {
         buttons[tag].clicked();
+      }
+    }
+
+    void registerSwitch(uint8_t tag, bool * val) {
+      if (tag < switchIndex) {
+        switchs[tag] = val;
+      }
+    }
+
+    void updateSwitch(uint8_t tag, bool val) {
+      if (tag < switchIndex) {
+        *switchs[tag] = val;
       }
     }
 };
