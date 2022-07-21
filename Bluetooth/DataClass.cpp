@@ -82,14 +82,14 @@ class ScreenObjects {
       }
     }
 
-    void registerSwitch(uint8_t tag, bool * val) {
-      if (tag < switchIndex) {
+    void registerSwitch(uint8_t tag, bool *val) {
+      if (tag < maxButtons) {
         switchs[tag] = val;
       }
     }
 
     void updateSwitch(uint8_t tag, bool val) {
-      if (tag < switchIndex) {
+      if (tag < maxButtons) {
         *switchs[tag] = val;
       }
     }
