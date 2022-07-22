@@ -33,10 +33,14 @@ class AADASeekBar(
             val array = with(bb1) {
                 put(objID)
                 putShort(aadaSeekBar.tag.toShort())
-                putShort(aadaSeekBar.seekValue.toShort())
+                putShort((aadaSeekBar.seekValue.coerceIn(0,aadaSeekBar.maxValue)).toShort())
             }.array()
             return array
         }
+    }
+
+    fun setSeek(value : Int){
+        this.seekValue = value.coerceIn(0,this.maxValue)
     }
 
     override fun toString(): String {

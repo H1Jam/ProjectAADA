@@ -319,7 +319,7 @@ object ScreenObjects {
         if (seekBar != null) {
             if (aadaSeekBar.cmdId == 0) {
                 with(aadaSeekBar) {
-                    seekBar.progress = seekValue
+                    seekBar.progress = seekValue.coerceIn(0,maxValue)
                     seekBar.max = maxValue
                 }
             } else {
@@ -458,8 +458,9 @@ object ScreenObjects {
                 mDisplayMetrics
             ).toInt()
             seekBar.setPaddingRelative(pad, 0, pad, 0)
-            seekBar.progress = seekValue
             seekBar.max = maxValue
+            seekValue = seekValue.coerceIn(0,maxValue)
+            seekBar.progress = seekValue
             mCanvasConstraintLayout.addView(seekBar)
             seekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(
@@ -467,19 +468,19 @@ object ScreenObjects {
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    aadaSeekBar.seekValue = progress
+                    aadaSeekBar.setSeek(progress)
                     // Limit the rate unless it hits the end or beginning.
                     sendSeekBar(aadaSeekBar, ((progress == seekBar?.max) or (progress == 0)))
                 }
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
                     if (seekBar?.progress !=null){
-                        aadaSeekBar.seekValue = seekBar.progress
+                        aadaSeekBar.setSeek(seekBar.progress)
                         sendSeekBar(aadaSeekBar, true)
                     }
                 }
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                     if (seekBar?.progress !=null){
-                        aadaSeekBar.seekValue = seekBar.progress
+                        aadaSeekBar.setSeek(seekBar.progress)
                         sendSeekBar(aadaSeekBar, true)
                     }
                 }
