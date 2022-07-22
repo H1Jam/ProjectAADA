@@ -40,7 +40,7 @@ class AADASeekBar(
     }
 
     override fun toString(): String {
-        return "AADASwitch:[Tag:$tag($screenTag), cmdId:$cmdId, seekValue:$seekValue, " +
+        return "AADASeekBar:[Tag:$tag($screenTag), cmdId:$cmdId, seekValue:$seekValue, " +
                 "x:$x, y:$y, width:$width, maxValue:$maxValue]"
     }
 }
