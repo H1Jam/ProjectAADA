@@ -290,7 +290,6 @@ object ScreenObjects {
         }
     }
 
-
     private fun refreshSwitch(aadaSwitch: AADASwitch) {
         Logger.debug(mTag, "refreshSwitch: aadaSwitch:$aadaSwitch")
         val switch: SwitchCompat? =
@@ -468,13 +467,21 @@ object ScreenObjects {
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    sendSeekBar(aadaSeekBar, false)
+                    aadaSeekBar.seekValue = progress
+                    // Limit the rate unless it hits the end or beginning.
+                    sendSeekBar(aadaSeekBar, ((progress == seekBar?.max) or (progress == 0)))
                 }
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    sendSeekBar(aadaSeekBar, true)
+                    if (seekBar?.progress !=null){
+                        aadaSeekBar.seekValue = seekBar.progress
+                        sendSeekBar(aadaSeekBar, true)
+                    }
                 }
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    sendSeekBar(aadaSeekBar, true)
+                    if (seekBar?.progress !=null){
+                        aadaSeekBar.seekValue = seekBar.progress
+                        sendSeekBar(aadaSeekBar, true)
+                    }
                 }
             })
         }
