@@ -79,6 +79,7 @@ class ScreenObjects {
     Button* buttons;
     DialKnob* dialKnobs;
     Switch *switchs;
+    SeekBar *SeekBars;
     uint8_t buttonIndex = 0;
     uint8_t dialKnobIndex = 0;
     uint8_t switchIndex = 0;
@@ -87,6 +88,7 @@ class ScreenObjects {
       buttons = new Button[maxButtons];
       dialKnobs = new DialKnob[maxButtons];
       switchs = new Switch[maxButtons];
+      SeekBar = new SeekBar[maxButtons];
       dialKnobIndex = 0;
       buttonIndex = 0;
     }
@@ -130,6 +132,19 @@ class ScreenObjects {
         switchs[tag].update(val);
       }
     }
+
+    void registerSeekBar(ScreenSeekBar screenSeekBar) {
+      if (screenSeekBar.tag < maxButtons) {
+        seekBars[tag] = seekBars(&screenSeekBar.seekValue);
+      }
+    }
+
+    void updateSeekBar(ScreenSeekBar screenSeekBar) {
+      if (screenSeekBar.tag < maxButtons) {
+        seekBars[tag].update(val);
+      }
+    }
+    
 };
 
 
