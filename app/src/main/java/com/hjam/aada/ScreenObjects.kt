@@ -7,8 +7,10 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
@@ -39,7 +41,7 @@ object ScreenObjects {
 
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
     private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
-
+    private var mDataRateLimiter =0L
     fun mapViewResume() {
         if (mapView != null) {
             mapView?.onResume()
@@ -75,6 +77,18 @@ object ScreenObjects {
         mWriteListener = writeListener
         for (icon in Icons.values()) {
             mIconsDrawable[icon] = getDrawable(context, icon.drawableId)
+        }
+    }
+
+    fun addSeekBar(aadaSeekBar: AADASeekBar, context: Context) {
+        if (mReady && aadaSeekBar.tag > 0) {
+            Logger.debug(mTag, "addSeekBar: $aadaSeekBar")
+            if (mScreenObjects.add(aadaSeekBar.screenTag)) {
+                addSeekBarToScreen(aadaSeekBar, context)
+            } else {
+                refreshSeekBar(aadaSeekBar)
+            }
+            refreshScreen()
         }
     }
 
@@ -295,9 +309,30 @@ object ScreenObjects {
             }
 
         } else {
-            Logger.error(mTag, "refreshMap: mapView is null!")
+            Logger.error(mTag, "refreshSwitch: switch is null!")
         }
     }
+
+    private fun refreshSeekBar(aadaSeekBar: AADASeekBar) {
+        Logger.debug(mTag, "refreshSeekBar: aadaSeekBar:$aadaSeekBar")
+        val seekBar: AppCompatSeekBar? =
+            mCanvasConstraintLayout.findViewWithTag(aadaSeekBar.screenTag)
+        if (seekBar != null) {
+            if (aadaSeekBar.cmdId == 0) {
+                with(aadaSeekBar) {
+                    seekBar.progress = seekValue
+                    seekBar.max = maxValue
+                }
+            } else {
+                Logger.debug(mTag, "removeSeekBar: $aadaSeekBar")
+                removeViewByTag(aadaSeekBar.screenTag)
+            }
+
+        } else {
+            Logger.error(mTag, "refreshSeekBar: seekBar is null!")
+        }
+    }
+
 
     private fun removeViewByTag(screenTag: String) {
         val view: View? =
@@ -402,6 +437,60 @@ object ScreenObjects {
             Logger.error(mTag, "refreshButtonText: Button(tag=$cTag) does not exist!")
         }
     }
+
+    private fun addSeekBarToScreen(aadaSeekBar: AADASeekBar, context: Context) {
+        with(aadaSeekBar) {
+            if (tag < 0 || tag > 255) {
+                Logger.error(mTag, "addSeekBarToScreen: Invalid tag! (tag:$tag)")
+                return
+            }
+            val params = setLayout(
+                x,
+                y,
+                width,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            val seekBar = AppCompatSeekBar(context)
+            seekBar.tag = screenTag
+            seekBar.layoutParams = params
+            val pad = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15.0F,
+                mDisplayMetrics
+            ).toInt()
+            seekBar.setPaddingRelative(pad, 0, pad, 0)
+            seekBar.progress = seekValue
+            seekBar.max = maxValue
+            mCanvasConstraintLayout.addView(seekBar)
+            seekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    sendSeekBar(aadaSeekBar, false)
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    sendSeekBar(aadaSeekBar, true)
+                }
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    sendSeekBar(aadaSeekBar, true)
+                }
+            })
+        }
+    }
+
+    fun sendSeekBar(aadaSeekBar: AADASeekBar, forceSend: Boolean){
+        if (!forceSend && (System.currentTimeMillis() - mDataRateLimiter) < AADASeekBar.minCallTime){
+            return
+        }
+        mDataRateLimiter = System.currentTimeMillis()
+        writeData(
+            AADASeekBar.toBytesFromTag(aadaSeekBar)
+                ?.let { it2 -> DataProtocol.prepareFrame(it2) })
+        Logger.debug(mTag, "sendSeekBar $aadaSeekBar")
+    }
+
 
     private fun addSwitchToScreen(aadaSwitch: AADASwitch, context: Context) {
         with(aadaSwitch) {
