@@ -54,6 +54,24 @@ class Switch {
     }
 };
 
+class SeekBar {
+  private:
+    int16_t * value = NULL;
+  public:
+    SeekBar() {
+      SeekBar(NULL);
+    }
+    SeekBar(int16_t *val) {
+      value = val;
+    }
+    void update(int16_t val) {
+      if (value != NULL) {
+        *value = val;
+      }
+    }
+};
+
+
 
 #define maxButtons  8
 class ScreenObjects {
@@ -412,17 +430,16 @@ class ScreenSwitch {
 
 class ScreenSeekBar {
   private:
-    uint8_t objID = ScreenIDs::knob;
+    uint8_t objID = ScreenIDs::seekBar;
     int offset = 0;
   public:
-    int16_t x;
-    int16_t y;
+    int16_t x = 0;
+    int16_t y = 0;
     int16_t tag;
-    int16_t dimSize;
-    int16_t minValue;
-    int16_t maxValue;
-    int16_t startValue;
-    std::string labelText;
+    uint8_t cmdId = 0;
+    int16_t seekValue = 0;
+    int16_t maxValue = 100;
+    int16_t width = 200;
     int getBytes(uint8_t *out) {
       //Todo: add a better lenght limit!
       offset = 0;
@@ -434,21 +451,14 @@ class ScreenSeekBar {
       offset += sizeof(y);
       memcpy(out + offset, &tag, 2);
       offset += sizeof(tag);
-      memcpy(out + offset, &dimSize, 2);
-      offset += sizeof(dimSize);
-      memcpy(out + offset, &minValue, 2);
-      offset += sizeof(minValue);
-      memcpy(out + offset, &maxValue, 2);
+      memcpy(out + offset, &cmdId, sizeof(cmdId));
+      offset += sizeof(cmdId);
+      memcpy(out + offset, &seekValue, sizeof(seekValue));
+      offset += sizeof(seekValue);
+      memcpy(out + offset, &maxValue, sizeof(maxValue));
       offset += sizeof(maxValue);
-      memcpy(out + offset, &startValue, 2);
-      offset += sizeof(startValue);
-      if (labelText.length() > 32) {
-        memcpy(out + offset, labelText.data(), 32);
-        return (offset + 32);
-      } else {
-        memcpy(out + offset, labelText.data(), labelText.length());
-        return offset + labelText.length();
-      }
+      memcpy(out + offset, &width, sizeof(width));
+      offset += sizeof(width);
     }
 };
 
