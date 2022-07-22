@@ -73,81 +73,6 @@ class SeekBar {
 
 
 
-#define maxButtons  8
-class ScreenObjects {
-  private:
-    Button* buttons;
-    DialKnob* dialKnobs;
-    Switch *switchs;
-    SeekBar *SeekBars;
-    uint8_t buttonIndex = 0;
-    uint8_t dialKnobIndex = 0;
-    uint8_t switchIndex = 0;
-  public:
-    ScreenObjects() {
-      buttons = new Button[maxButtons];
-      dialKnobs = new DialKnob[maxButtons];
-      switchs = new Switch[maxButtons];
-      SeekBar = new SeekBar[maxButtons];
-      dialKnobIndex = 0;
-      buttonIndex = 0;
-    }
-
-    int32_t addButton(void (*buttonCallback)(void)) {
-      if (buttonIndex < maxButtons) {
-        buttons[buttonIndex] = Button(buttonCallback);
-        buttonIndex++;
-      }
-      return (int32_t)buttonCallback;
-    }
-
-    void addDialKnob(int16_t * val) {
-      if (dialKnobIndex < maxButtons) {
-        dialKnobs[dialKnobIndex] = DialKnob(val);
-        dialKnobIndex++;
-      }
-    }
-
-    void knobChanged(int8_t tag, int val) {
-      if (tag < dialKnobIndex) {
-        dialKnobs[tag].changed(val);
-      }
-    }
-
-    void clickButton(uint8_t tag) {
-      if (tag < buttonIndex) {
-        buttons[tag].clicked();
-      }
-    }
-
-    //Todo just get ScreenSwitch
-    void registerSwitch(uint8_t tag, bool *val) {
-      if (tag < maxButtons) {
-        switchs[tag] = Switch(val);
-      }
-    }
-
-    void updateSwitch(uint8_t tag, bool val) {
-      if (tag < maxButtons) {
-        switchs[tag].update(val);
-      }
-    }
-
-    void registerSeekBar(ScreenSeekBar screenSeekBar) {
-      if (screenSeekBar.tag < maxButtons) {
-        seekBars[tag] = seekBars(&screenSeekBar.seekValue);
-      }
-    }
-
-    void updateSeekBar(ScreenSeekBar screenSeekBar) {
-      if (screenSeekBar.tag < maxButtons) {
-        seekBars[tag].update(val);
-      }
-    }
-    
-};
-
-
 class Data1 {
   public:
     int64_t  mLng;
@@ -477,7 +402,82 @@ class ScreenSeekBar {
     }
 };
 
-void copyAndOffset(uint8_t *out, uint8_t *offset, const void * source, size_t num) {
-  memcpy(out + (*offset), source, num);
-  *offset += sizeof(num);
-}
+//void copyAndOffset(uint8_t *out, uint8_t *offset, const void * source, size_t num) {
+//  memcpy(out + (*offset), source, num);
+//  *offset += sizeof(num);
+//}
+//
+
+#define maxButtons  8
+class ScreenObjects {
+  private:
+    Button* buttons;
+    DialKnob* dialKnobs;
+    Switch *switchs;
+    SeekBar *seekBars;
+    uint8_t buttonIndex = 0;
+    uint8_t dialKnobIndex = 0;
+    uint8_t switchIndex = 0;
+  public:
+    ScreenObjects() {
+      buttons = new Button[maxButtons];
+      dialKnobs = new DialKnob[maxButtons];
+      switchs = new Switch[maxButtons];
+      seekBars = new SeekBar[maxButtons];
+      dialKnobIndex = 0;
+      buttonIndex = 0;
+    }
+
+    int32_t addButton(void (*buttonCallback)(void)) {
+      if (buttonIndex < maxButtons) {
+        buttons[buttonIndex] = Button(buttonCallback);
+        buttonIndex++;
+      }
+      return (int32_t)buttonCallback;
+    }
+
+    void addDialKnob(int16_t * val) {
+      if (dialKnobIndex < maxButtons) {
+        dialKnobs[dialKnobIndex] = DialKnob(val);
+        dialKnobIndex++;
+      }
+    }
+
+    void knobChanged(int8_t tag, int val) {
+      if (tag < dialKnobIndex) {
+        dialKnobs[tag].changed(val);
+      }
+    }
+
+    void clickButton(uint8_t tag) {
+      if (tag < buttonIndex) {
+        buttons[tag].clicked();
+      }
+    }
+
+    //Todo just get ScreenSwitch
+    void registerSwitch(uint8_t tag, bool *val) {
+      if (tag < maxButtons) {
+        switchs[tag] = Switch(val);
+      }
+    }
+
+    void updateSwitch(uint8_t tag, bool val) {
+      if (tag < maxButtons) {
+        switchs[tag].update(val);
+      }
+    }
+
+    void registerSeekBar(ScreenSeekBar screenSeekBar) {
+      if (screenSeekBar.tag < maxButtons) {
+        seekBars[screenSeekBar.tag] = SeekBar(&screenSeekBar.seekValue);
+      }
+    }
+
+    void updateSeekBar(uint8_t tag, int16_t val) {
+      if (tag < maxButtons) {
+        seekBars[tag].update(val);
+      }
+    }
+    
+};
