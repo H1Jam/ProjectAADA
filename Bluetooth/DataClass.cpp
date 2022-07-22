@@ -469,9 +469,9 @@ class ScreenObjects {
       }
     }
 
-    void registerSeekBar(ScreenSeekBar screenSeekBar) {
-      if (screenSeekBar.tag < maxButtons) {
-        seekBars[screenSeekBar.tag] = SeekBar(&screenSeekBar.seekValue);
+    void registerSeekBar(ScreenSeekBar *screenSeekBar) {
+      if (screenSeekBar->tag < maxButtons) {
+        seekBars[screenSeekBar->tag] = SeekBar(&screenSeekBar->seekValue);
       }
     }
 
