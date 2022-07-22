@@ -99,7 +99,7 @@ class ScreenObjects {
         buttons[tag].clicked();
       }
     }
-    
+
     //Todo just get ScreenSwitch
     void registerSwitch(uint8_t tag, bool *val) {
       if (tag < maxButtons) {
@@ -409,3 +409,50 @@ class ScreenSwitch {
       return offset + labelText.length();
     }
 };
+
+class ScreenSeekBar {
+  private:
+    uint8_t objID = ScreenIDs::knob;
+    int offset = 0;
+  public:
+    int16_t x;
+    int16_t y;
+    int16_t tag;
+    int16_t dimSize;
+    int16_t minValue;
+    int16_t maxValue;
+    int16_t startValue;
+    std::string labelText;
+    int getBytes(uint8_t *out) {
+      //Todo: add a better lenght limit!
+      offset = 0;
+      memcpy(out, &objID, 1);
+      offset += sizeof(objID);
+      memcpy(out + offset, &x, 2);
+      offset += sizeof(x);
+      memcpy(out + offset, &y, 2);
+      offset += sizeof(y);
+      memcpy(out + offset, &tag, 2);
+      offset += sizeof(tag);
+      memcpy(out + offset, &dimSize, 2);
+      offset += sizeof(dimSize);
+      memcpy(out + offset, &minValue, 2);
+      offset += sizeof(minValue);
+      memcpy(out + offset, &maxValue, 2);
+      offset += sizeof(maxValue);
+      memcpy(out + offset, &startValue, 2);
+      offset += sizeof(startValue);
+      if (labelText.length() > 32) {
+        memcpy(out + offset, labelText.data(), 32);
+        return (offset + 32);
+      } else {
+        memcpy(out + offset, labelText.data(), labelText.length());
+        return offset + labelText.length();
+      }
+    }
+};
+
+void copyAndOffset(uint8_t *out, uint8_t *offset, const void * source, size_t num) {
+  memcpy(out + (*offset), source, num);
+  *offset += sizeof(num);
+}
