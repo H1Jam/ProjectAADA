@@ -49,6 +49,11 @@ class DataStateMachine {
                     Logger.debug(mTag, "Got a aadaSwitch $aadaSwitch")
                     ScreenObjects.addSwitch(aadaSwitch, context)
                 }
+                AADASeekBar.objID->{
+                    val aadaSeekBar = AADASeekBar.fromByteBuffer(bb)
+                    Logger.debug(mTag, "Got a aadaSeekBar $aadaSeekBar")
+                    ScreenObjects.addSeekBar(aadaSeekBar, context)
+                }
                 else ->{
                     Logger.debug(mTag, "Got a unknown command ID!")
                 }
