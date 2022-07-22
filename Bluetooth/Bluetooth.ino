@@ -99,9 +99,13 @@ void buttonClicked1()
   }
   datacntr++;
   Serial.print("\nA 1 button has been clicked!\n");
+
+  //int dLenght = screenSwitch.getBytes(bufFrame);
+
 }
 
 ScreenObjects screenObjects;
+ScreenSeekBar screenSeekBar;
 void setup() {
   Serial.begin(115200);
 
@@ -130,6 +134,8 @@ void setup() {
   screenSwitch1.tag = 2;
   screenObjects.registerSwitch(screenSwitch.tag, &screenSwitch.switchValue);//Todo just get screenSwitch
   screenObjects.registerSwitch(screenSwitch1.tag, &screenSwitch1.switchValue);
+  screenSeekBar.tag = 4;
+  screenObjects.registerSeekBar(screenSeekBar);
   // screenObjects.clickButton(2);
   //screenObjects.clickButton(0);
   //screenObjects.clickButton(1);
@@ -173,15 +179,15 @@ void setup() {
   data1.mInt = -1643;
   char* my_s_bytes = reinterpret_cast<char*>(&data1);
   bool aTst = true;
-//  screenObjects.registerSwitch(1, &aTst);
-//  screenObjects.updateSwitch(1, false);
-//  Serial.println(aTst);
-//  screenObjects.updateSwitch(1, true);
-//  Serial.println(aTst);
-//  screenObjects.updateSwitch(1, true);
-//  Serial.println(aTst);
-//  screenObjects.updateSwitch(1, false);
-//  Serial.println(aTst);
+  //  screenObjects.registerSwitch(1, &aTst);
+  //  screenObjects.updateSwitch(1, false);
+  //  Serial.println(aTst);
+  //  screenObjects.updateSwitch(1, true);
+  //  Serial.println(aTst);
+  //  screenObjects.updateSwitch(1, true);
+  //  Serial.println(aTst);
+  //  screenObjects.updateSwitch(1, false);
+  //  Serial.println(aTst);
 }
 
 
@@ -238,10 +244,17 @@ void loop() {
         Serial.println(knb4);
       }
       if (buf[1] == ScreenIDs::toggleSwitch) {
-         screenObjects.updateSwitch(buf[2], buf[4]==1);
+        screenObjects.updateSwitch(buf[2], buf[4] == 1);
         Serial.print("\nSwitchs:");
         Serial.println(screenSwitch.switchValue);
         Serial.println(screenSwitch1.switchValue);
+      }
+
+      if (buf[1] == ScreenIDs::seekBar) {
+        int16_t aaa = ((0xFFFF & buf[5]) << 8) | (buf[4] & 0xFF);
+        screenObjects.updateSeekBar(buf[2], aaa);
+        Serial.print("\nSeek:");
+        Serial.println(screenSeekBar.seekValue);
       }
 
       for (int i = 0; i < a ; i++ ) {
@@ -327,6 +340,19 @@ void buttonClicked3()
   Serial.print("\n3rd button has been clicked!\n");
 }
 
+void addSeekBar() {
+  screenSeekBar.x = 40;
+  screenSeekBar.y = 300;
+  screenSeekBar.cmdId = 0;
+  screenSeekBar.seekValue = 44;
+  screenSeekBar.maxValue = 200;
+  screenSeekBar.width = 150;
+  int dLenght = screenSeekBar.getBytes(bufFrame);
+  frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
+  if (frameSendBufferSize > 0) {
+    SerialBT.write(frameSendBuffer, frameSendBufferSize);
+  }
+}
 
 void addSwitch() {
 
@@ -342,7 +368,7 @@ void addSwitch() {
   if (frameSendBufferSize > 0) {
     SerialBT.write(frameSendBuffer, frameSendBufferSize);
   }
-  
+
   screenSwitch1.x = 50;
   screenSwitch1.y = 320;
   screenSwitch1.cmdId = 0;
