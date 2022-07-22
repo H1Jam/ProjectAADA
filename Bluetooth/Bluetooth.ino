@@ -321,7 +321,7 @@ void buttonClicked2()
 
 bool hasMap = false;
 bool hasMapMarker = false;
-
+float gVal = 0;
 void buttonClicked3()
 {
   if (hasMap) {
@@ -337,6 +337,7 @@ void buttonClicked3()
     hasMap = true;
   }
   addSwitch();
+  addSeekBar();
   Serial.print("\n3rd button has been clicked!\n");
 }
 
@@ -344,7 +345,7 @@ void addSeekBar() {
   screenSeekBar.x = 40;
   screenSeekBar.y = 300;
   screenSeekBar.cmdId = 0;
-  screenSeekBar.seekValue = 44;
+  screenSeekBar.seekValue = (int)gVal;
   screenSeekBar.maxValue = 200;
   screenSeekBar.width = 150;
   int dLenght = screenSeekBar.getBytes(bufFrame);
@@ -384,7 +385,7 @@ void addSwitch() {
 }
 
 
-float gVal = 0;
+
 uint8_t iconId = 0;
 void addMapMarker()
 {
