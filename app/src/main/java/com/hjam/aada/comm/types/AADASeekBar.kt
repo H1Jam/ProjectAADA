@@ -14,6 +14,7 @@ class AADASeekBar(
 ) : AADAObject(tag, "skb") {
     companion object {
         val objID = ScreenIDs.SeekBar.ordinal.toByte()
+        const val minCallTime = 50
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADASeekBar {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
