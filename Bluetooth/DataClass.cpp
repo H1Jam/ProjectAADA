@@ -399,6 +399,7 @@ class ScreenSeekBar {
       offset += sizeof(maxValue);
       memcpy(out + offset, &width, sizeof(width));
       offset += sizeof(width);
+      return offset;
     }
 };
 
