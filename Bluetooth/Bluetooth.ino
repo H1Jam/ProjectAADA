@@ -106,6 +106,7 @@ void buttonClicked1()
 
 ScreenObjects screenObjects;
 ScreenSeekBar screenSeekBar;
+ScreenSeekBar screenSeekBar2;
 void setup() {
   Serial.begin(115200);
 
@@ -135,7 +136,9 @@ void setup() {
   screenObjects.registerSwitch(screenSwitch.tag, &screenSwitch.switchValue);//Todo just get screenSwitch
   screenObjects.registerSwitch(screenSwitch1.tag, &screenSwitch1.switchValue);
   screenSeekBar.tag = 4;
+  screenSeekBar2.tag = 2;
   screenObjects.registerSeekBar(&screenSeekBar);
+  screenObjects.registerSeekBar(&screenSeekBar2);
   // screenObjects.clickButton(2);
   //screenObjects.clickButton(0);
   //screenObjects.clickButton(1);
@@ -246,16 +249,18 @@ void loop() {
       if (buf[1] == ScreenIDs::toggleSwitch) {
         screenObjects.updateSwitch(buf[2], buf[4] == 1);
         Serial.print("\nSwitchs:");
-        Serial.println(screenSwitch.switchValue);
+        Serial.print(screenSwitch.switchValue);
+        Serial.print(" ");
         Serial.println(screenSwitch1.switchValue);
       }
 
       if (buf[1] == ScreenIDs::seekBar) {
         int16_t aaa = ((0xFFFF & buf[5]) << 8) | (buf[4] & 0xFF);
         screenObjects.updateSeekBar(buf[2], aaa);
-        Serial.print(aaa);
         Serial.print("\nSeek:");
-        Serial.println(screenSeekBar.seekValue);
+        Serial.print(screenSeekBar.seekValue);
+        Serial.print(" ");
+        Serial.println(screenSeekBar2.seekValue);
       }
 
       for (int i = 0; i < a ; i++ ) {
@@ -345,7 +350,7 @@ void buttonClicked3()
 void addSeekBar() {
   screenSeekBar.x = 40;
   screenSeekBar.y = 340;
-  screenSeekBar.cmdId = 0;
+  screenSeekBar.cmdId = hasMapMarker;
   screenSeekBar.seekValue = (int)gVal;
   screenSeekBar.maxValue = 300;
   screenSeekBar.width = 290;
@@ -354,6 +359,19 @@ void addSeekBar() {
   if (frameSendBufferSize > 0) {
     SerialBT.write(frameSendBuffer, frameSendBufferSize);
   }
+  
+  screenSeekBar2.x = 40;
+  screenSeekBar2.y = 380;
+  screenSeekBar2.cmdId = 0;
+  screenSeekBar2.seekValue = 0;
+  screenSeekBar2.maxValue = 300;
+  screenSeekBar2.width = 290;
+  dLenght = screenSeekBar2.getBytes(bufFrame);
+  frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
+  if (frameSendBufferSize > 0) {
+    SerialBT.write(frameSendBuffer, frameSendBufferSize);
+  }
+  
 }
 
 void addSwitch() {
