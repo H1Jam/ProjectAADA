@@ -41,7 +41,7 @@ object ScreenObjects {
 
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
     private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
-    private var mDataRateLimiter =0L
+    private var mDataRateLimiter = 0L
     fun mapViewResume() {
         if (mapView != null) {
             mapView?.onResume()
@@ -262,16 +262,30 @@ object ScreenObjects {
         val btn: Button? =
             mCanvasConstraintLayout.findViewWithTag(aadaButton.screenTag)
         if (btn != null) {
-            btn.text = aadaButton.text
-            if (aadaButton.textColor.toUInt() > 0u) {
-                btn.setTextColor(aadaButton.textColor)
-            }
-            if (aadaButton.backColor.toUInt() > 0u) {
-                btn.background = getDrawableFromColor(aadaButton.backColor, context)
-            }
-
-            if (aadaButton.fontSize > 0) {
-                btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, aadaButton.fontSize.toFloat())
+            when (aadaButton.cmdId) {
+                0 -> {
+                    btn.text = aadaButton.text
+                    if (aadaButton.textColor.toUInt() > 0u) {
+                        btn.setTextColor(aadaButton.textColor)
+                    }
+                    if (aadaButton.backColor.toUInt() > 0u) {
+                        btn.background = getDrawableFromColor(aadaButton.backColor, context)
+                    }
+                    if (aadaButton.fontSize > 0) {
+                        btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, aadaButton.fontSize.toFloat())
+                    }
+                }
+                1 -> {
+                    Logger.debug(mTag, "removeView: $aadaButton")
+                    removeViewByTag(aadaButton.screenTag)
+                }
+                2 -> {
+                    Logger.debug(mTag, "disableViewByTag: $aadaButton")
+                    disableViewByTag(aadaButton.screenTag)
+                }
+                else -> {
+                    Logger.debug(mTag, "Unknown cmdId: ${aadaButton.cmdId}")
+                }
             }
         } else {
             Logger.error(mTag, "refreshText: TextView(tag=${aadaButton.tag}) does not exist!")
@@ -295,18 +309,27 @@ object ScreenObjects {
         val switch: SwitchCompat? =
             mCanvasConstraintLayout.findViewWithTag(aadaSwitch.screenTag)
         if (switch != null) {
-            if (aadaSwitch.cmdId == 0) {
-                with(aadaSwitch) {
-                    switch.isChecked = switchValue
-                    switch.text = text
-                    switch.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
-                    switch.setTextColor(textColor)
+            when (aadaSwitch.cmdId) {
+                0 -> {
+                    with(aadaSwitch) {
+                        switch.isChecked = switchValue
+                        switch.text = text
+                        switch.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
+                        switch.setTextColor(textColor)
+                    }
                 }
-            } else {
-                Logger.debug(mTag, "removeSwitch: $aadaSwitch")
-                removeViewByTag(aadaSwitch.screenTag)
+                1 -> {
+                    Logger.debug(mTag, "removeSwitch: $aadaSwitch")
+                    removeViewByTag(aadaSwitch.screenTag)
+                }
+                2 -> {
+                    Logger.debug(mTag, "disableViewByTag: $aadaSwitch")
+                    disableViewByTag(aadaSwitch.screenTag)
+                }
+                else -> {
+                    Logger.debug(mTag, "Unknown cmdId: ${aadaSwitch.cmdId}")
+                }
             }
-
         } else {
             Logger.error(mTag, "refreshSwitch: switch is null!")
         }
@@ -317,14 +340,24 @@ object ScreenObjects {
         val seekBar: AppCompatSeekBar? =
             mCanvasConstraintLayout.findViewWithTag(aadaSeekBar.screenTag)
         if (seekBar != null) {
-            if (aadaSeekBar.cmdId == 0) {
-                with(aadaSeekBar) {
-                    seekBar.progress = seekValue.coerceIn(0,maxValue)
-                    seekBar.max = maxValue
+            when (aadaSeekBar.cmdId) {
+                0 -> {
+                    with(aadaSeekBar) {
+                        seekBar.progress = seekValue.coerceIn(0, maxValue)
+                        seekBar.max = maxValue
+                    }
                 }
-            } else {
-                Logger.debug(mTag, "removeSeekBar: $aadaSeekBar")
-                removeViewByTag(aadaSeekBar.screenTag)
+                1 -> {
+                    Logger.debug(mTag, "removeSeekBar: $aadaSeekBar")
+                    removeViewByTag(aadaSeekBar.screenTag)
+                }
+                2 -> {
+                    Logger.debug(mTag, "disableViewByTag: $aadaSeekBar")
+                    disableViewByTag(aadaSeekBar.screenTag)
+                }
+                else -> {
+                    Logger.debug(mTag, "Unknown cmdId: ${aadaSeekBar.cmdId}")
+                }
             }
 
         } else {
@@ -332,10 +365,13 @@ object ScreenObjects {
         }
     }
 
+    private fun disableViewByTag(screenTag: String) {
+        val view: View? = mCanvasConstraintLayout.findViewWithTag(screenTag)
+        view?.isEnabled = false
+    }
 
     private fun removeViewByTag(screenTag: String) {
-        val view: View? =
-            mCanvasConstraintLayout.findViewWithTag(screenTag)
+        val view: View? = mCanvasConstraintLayout.findViewWithTag(screenTag)
         if (view != null) {
             mCanvasConstraintLayout.removeView(view)
             mScreenObjects.remove(screenTag)
@@ -459,10 +495,10 @@ object ScreenObjects {
             ).toInt()
             seekBar.setPaddingRelative(pad, 0, pad, 0)
             seekBar.max = maxValue
-            seekValue = seekValue.coerceIn(0,maxValue)
+            seekValue = seekValue.coerceIn(0, maxValue)
             seekBar.progress = seekValue
             mCanvasConstraintLayout.addView(seekBar)
-            seekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
@@ -472,14 +508,16 @@ object ScreenObjects {
                     // Limit the rate unless it hits the end or beginning.
                     sendSeekBar(aadaSeekBar, ((progress == seekBar?.max) or (progress == 0)))
                 }
+
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    if (seekBar?.progress !=null){
+                    if (seekBar?.progress != null) {
                         aadaSeekBar.setSeek(seekBar.progress)
                         sendSeekBar(aadaSeekBar, true)
                     }
                 }
+
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    if (seekBar?.progress !=null){
+                    if (seekBar?.progress != null) {
                         aadaSeekBar.setSeek(seekBar.progress)
                         sendSeekBar(aadaSeekBar, true)
                     }
@@ -488,8 +526,8 @@ object ScreenObjects {
         }
     }
 
-    fun sendSeekBar(aadaSeekBar: AADASeekBar, forceSend: Boolean){
-        if (!forceSend && (System.currentTimeMillis() - mDataRateLimiter) < AADASeekBar.minCallTime){
+    fun sendSeekBar(aadaSeekBar: AADASeekBar, forceSend: Boolean) {
+        if (!forceSend && (System.currentTimeMillis() - mDataRateLimiter) < AADASeekBar.minCallTime) {
             return
         }
         mDataRateLimiter = System.currentTimeMillis()
