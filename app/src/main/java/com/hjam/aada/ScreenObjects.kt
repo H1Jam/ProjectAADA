@@ -275,8 +275,27 @@ object ScreenObjects {
         val knb: DialKnob? =
             mCanvasConstraintLayout.findViewWithTag(aadaKnob.screenTag)
         if (knb != null) {
-            with(aadaKnob) {
-                knb.setStyle(minValue, maxValue, startValue, labelText)
+            when(aadaKnob.cmdId) {
+                0 -> {
+                    with(aadaKnob) {
+                        knb.setStyle(minValue, maxValue, startValue, labelText)
+                    }
+                }
+                1->{
+                    Logger.debug(mTag, "removeViewByTag: $aadaKnob")
+                    removeViewByTag(aadaKnob.screenTag)
+                }
+                2->{
+                    Logger.debug(mTag, "disableViewByTag: $aadaKnob")
+                    disableViewByTag(aadaKnob.screenTag)
+                }
+                3 -> {
+                    Logger.debug(mTag, "enableViewByTag: $aadaKnob")
+                    enableViewByTag(aadaKnob.screenTag)
+                }
+                else->{
+                    Logger.debug(mTag, "Unknown cmdId: ${aadaKnob.cmdId}")
+                }
             }
         } else {
             Logger.error(mTag, "refresh Knob: AADAKnob(tag=${aadaKnob.tag}) does not exist!")
