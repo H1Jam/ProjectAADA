@@ -12,7 +12,8 @@ class AADAKnob(
     val maxValue: Int,
     val startValue: Int,
     val labelText: String,
-    val tag: Int
+    val tag: Int,
+    val cmdId: Int
 ) : AADAObject(tag, "knb") {
     var dial: Int = startValue
     var lastCallbackTick: Long = 0L
@@ -25,12 +26,13 @@ class AADAKnob(
             val x = byteBuffer.short.toInt()
             val y = byteBuffer.short.toInt()
             val cTag = byteBuffer.short.toInt()
+            val cmdId = byteBuffer.get().toInt()
             val size = byteBuffer.short.toInt()
             val minValue = byteBuffer.short.toInt()
             val maxValue = byteBuffer.short.toInt()
             val startValue = byteBuffer.short.toInt()
             val vText = StandardCharsets.UTF_8.decode(byteBuffer).toString()
-            return AADAKnob(x, y, size, minValue, maxValue, startValue, vText, cTag)
+            return AADAKnob(x, y, size, minValue, maxValue, startValue, vText, cTag, cmdId)
         }
 
         fun toBytesFromTag(aadaKnob: AADAKnob): ByteArray? {
@@ -46,7 +48,7 @@ class AADAKnob(
     }
 
     override fun toString(): String {
-        return "AADAKnob:[Tag:$tag (${screenTag}), x:$x, y:$y, Size:$size " +
+        return "AADAKnob:[Tag:$tag (${screenTag}),cmdId:$cmdId x:$x, y:$y, Size:$size " +
                 "minValue:$minValue, maxValue:$maxValue," +
                 " startValue:$startValue, labelText:$labelText]"
     }
