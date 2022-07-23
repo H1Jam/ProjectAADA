@@ -255,7 +255,7 @@ object ScreenObjects {
                 2 -> {
                     Logger.debug(mTag, "disableViewByTag: $aadaButton")
                     disableViewByTag(aadaButton.screenTag)
-                    disableButtonStyle(btn,aadaButton,)
+                    disableButtonStyle(btn,aadaButton, context)
                 }
                 3 -> {
                     Logger.debug(mTag, "enableViewByTag: $aadaButton")
