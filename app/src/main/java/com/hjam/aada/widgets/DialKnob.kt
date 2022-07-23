@@ -204,7 +204,7 @@ class DialKnob : AppCompatImageView {
                 mRotationAnchorY
             )
             canvas.drawBitmap(
-                mKnobBitmap,
+                (if (isEnabled) mKnobBitmap else mKnobDisableBitmap),
                 mSmallestDim * (1 - mBitmapScale) / 2,
                 mSmallestDim * (1 - mBitmapScale) / 8,
                 mPaintKnob
