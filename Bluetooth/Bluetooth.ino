@@ -347,6 +347,7 @@ void buttonClicked3()
   }
   addSwitch();
   addSeekBar();
+  addKnob();
   Serial.print("\n3rd button has been clicked!\n");
 }
 
@@ -488,6 +489,11 @@ void addKnob()
   screenknob.x = 120;
   screenknob.y = 500;
   screenknob.tag = 2;
+    if(hasMapMarker){
+    screenknob.cmdId = 2;
+  }else{
+    screenknob.cmdId = 3;
+  }
   screenknob.dimSize = 95;
   screenknob.minValue = -500;
   screenknob.maxValue = 500;
