@@ -20,6 +20,8 @@ class DialKnob : AppCompatImageView {
     private val mBitmapOptions: BitmapFactory.Options = BitmapFactory.Options()
     private var mKnobBitmap: Bitmap =
         BitmapFactory.decodeResource(resources, R.drawable.knob02s, mBitmapOptions)
+    private var mKnobDisableBitmap: Bitmap =
+        BitmapFactory.decodeResource(resources, R.drawable.knob_disable, mBitmapOptions)
     private var mDrawKnob = true
     private var mDrawText = true
     private var mTouchX = 0f
@@ -148,12 +150,16 @@ class DialKnob : AppCompatImageView {
         super.onSizeChanged(w, h, oldw, oldh)
         mSmallestDim = min(width, height)
         mPaintText.textSize = mSmallestDim * 0.1f
-        mKnobBitmap =
-            mKnobBitmap.scale(
-                (mSmallestDim * mBitmapScale).toInt(),
-                (mSmallestDim * mBitmapScale).toInt(),
-                true
-            )
+        mKnobBitmap = mKnobBitmap.scale(
+            (mSmallestDim * mBitmapScale).toInt(),
+            (mSmallestDim * mBitmapScale).toInt(),
+            true
+        )
+        mKnobDisableBitmap = mKnobDisableBitmap.scale(
+            (mSmallestDim * mBitmapScale).toInt(),
+            (mSmallestDim * mBitmapScale).toInt(),
+            true
+        )
         mWidthBitmap = mKnobBitmap.width.toFloat() / 2
         mHeightBitmap = mKnobBitmap.height.toFloat() / 2
         mRotationAnchorX = mSmallestDim * (1f - mBitmapScale) / 2f + mWidthBitmap
