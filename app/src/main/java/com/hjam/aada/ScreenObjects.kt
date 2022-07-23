@@ -110,7 +110,7 @@ object ScreenObjects {
             if (mScreenObjects.add(aadaKnob.screenTag)) {
                 addKnobToScreen(aadaKnob, context)
             } else {
-                modifyKnob(aadaKnob)
+                refreshKnob(aadaKnob)
             }
             refreshScreen()
         }
@@ -122,7 +122,7 @@ object ScreenObjects {
             if (mScreenObjects.add(aadaGauge.screenTag)) {
                 addGaugeToScreen(aadaGauge, context)
             } else {
-                modifyGauge(aadaGauge)
+                refreshGauge(aadaGauge)
             }
             refreshScreen()
         }
@@ -161,29 +161,12 @@ object ScreenObjects {
             if (mScreenObjects.add(aadaButton.screenTag)) {
                 addButtonToScreen(aadaButton, context)
             } else {
-                modifyButton(aadaButton, context)
+                refreshButton(aadaButton, context)
             }
             refreshScreen()
         }
     }
 
-    private fun modifyButton(aadaButton: AADAButton, context: Context) {
-        Logger.debug(mTag, "modifyButton: ${aadaButton.tag}")
-        refreshButton(aadaButton, context)
-        refreshScreen()
-    }
-
-    private fun modifyKnob(aadaKnob: AADAKnob) {
-        Logger.debug(mTag, "modifyKnob: ${aadaKnob.tag}")
-        refreshKnob(aadaKnob)
-        refreshScreen()
-    }
-
-    private fun modifyGauge(aadaGauge: AADAGauge) {
-        Logger.debug(mTag, "modifyKnob: ${aadaGauge.tag}")
-        refreshGauge(aadaGauge)
-        refreshScreen()
-    }
 
     fun addTextLabel(aadaTextLabel: AADATextLabel, context: Context) {
         if (mReady && aadaTextLabel.tag > 0) {
@@ -192,20 +175,10 @@ object ScreenObjects {
                 addTextToScreen(aadaTextLabel, context)
                 refreshScreen()
             } else {
-                modifyTextLabel(aadaTextLabel)
+                refreshText(aadaTextLabel)
             }
 
         }
-    }
-
-    private fun modifyTextLabel(aadaTextLabel: AADATextLabel) {
-        Logger.debug(mTag, "modifyTextLabel: ${aadaTextLabel.tag}")
-        refreshText(aadaTextLabel)
-        refreshScreen()
-    }
-
-    fun removeTextLabel(AADATextLabel: AADATextLabel) {
-
     }
 
     private fun addTextToScreen(aadaTextLabel: AADATextLabel, context: Context) {
@@ -283,6 +256,10 @@ object ScreenObjects {
                     Logger.debug(mTag, "disableViewByTag: $aadaButton")
                     disableViewByTag(aadaButton.screenTag)
                 }
+                3 -> {
+                    Logger.debug(mTag, "enableViewByTag: $aadaButton")
+                    enableViewByTag(aadaButton.screenTag)
+                }
                 else -> {
                     Logger.debug(mTag, "Unknown cmdId: ${aadaButton.cmdId}")
                 }
@@ -326,6 +303,10 @@ object ScreenObjects {
                     Logger.debug(mTag, "disableViewByTag: $aadaSwitch")
                     disableViewByTag(aadaSwitch.screenTag)
                 }
+                3 -> {
+                    Logger.debug(mTag, "enableViewByTag: $aadaSwitch")
+                    enableViewByTag(aadaSwitch.screenTag)
+                }
                 else -> {
                     Logger.debug(mTag, "Unknown cmdId: ${aadaSwitch.cmdId}")
                 }
@@ -355,6 +336,10 @@ object ScreenObjects {
                     Logger.debug(mTag, "disableViewByTag: $aadaSeekBar")
                     disableViewByTag(aadaSeekBar.screenTag)
                 }
+                3 -> {
+                    Logger.debug(mTag, "enableViewByTag: $aadaSeekBar")
+                    enableViewByTag(aadaSeekBar.screenTag)
+                }
                 else -> {
                     Logger.debug(mTag, "Unknown cmdId: ${aadaSeekBar.cmdId}")
                 }
@@ -363,6 +348,11 @@ object ScreenObjects {
         } else {
             Logger.error(mTag, "refreshSeekBar: seekBar is null!")
         }
+    }
+
+    private fun enableViewByTag(screenTag: String) {
+        val view: View? = mCanvasConstraintLayout.findViewWithTag(screenTag)
+        view?.isEnabled = true
     }
 
     private fun disableViewByTag(screenTag: String) {
