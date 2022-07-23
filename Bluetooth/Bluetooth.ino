@@ -82,12 +82,15 @@ void buttonClicked1()
   screenButton.y = 220;
   screenButton.tag = 3;
   screenButton.color = BLACK;
+
   button_counter = !button_counter;
   if (button_counter) {
+    screenButton.cmdId = 2;
     screenButton.text = "@C++@";
     screenButton.backColor = MAGENTA;
     screenButton.fontSize = 23;
   } else {
+    screenButton.cmdId = 3;
     screenButton.text = "!C++! ";
     screenButton.backColor = YELLOW;
     screenButton.fontSize = 18;
@@ -350,10 +353,15 @@ void buttonClicked3()
 void addSeekBar() {
   screenSeekBar.x = 40;
   screenSeekBar.y = 340;
-  screenSeekBar.cmdId = hasMapMarker;
+  if(hasMapMarker){
+    screenSeekBar.cmdId = 2;
+  }else{
+    screenSeekBar.cmdId = 3;
+  }
   screenSeekBar.seekValue = (int)gVal;
   screenSeekBar.maxValue = 300;
   screenSeekBar.width = 290;
+ 
   int dLenght = screenSeekBar.getBytes(bufFrame);
   frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
   if (frameSendBufferSize > 0) {
@@ -378,7 +386,12 @@ void addSwitch() {
 
   screenSwitch.x = 50;
   screenSwitch.y = 270;
-  screenSwitch.cmdId = 0;
+  if (hasMapMarker){
+  screenSwitch.cmdId = 2;
+  }else{
+  screenSwitch.cmdId = 3;
+  }
+
   screenSwitch.switchValue = hasMapMarker;
   screenSwitch.fontSize = 30;
   screenSwitch.textColor = MAGENTA;
