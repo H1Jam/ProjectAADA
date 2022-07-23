@@ -10,8 +10,10 @@ import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
+import androidx.appcompat.widget.`AppCompatButton$InspectionCompanion`
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
@@ -411,7 +413,7 @@ object ScreenObjects {
                 mTag, "addButtonToScreen:[x:$x, y:$y, " +
                         "cTag:$screenTag, Text:$text], size:$fontSize"
             )
-            val btn = Button(context)
+            val btn = AppCompatButton(context)
             btn.tag = screenTag
             btn.text = text
             btn.layoutParams = params
@@ -431,7 +433,7 @@ object ScreenObjects {
         }
     }
 
-    private fun setButtonListener(button: Button) {
+    private fun setButtonListener(button: AppCompatButton) {
         val buttonListener: View.OnClickListener = object : View.OnClickListener {
             var numClicks = 0
             override fun onClick(v: View?) {
@@ -454,8 +456,7 @@ object ScreenObjects {
     }
 
     fun refreshButtonText(cTag: Int, vText: String) {
-        val btn: Button? = mCanvasConstraintLayout.findViewWithTag("btn${cTag.toUInt()}")
-
+        val btn: AppCompatButton? = mCanvasConstraintLayout.findViewWithTag("btn${cTag.toUInt()}")
         if (btn != null) {
             btn.text = vText
         } else {
