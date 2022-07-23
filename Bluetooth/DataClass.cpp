@@ -131,6 +131,7 @@ class ScreenButton {
     int16_t x;
     int16_t y;
     int16_t tag;
+    uint8_t cmdId = 0;
     int16_t fontSize;
     int32_t color;
     int32_t backColor;
@@ -146,6 +147,8 @@ class ScreenButton {
       offset += sizeof(y);
       memcpy(out + offset, &tag, 2);
       offset += sizeof(tag);
+      memcpy(out + offset, &cmdId, sizeof(cmdId));
+      offset += sizeof(cmdId);
       memcpy(out + offset, &fontSize, 2);
       offset += sizeof(fontSize);
       memcpy(out + offset, &color, 4);
