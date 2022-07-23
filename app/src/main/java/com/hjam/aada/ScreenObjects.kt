@@ -260,6 +260,7 @@ object ScreenObjects {
                 3 -> {
                     Logger.debug(mTag, "enableViewByTag: $aadaButton")
                     enableViewByTag(aadaButton.screenTag)
+                    enableButtonStyle(btn,aadaButton, context)
                 }
                 else -> {
                     Logger.debug(mTag, "Unknown cmdId: ${aadaButton.cmdId}")
@@ -270,7 +271,11 @@ object ScreenObjects {
         }
     }
 
-    fun disableButtonStyle(btn : AppCompatButton, aadaButton: AADAButton, context: Context){
+    private fun disableButtonStyle(btn : AppCompatButton, aadaButton: AADAButton, context: Context){
+        btn.background = getDrawableFromColor(aadaButton.backColor, context)
+    }
+
+    private fun enableButtonStyle(btn : AppCompatButton, aadaButton: AADAButton, context: Context){
         btn.background = getDrawableFromColor(aadaButton.backColor, context)
     }
 
