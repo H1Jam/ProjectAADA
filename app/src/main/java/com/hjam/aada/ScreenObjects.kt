@@ -179,7 +179,6 @@ object ScreenObjects {
             } else {
                 refreshText(aadaTextLabel)
             }
-
         }
     }
 
@@ -204,7 +203,6 @@ object ScreenObjects {
             }
             lbl.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
             mCanvasConstraintLayout.addView(lbl)
-
         }
     }
 
@@ -234,7 +232,7 @@ object ScreenObjects {
     }
 
     private fun refreshButton(aadaButton: AADAButton, context: Context) {
-        val btn: Button? =
+        val btn: AppCompatButton? =
             mCanvasConstraintLayout.findViewWithTag(aadaButton.screenTag)
         if (btn != null) {
             when (aadaButton.cmdId) {
@@ -257,6 +255,7 @@ object ScreenObjects {
                 2 -> {
                     Logger.debug(mTag, "disableViewByTag: $aadaButton")
                     disableViewByTag(aadaButton.screenTag)
+                    disableButtonStyle(btn,aadaButton,)
                 }
                 3 -> {
                     Logger.debug(mTag, "enableViewByTag: $aadaButton")
@@ -269,6 +268,10 @@ object ScreenObjects {
         } else {
             Logger.error(mTag, "refreshText: TextView(tag=${aadaButton.tag}) does not exist!")
         }
+    }
+
+    fun disableButtonStyle(btn : AppCompatButton, aadaButton: AADAButton, context: Context){
+        btn.background = getDrawableFromColor(aadaButton.backColor, context)
     }
 
     private fun refreshKnob(aadaKnob: AADAKnob) {
