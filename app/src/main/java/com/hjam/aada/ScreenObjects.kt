@@ -1,20 +1,21 @@
 package com.hjam.aada
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.`AppCompatButton$InspectionCompanion`
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.component1
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
 import com.hjam.aada.comm.types.AADAMapMarker.Companion.Icons
@@ -272,7 +273,7 @@ object ScreenObjects {
     }
 
     private fun disableButtonStyle(btn : AppCompatButton, aadaButton: AADAButton, context: Context){
-        btn.background = getDrawableFromColor(aadaButton.backColor, context)
+        btn.background = getDrawableFromColor(makeColorDarker(aadaButton.backColor), context)
     }
 
     private fun enableButtonStyle(btn : AppCompatButton, aadaButton: AADAButton, context: Context){
@@ -816,6 +817,17 @@ object ScreenObjects {
 
     private fun getDrawableFromColor(color: Int, context: Context): Drawable? {
         return getDrawable(context, R.drawable.button_red)?.apply { setTint(color) }
+    }
+
+    fun makeColorDarker(color: Int): Int {
+
+        val uColor=color.toUInt()
+        Log.d(mTag, "makeColorDarker color:$uColor($color)")
+        val r = (((uColor shr 16) and 255u).toFloat() * 0.3f).toInt()
+        val g = (((uColor shr 8) and 255u).toFloat() * 0.3f).toInt()
+        val b = ((uColor and 255u).toFloat() * 0.3f).toInt()
+        Log.d(mTag, "makeColorDarker color:$uColor($color) $r,$g,$b")
+        return ((0xFF shl 24) or (r shl 16) or (g shl 8) or (b and 0xFF))
     }
 
 }
