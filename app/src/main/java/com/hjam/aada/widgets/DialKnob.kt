@@ -227,6 +227,8 @@ class DialKnob : AppCompatImageView {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
+        if (!isEnabled)
+            return true
         if (event.action == MotionEvent.ACTION_UP) {
             performClick()
             if (mOnChangedListener != null) {
