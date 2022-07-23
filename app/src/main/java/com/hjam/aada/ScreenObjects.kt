@@ -820,7 +820,6 @@ object ScreenObjects {
     }
 
     fun makeColorDarker(color: Int): Int {
-
         val uColor=color.toUInt()
         Log.d(mTag, "makeColorDarker color:$uColor($color)")
         val r = (((uColor shr 16) and 255u).toFloat() * 0.3f).toInt()

@@ -87,7 +87,6 @@ void buttonClicked1()
   if (button_counter) {
     screenButton.cmdId = 2;
     screenButton.text = "@C++@";
-    screenButton.backColor = MAGENTA;
     screenButton.fontSize = 23;
   } else {
     screenButton.cmdId = 3;
