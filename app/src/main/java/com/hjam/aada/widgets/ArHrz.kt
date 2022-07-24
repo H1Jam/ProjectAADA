@@ -14,42 +14,28 @@ import kotlin.math.sin
 class ArHrz : View {
     /// public List<Float> dat01 = new ArrayList<>();
     private var currentPaint: Paint? = null
-    private var paintC = Paint(Paint.ANTI_ALIAS_FLAG)
-    var wallpath = Path()
-    private var xe = 0f
-    private var ye = 0f
-    var radius = 100f
-    var xc = 0f
-    var yc = 0f
+    private var wallpath = Path()
+    private var xc = 0f
+    private var yc = 0f
     private var roll = 0f
     private var pitch = 0f
-    var canvasWidth = 0f
-    var canvasHeight = 0f
+    private var canvasWidth = 0f
+    private var canvasHeight = 0f
     var minDim = 0f
-    var AHR: Bitmap? = null
-    var canvasAH: Canvas? = null
-
-    // float[] xP= new float[4];
-    // float[] yP=new float[4];
     private var face: Bitmap? = null
     private var sky: Bitmap? = null
     private var skyAspect = 1f
-    private var df: DecimalFormat? = null
-    private var Arect: RectF? = null
-    private var scX = 0f
-    private var scY = 0f
-    private var AHBackWidth = 0f
-    private var AHSkyWidth = 0f
-    private var AHBackHeight = 0f
-    private var AHSkyHeight = 0f
+    private var mScX = 0f
+    private var mAHBackWidth = 0f
+    private var mAHSkyWidth = 0f
+    private var mAHBackHeight = 0f
+    private var mAHSkyHeight = 0f
 
-    // RectF gPointer=new RectF(10,10,10,10);
-    //Bitmap icon1;
     private var mMatrix: Matrix? = null
 
-    fun setValus(_roll: Float, _pitch: Float) {
-        roll = _roll
-        pitch = _pitch
+    fun setValues(roll: Float, pitch: Float) {
+        this.roll = roll
+        this.pitch = pitch
         invalidate()
         requestLayout()
     }
@@ -62,27 +48,23 @@ class ArHrz : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         minDim = min(w, h).toFloat()
-        face = BitmapFactory.decodeResource(this.resources, R.drawable.ah_background2).scale(minDim.toInt(),minDim.toInt(),true)
+        face = BitmapFactory.decodeResource(this.resources, R.drawable.ah_glass).scale(minDim.toInt(),minDim.toInt(),true)
         sky = BitmapFactory.decodeResource(this.resources, R.drawable.horizon_sky)
         canvasWidth = w.toFloat()
         canvasHeight = h.toFloat()
         xc = canvasWidth / 2f
         yc = canvasHeight / 2f
         mMatrix = Matrix()
-        scX = minDim / face!!.width.toFloat()
-        scY = (scX*w)
+        mScX = minDim / face!!.width.toFloat()
         skyAspect = (sky!!.height.toFloat() / sky!!.width)
         sky=sky!!.scale(
             (minDim*0.75f).toInt(),
             (minDim*0.75f*skyAspect).toInt()
         )
-        AHBackWidth = face!!.width.toFloat()
-        AHSkyWidth = sky!!.width.toFloat()
-        AHBackHeight = face!!.height.toFloat()
-        AHSkyHeight = sky!!.height.toFloat()
-        //paintC.strokeWidth = minDim * 0.2f
-       // paintC.color = Color.TRANSPARENT
-        //paintC.xfermode = PorterDuffXfermode(PorterDuff.Mode.ADD)
+        mAHBackWidth = face!!.width.toFloat()
+        mAHSkyWidth = sky!!.width.toFloat()
+        mAHBackHeight = face!!.height.toFloat()
+        mAHSkyHeight = sky!!.height.toFloat()
         wallpath.reset()
         wallpath.moveTo(minDim*0.95f, minDim/2);
         repeat(60) {
@@ -91,11 +73,6 @@ class ArHrz : View {
     }
 
     private fun init() {
-
-        df = DecimalFormat("#")
-        //        icon1 = BitmapFactory.decodeResource(this.getResources(),
-//                R.drawable.electro);
-//        icon1=Bitmap.createScaledBitmap(icon1, 100, 100, true);
         currentPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         currentPaint?.isDither = false
         currentPaint?.color = Color.argb(255, 234, 28, 58) // alpha.r.g.b
@@ -105,11 +82,6 @@ class ArHrz : View {
         currentPaint?.strokeWidth = 5f
         currentPaint?.isAntiAlias = true
         currentPaint?.setShadowLayer(10f, 3f, 3f, Color.BLACK)
-//        paintC = Paint()
-//        paintC.color = Color.TRANSPARENT
-//        paintC.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-//        paintC.strokeWidth = minDim * 0.2f
-//        paintC.style = Paint.Style.STROKE
         mMatrix = Matrix()
     }
 
@@ -138,12 +110,12 @@ class ArHrz : View {
         //matrix = new Matrix();
         //pitch = 30f
         //roll = 45f
-        scX = minDim / sky!!.width.toFloat()
+        mScX = minDim / sky!!.width.toFloat()
         mMatrix?.reset()
-        mMatrix?.preRotate(roll, AHBackWidth / 2.0f, AHBackHeight / 2.0f)
+        mMatrix?.preRotate(roll, mAHBackWidth / 2.0f, mAHBackHeight / 2.0f)
         mMatrix?.preTranslate(
-            minDim/2 - AHSkyWidth / 2.0f,
-            minDim/2 - AHSkyHeight * (0.5f - 0.36f * pitch / 90.0f)
+            minDim/2 - mAHSkyWidth / 2.0f,
+            minDim/2 - mAHSkyHeight * (0.5f - 0.36f * pitch / 90.0f)
         )
         canvas.save()
         canvas.clipPath(wallpath)
