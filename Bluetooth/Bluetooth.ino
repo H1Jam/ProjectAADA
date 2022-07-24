@@ -23,6 +23,7 @@ uint8_t rbuf[] = { 49, 50, 51, 52, 53, 54, 55, 56, 57}; // 123456789
 uint8_t rbufTextLabel[] = {17, 0, 50, 0, 52, 0, 20, 0, 28, 255, 0, 255, 255, 66, 67, 68, 69, 70}; // 123456789 BCDEF
 ScreenTextLabel textLabel;
 ScreenButton screenButton;
+ScreenButton screenButton2;
 ScreenKnob screenknob;
 ScreenGauge screenGauge;
 ScreenMap screenMap;
@@ -101,6 +102,26 @@ void buttonClicked1()
   }
   datacntr++;
   Serial.print("\nA 1 button has been clicked!\n");
+  
+  screenButton2.x = 60;
+  screenButton2.y = 220;
+  screenButton2.tag = 3;
+  screenButton2.color = WHITE;
+  screenButton2.backColor = LTGRAY;
+  if (button_counter) {
+    screenButton2.cmdId = 2;
+    screenButton2.text = "BTN2";
+    screenButton2.fontSize = 23;
+  } else {
+    screenButton2.cmdId = 3;
+    screenButton2.text = "Start Motor";
+    screenButton2.fontSize = 18;
+  }
+  dLenght = screenButton2.getBytes(bufFrame);
+  frameSendBufferSize = sendFrame(frameSendBuffer, bufFrame, dLenght);
+  if (frameSendBufferSize > 0) {
+    SerialBT.write(frameSendBuffer, frameSendBufferSize);
+  }
 
   //int dLenght = screenSwitch.getBytes(bufFrame);
 
