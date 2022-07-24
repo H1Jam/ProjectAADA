@@ -14,16 +14,9 @@ class AADAButton(
     var fontSize: Int,
     var textColor: Int,
     var backColor: Int
-) {
-    val screenTag = screenTag(this)
-
+): AADAObject(tag, "btn") {
     companion object {
-        val objID = AADAObject.ScreenIDs.Button.ordinal.toByte()
-        private const val mTagPrefix = "btn"
-        fun screenTag(aadaButton: AADAButton): String {
-            return mTagPrefix + aadaButton.tag.toString()
-        }
-
+        val objID = ScreenIDs.Button.ordinal.toByte()
         fun fromByteBuffer(byteBuffer: ByteBuffer): AADAButton {
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
             val x = byteBuffer.short.toInt()
@@ -48,7 +41,7 @@ class AADAButton(
         }
 
         fun toBytesFromTag(tag: String): ByteArray? {
-            if (!tag.startsWith(mTagPrefix)) {
+            if (!tag.startsWith("btn")) {
                 Logger.debug("AADAButton", "toBytesFromTag: Null!")
                 return null
             }
