@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity(), EzBlue.BlueCallback, EzBlue.BlueParser
         //ScreenObjects.addSwitch(AADASwitch(60,240,4,0,true,16,Color.RED,"MyFirstSwitch2"), this)
         //ScreenObjects.addSwitch(AADASwitch(60,240,4,0,true,20,Color.YELLOW,"MyFirstSwitch2"), this)
         //ScreenObjects.addSwitch(AADASwitch(0,0,4,1,true,0,0,""), this)
-        ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100, 50, "Voltage", 33, 0), this)
+        //ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100, 50, "Voltage", 33, 0), this)
         //ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100 ,50, "Voltage", 33,2) ,this)
         //ScreenObjects.addKnob(AADAKnob(44, 450, 120, -100, 100 ,50, "Voltage", 33,3) ,this)
         //ScreenObjects.addKnob(AADAKnob(170, 450, 80, -120, 200, 50, "Current", 34))
