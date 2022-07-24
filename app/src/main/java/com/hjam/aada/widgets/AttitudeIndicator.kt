@@ -10,7 +10,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-class ArHrz : View {
+class AttitudeIndicator : View {
     private var mCurrentPaint: Paint? = null
     private var mWallPath = Path()
     private var mCenterX = 0f
