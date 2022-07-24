@@ -41,6 +41,7 @@ class ArHrz : View {
         init()
     }
 
+    //Todo: Needs some simplifications.
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         mSmallestDim = min(w, h).toFloat()
