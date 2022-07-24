@@ -103,9 +103,9 @@ void buttonClicked1()
   datacntr++;
   Serial.print("\nA 1 button has been clicked!\n");
   
-  screenButton2.x = 60;
+  screenButton2.x = 120;
   screenButton2.y = 220;
-  screenButton2.tag = 3;
+  screenButton2.tag = 2;
   screenButton2.color = WHITE;
   screenButton2.backColor = LTGRAY;
   if (button_counter) {
