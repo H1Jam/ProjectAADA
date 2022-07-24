@@ -19,7 +19,8 @@ open class AADAObject(private val aadaTag: Int, tagPrefix: String) {
         MapView,
         MapMarkers,
         ToggleSwitch,
-        SeekBar
+        SeekBar,
+        AttitudeIndicator
     }
 
     companion object {
