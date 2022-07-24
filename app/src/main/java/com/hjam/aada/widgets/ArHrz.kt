@@ -6,36 +6,32 @@ import android.util.AttributeSet
 import com.hjam.aada.R
 import android.view.View
 import androidx.core.graphics.scale
-import java.text.DecimalFormat
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
 class ArHrz : View {
-    /// public List<Float> dat01 = new ArrayList<>();
-    private var currentPaint: Paint? = null
-    private var wallpath = Path()
-    private var xc = 0f
-    private var yc = 0f
-    private var roll = 0f
-    private var pitch = 0f
-    private var canvasWidth = 0f
-    private var canvasHeight = 0f
-    var minDim = 0f
-    private var face: Bitmap? = null
-    private var sky: Bitmap? = null
-    private var skyAspect = 1f
-    private var mScX = 0f
+    private var mCurrentPaint: Paint? = null
+    private var mWallPath = Path()
+    private var mCenterX = 0f
+    private var mCenterY = 0f
+    private var mRoll = 0f
+    private var mPitch = 0f
+    private var mCanvasWidth = 0f
+    private var mCanvasHeight = 0f
+    private var mSmallestDim = 0f
+    private var mGlassBitmap: Bitmap? = null
+    private var mSkyBitmap: Bitmap? = null
+    private var mSkyAspect = 1f
     private var mAHBackWidth = 0f
     private var mAHSkyWidth = 0f
     private var mAHBackHeight = 0f
     private var mAHSkyHeight = 0f
-
     private var mMatrix: Matrix? = null
 
     fun setValues(roll: Float, pitch: Float) {
-        this.roll = roll
-        this.pitch = pitch
+        this.mRoll = roll
+        this.mPitch = pitch
         invalidate()
         requestLayout()
     }
@@ -47,96 +43,64 @@ class ArHrz : View {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        minDim = min(w, h).toFloat()
-        face = BitmapFactory.decodeResource(this.resources, R.drawable.ah_glass).scale(minDim.toInt(),minDim.toInt(),true)
-        sky = BitmapFactory.decodeResource(this.resources, R.drawable.horizon_sky)
-        canvasWidth = w.toFloat()
-        canvasHeight = h.toFloat()
-        xc = canvasWidth / 2f
-        yc = canvasHeight / 2f
+        mSmallestDim = min(w, h).toFloat()
+        mGlassBitmap = BitmapFactory.decodeResource(this.resources, R.drawable.ah_glass).scale(mSmallestDim.toInt(),mSmallestDim.toInt(),true)
+        mSkyBitmap = BitmapFactory.decodeResource(this.resources, R.drawable.horizon_sky)
+        mCanvasWidth = w.toFloat()
+        mCanvasHeight = h.toFloat()
+        mCenterX = mCanvasWidth / 2f
+        mCenterY = mCanvasHeight / 2f
         mMatrix = Matrix()
-        mScX = minDim / face!!.width.toFloat()
-        skyAspect = (sky!!.height.toFloat() / sky!!.width)
-        sky=sky!!.scale(
-            (minDim*0.75f).toInt(),
-            (minDim*0.75f*skyAspect).toInt()
+        mSkyAspect = (mSkyBitmap!!.height.toFloat() / mSkyBitmap!!.width)
+        mSkyBitmap=mSkyBitmap!!.scale(
+            (mSmallestDim*0.75f).toInt(),
+            (mSmallestDim*0.75f*mSkyAspect).toInt()
         )
-        mAHBackWidth = face!!.width.toFloat()
-        mAHSkyWidth = sky!!.width.toFloat()
-        mAHBackHeight = face!!.height.toFloat()
-        mAHSkyHeight = sky!!.height.toFloat()
-        wallpath.reset()
-        wallpath.moveTo(minDim*0.95f, minDim/2);
+        mAHBackWidth = mGlassBitmap!!.width.toFloat()
+        mAHSkyWidth = mSkyBitmap!!.width.toFloat()
+        mAHBackHeight = mGlassBitmap!!.height.toFloat()
+        mAHSkyHeight = mSkyBitmap!!.height.toFloat()
+        mWallPath.reset()
+        mWallPath.moveTo(mSmallestDim*0.95f, mSmallestDim/2);
         repeat(60) {
-            wallpath.lineTo(minDim/2 + (minDim * 0.45f * cos(it * Math.PI / 30f)).toFloat(), minDim/2 + (minDim * 0.45f * sin(it * Math.PI / 30)).toFloat())
+            mWallPath.lineTo(mSmallestDim/2 + (mSmallestDim * 0.45f * cos(it * Math.PI / 30f)).toFloat(), mSmallestDim/2 + (mSmallestDim * 0.45f * sin(it * Math.PI / 30)).toFloat())
         }
+        mCurrentPaint!!.strokeWidth = mSmallestDim / 200f
+        mCurrentPaint!!.color = Color.WHITE
+        mCurrentPaint!!.style = Paint.Style.FILL
+        mCurrentPaint!!.alpha = 255
     }
 
     private fun init() {
-        currentPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        currentPaint?.isDither = false
-        currentPaint?.color = Color.argb(255, 234, 28, 58) // alpha.r.g.b
-        currentPaint?.style = Paint.Style.STROKE
-        currentPaint?.strokeJoin = Paint.Join.ROUND
-        currentPaint?.strokeCap = Paint.Cap.ROUND
-        currentPaint?.strokeWidth = 5f
-        currentPaint?.isAntiAlias = true
-        currentPaint?.setShadowLayer(10f, 3f, 3f, Color.BLACK)
+        mCurrentPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        mCurrentPaint?.isDither = false
+        mCurrentPaint?.color = Color.argb(255, 234, 28, 58) // alpha.r.g.b
+        mCurrentPaint?.style = Paint.Style.STROKE
+        mCurrentPaint?.strokeJoin = Paint.Join.ROUND
+        mCurrentPaint?.strokeCap = Paint.Cap.ROUND
+        mCurrentPaint?.strokeWidth = 5f
+        mCurrentPaint?.isAntiAlias = true
+        mCurrentPaint?.setShadowLayer(10f, 3f, 3f, Color.BLACK)
         mMatrix = Matrix()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-
-        // matrix.setScale(MinDim/face.getWidth(),MinDim/face.getWidth(),0, 0);
-        //  matrix.postTranslate((canvasWidth-MinDim)/2,(canvasHeight-MinDim)/2);
-
-        //  canvas.drawBitmap(face, matrix,currentPaint);
-
-
-        //  matrix.setRotate(10, sky.getWidth()/2, sky.getHeight()/2);
-
-        //  matrix.setScale(MinDim/sky.getWidth(),MinDim/sky.getWidth(),0, 0);
-        //  matrix.postTranslate((canvasWidth-MinDim)/2,(canvasHeight-MinDim)/2);
-
-
-
-//        wallpath.moveTo(canvasWidth*0.8f,yc);
-//        wallpath.lineTo(canvasWidth*0.2f,yc+100);
-        currentPaint!!.alpha = 255
-        currentPaint!!.strokeWidth = 2f
-        currentPaint!!.style = Paint.Style.STROKE
-        //matrix = new Matrix();
-        //pitch = 30f
-        //roll = 45f
-        mScX = minDim / sky!!.width.toFloat()
         mMatrix?.reset()
-        mMatrix?.preRotate(roll, mAHBackWidth / 2.0f, mAHBackHeight / 2.0f)
+        mMatrix?.preRotate(mRoll, mAHBackWidth / 2.0f, mAHBackHeight / 2.0f)
         mMatrix?.preTranslate(
-            minDim/2 - mAHSkyWidth / 2.0f,
-            minDim/2 - mAHSkyHeight * (0.5f - 0.36f * pitch / 90.0f)
+            mSmallestDim/2 - mAHSkyWidth / 2.0f,
+            mSmallestDim/2 - mAHSkyHeight * (0.5f - 0.36f * mPitch / 90.0f)
         )
         canvas.save()
-        canvas.clipPath(wallpath)
-        canvas.drawBitmap(sky!!, mMatrix!!, currentPaint)
+        canvas.clipPath(mWallPath)
+        canvas.drawBitmap(mSkyBitmap!!, mMatrix!!, mCurrentPaint)
         canvas.restore()
-        currentPaint!!.strokeWidth = minDim / 200f
-        currentPaint!!.color = Color.WHITE
-        currentPaint!!.style = Paint.Style.FILL
-        currentPaint!!.alpha = 255
-
-        canvas.drawLine(minDim * 0.2f, minDim/2, minDim * 0.8f, minDim/2, currentPaint!!)
-
-        canvas?.drawBitmap(
-            face!!,
+        canvas.drawLine(mSmallestDim * 0.2f, mSmallestDim/2, mSmallestDim * 0.8f, mSmallestDim/2, mCurrentPaint!!)
+        canvas.drawBitmap(
+            mGlassBitmap!!,
             0f,
             0f,
-            currentPaint)
-        //
-        //canvas.drawLine(minDim * 0.2f, minDim/2, minDim * 0.8f, minDim/2, currentPaint!!)
-        // canvas.drawColor(Color.TRANSPARENT);
-        // canvas.drawRect(1,1,canvasWidth-1,canvasHeight-1,PaintSTRK);
-        //   canvas.drawBitmap(AHR,0,0,currentPaint);
+            mCurrentPaint)
     }
 }
