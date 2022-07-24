@@ -8,6 +8,7 @@ class AADATextLabel(
     var x: Int,
     var y: Int,
     val tag: Int,
+    val cmdId: Int,
     var text: String,
     var fontSize: Int,
     var textColor: Int
@@ -27,7 +28,7 @@ class AADATextLabel(
             val fSize = byteBuffer.short.toInt()
             val textColor: Int = byteBuffer.int
             val vText = StandardCharsets.UTF_8.decode(byteBuffer).toString()
-            return AADATextLabel(x, y, cTag, vText, fSize, textColor)
+            return AADATextLabel(x, y, cTag,0, vText, fSize, textColor)
         }
     }
 
