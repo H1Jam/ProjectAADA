@@ -5,6 +5,7 @@
     android:id="@+id/canvas01"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#012F35"
     android:textAllCaps="false"
     tools:context=".ui.home.HomeFragment">
 
