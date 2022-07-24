@@ -1,7 +1,7 @@
 package com.hjam.aada
 
 import android.content.Context
-import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
 import android.util.Log
@@ -15,7 +15,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.component1
+import androidx.core.content.res.ResourcesCompat
 import com.hjam.aada.comm.DataProtocol
 import com.hjam.aada.comm.types.*
 import com.hjam.aada.comm.types.AADAMapMarker.Companion.Icons
@@ -29,6 +29,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
+
 object ScreenObjects {
     private const val mTag = "ScreenObjects"
     private val mScreenObjects: MutableSet<String> = mutableSetOf()
@@ -41,7 +42,9 @@ object ScreenObjects {
     private var mapController: IMapController? = null
     private var mapView: MapView? = null
     var mapPermissions = false
-
+    private var typeface : Typeface?= null
+    private var typefaceBold : Typeface?= null
+    private var typefaceRobotoReg : Typeface?= null
     private val mMarkerListMap: MutableMap<Int, AADAMapMarker> = mutableMapOf()
     private val mIconsDrawable: MutableMap<Icons, Drawable?> = mutableMapOf()
     private var mDataRateLimiter = 0L
@@ -81,6 +84,9 @@ object ScreenObjects {
         for (icon in Icons.values()) {
             mIconsDrawable[icon] = getDrawable(context, icon.drawableId)
         }
+        typeface = ResourcesCompat.getFont(context, R.font.courier_reg)
+        typefaceRobotoReg = ResourcesCompat.getFont(context, R.font.roboto_reg)
+        typefaceBold= ResourcesCompat.getFont(context, R.font.roboto_bold)
     }
 
     fun addSeekBar(aadaSeekBar: AADASeekBar, context: Context) {
@@ -199,6 +205,7 @@ object ScreenObjects {
             lbl.tag = screenTag
             lbl.text = text
             lbl.layoutParams = params
+            lbl.typeface = typeface
             if (textColor.toUInt() > 0U) {
                 lbl.setTextColor(textColor)
             }
@@ -448,6 +455,7 @@ object ScreenObjects {
             btn.isAllCaps = false
             btn.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
             btn.setTextColor(textColor)
+            btn.typeface = typefaceRobotoReg
             btn.background = getDrawableFromColor(backColor, context)
             val pad = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -556,7 +564,6 @@ object ScreenObjects {
         Logger.debug(mTag, "sendSeekBar $aadaSeekBar")
     }
 
-
     private fun addSwitchToScreen(aadaSwitch: AADASwitch, context: Context) {
         with(aadaSwitch) {
             if (tag < 0 || tag > 255) {
@@ -582,6 +589,7 @@ object ScreenObjects {
             switch.setTextSize(TypedValue.COMPLEX_UNIT_DIP, fontSize.toFloat())
             switch.setTextColor(textColor)
             switch.isChecked = switchValue
+            switch.typeface = typefaceRobotoReg
             mCanvasConstraintLayout.addView(switch)
             switch.setOnCheckedChangeListener { _, isChecked ->
                 aadaSwitch.switchValue = isChecked
