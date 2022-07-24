@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets
 class AADAGauge(
     var x: Int,
     var y: Int,
+    val tag: Int,
+    val cmdId: Int,
     val size: Int,
     var value: Float,
     val maxValue: Float,
@@ -14,8 +16,7 @@ class AADAGauge(
     val arcGreenMaxVal: Float,
     val arcYellowMaxVal: Float,
     val arcRedMaxVal: Float,
-    val unitTextLabel: String,
-    val tag: Int
+    val unitTextLabel: String
 ) : AADAObject(tag, "gau") {
     companion object {
         val objID = ScreenIDs.Gauge1.ordinal.toByte()
@@ -35,6 +36,8 @@ class AADAGauge(
             return AADAGauge(
                 x,
                 y,
+                cTag,
+                0,
                 size,
                 value,
                 maxValue,
@@ -43,7 +46,7 @@ class AADAGauge(
                 arcYellowMaxVal,
                 arcRedMaxVal,
                 unitTextLabel,
-                cTag
+
             )
         }
     }
