@@ -2,7 +2,6 @@ package com.hjam.aada.comm.types
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.charset.StandardCharsets
 
 class AADAAttitudeIndicator(
     var x: Int,
