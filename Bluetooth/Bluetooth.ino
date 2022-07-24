@@ -84,6 +84,7 @@ void buttonClicked1()
   screenButton.color = BLACK;
 
   button_counter = !button_counter;
+  screenButton.backColor = YELLOW;
   if (button_counter) {
     screenButton.cmdId = 2;
     screenButton.text = "@C++@";
@@ -91,7 +92,6 @@ void buttonClicked1()
   } else {
     screenButton.cmdId = 3;
     screenButton.text = "!C++! ";
-    screenButton.backColor = YELLOW;
     screenButton.fontSize = 18;
   }
   int dLenght = screenButton.getBytes(bufFrame);
