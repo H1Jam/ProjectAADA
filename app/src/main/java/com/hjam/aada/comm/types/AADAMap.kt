@@ -6,6 +6,7 @@ import java.nio.ByteOrder
 class AADAMap(
     val x: Int,
     val y: Int,
+    val cmdId: Int,
     val width: Int,
     val height: Int,
     var lat: Float,
@@ -30,6 +31,7 @@ class AADAMap(
             return AADAMap(
                 x,
                 y,
+                0,
                 width,
                 height,
                 lat,
