@@ -7,13 +7,13 @@ import java.nio.charset.StandardCharsets
 class AADAKnob(
     var x: Int,
     var y: Int,
+    val tag: Int,
+    val cmdId: Int,
     var size: Int,
     val minValue: Int,
     val maxValue: Int,
     val startValue: Int,
-    val labelText: String,
-    val tag: Int,
-    val cmdId: Int
+    val labelText: String
 ) : AADAObject(tag, "knb") {
     var dial: Int = startValue
     var lastCallbackTick: Long = 0L
@@ -32,7 +32,7 @@ class AADAKnob(
             val maxValue = byteBuffer.short.toInt()
             val startValue = byteBuffer.short.toInt()
             val vText = StandardCharsets.UTF_8.decode(byteBuffer).toString()
-            return AADAKnob(x, y, size, minValue, maxValue, startValue, vText, cTag, cmdId)
+            return AADAKnob(x, y, cTag, cmdId, size, minValue, maxValue, startValue, vText)
         }
 
         fun toBytesFromTag(aadaKnob: AADAKnob): ByteArray? {
